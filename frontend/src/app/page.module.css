@@ -1,0 +1,76 @@
+.backgroundImage {
+  width: 100%;
+  height: 90vh;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.backgroundBlur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgb(0, 0, 0, 0.5);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 0;
+}
+
+.backgroundTitle {
+  font-size: 2rem;
+  color: white;
+  font-weight: 900;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.buttonHeader {
+  font-weight: 900;
+  font-size: 1.3rem;
+}
+
+.applySection {
+  background-color: #4caf50;
+  padding: 3rem;
+  color: white;
+  font-weight: 900;
+  font-size: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 60vh;
+}
+
+.circleStep {
+  border: 3px solid white;
+  width: 60px;
+  height: 60px;
+  background-color: #fcaf38;
+  border-radius: 30px;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lineStep {
+  width: 150px;
+  height: 3px;
+  background-color: #ffffff;
+}
+
+.contentStep {
+  position: absolute;
+  bottom: -100%;
+  left: 50%;
+  width: 200px;
+  transform: translate(-50%, 50%);
+  text-align: center;
+  vertical-align: text-top;
+  height: 100%;
+}
