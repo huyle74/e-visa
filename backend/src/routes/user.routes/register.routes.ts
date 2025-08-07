@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import createAccountController from '../controllers/register.controller';
-import { createAccountValidator } from '../dto/auth.dto';
+import createAccountController from '../../controllers/user.controller/register.controller';
+import { createAccountValidator } from '../../dto/auth.dto';
 
 const createAccountRoute = Router();
 createAccountRoute.post('/', createAccountValidator, createAccountController);

@@ -1,30 +1,44 @@
 import prisma from '../prisma/prisma';
-import { User } from '@prisma/client';
-import { CreateUserDto } from '../dto/auth.dto';
+import { Prisma, User } from '@prisma/client';
 
-const findOne = async (email: string): Promise<User | null> => {
+const findOne = async (
+  where: Prisma.UserWhereUniqueInput
+): Promise<User | null> => {
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
-
+    const user = await prisma.user.findUnique({ where });
     return user;
   } catch (error) {
     throw new Error('Cannot find user');
   }
 };
 
-const create = async (data: CreateUserDto): Promise<User | null> => {
+const create = async (data: Prisma.UserCreateInput): Promise<User> => {
   try {
-    const { nation, nationIso2, ...userData } = data;
     const newUser = await prisma.user.create({
-      data: { ...userData, nation: { connect: { iso2: nation } } },
+      data,
     });
 
     return newUser;
   } catch (error) {
+    console.log(error);
     throw new Error('Cannot create User');
   }
 };
 
-const userRepos = { findOne, create };
+const update = async (
+  where: Prisma.UserWhereUniqueInput,
+  data: Prisma.UserUpdateInput
+) => {
+  try {
+    const updateUser = await prisma.user.update({ where, data });
+    return updateUser;
+  } catch (error: any) {
+    console.log(error.message);
+
+    throw new Error('Failed to update Database');
+  }
+};
+
+const userRepos = { findOne, create, update };
 
 export default userRepos;

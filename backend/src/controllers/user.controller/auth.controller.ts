@@ -1,13 +1,12 @@
 import { Response, Request } from 'express';
-import { validationResult } from 'express-validator';
-import { validationResponse } from '../utils/validateResponse.helper';
-import loginService from '../services/auth.service';
+import { validationResponse } from '../../utils/validateResponse.helper';
+import loginService from '../../services/user-service/auth.service';
 import {
   responseSuccess,
   responseFailed,
   responseError,
-} from '../utils/response.helper';
-import { loginDto } from '../dto/auth.dto';
+} from '../../utils/response.helper';
+import { loginDto } from '../../dto/auth.dto';
 
 const loginController = async (req: Request, res: Response) => {
   try {

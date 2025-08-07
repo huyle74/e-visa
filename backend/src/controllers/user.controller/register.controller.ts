@@ -1,15 +1,14 @@
 import { Request, Response } from 'express';
-import { validationResponse } from '../utils/validateResponse.helper';
+import { validationResponse } from '../../utils/validateResponse.helper';
 import {
   responseSuccess,
   responseError,
   responseFailed,
-} from '../utils/response.helper';
-import createAccountService from '../services/register.service';
+} from '../../utils/response.helper';
+import createAccountService from '../../services/user-service/register.service';
 
 const createAccountController = async (req: Request, res: Response) => {
   try {
-    console.log('---call create account---');
     const checkErrors = validationResponse(req);
     if (checkErrors) return responseFailed({ res, message: checkErrors });
 
@@ -17,7 +16,7 @@ const createAccountController = async (req: Request, res: Response) => {
     if (!createUser)
       return responseFailed({ res, message: 'Cannot create account' });
 
-    const { password, ...data } = createUser;
+    const { verifyToken, password, ...data } = createUser;
 
     return responseSuccess({
       res,

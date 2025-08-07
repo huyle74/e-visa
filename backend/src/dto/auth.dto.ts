@@ -18,8 +18,8 @@ export interface CreateUserDto {
   email: string;
   password: string;
   phoneNumber: string;
-  nationIso2: string;
   nation: string;
+  verifyToken?: string;
 }
 
 export const loginValidator = [
@@ -47,4 +47,10 @@ export const createAccountValidator = [
   body('lastName').notEmpty().withMessage('Last name is required'),
   body('phoneNumber').notEmpty().withMessage('Mobile phone is required'),
   body('nation').notEmpty().withMessage('Nationality is required'),
+];
+
+export const changePasswordValidator = [
+  body('email').isEmail().withMessage('Invalid Email'),
+  body('password').notEmpty().withMessage('Password is required'),
+  body('re_password').notEmpty().withMessage('Re-enter Password is required'),
 ];
