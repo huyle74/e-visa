@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, ChangeEvent } from "react";
-import GetStaticProps from "next";
 import { Box, Button, InputLabel, MenuItem, styled, FormControl, InputBase, Divider } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import TextFormRow from "./textForm-row";
@@ -7,6 +6,7 @@ import PhoneFormRow from "./phoneForm-row";
 import PasswordFormRow from "./textPassword-row";
 import { countries } from "@/app/static/countries";
 import styles from "./form.module.css";
+import PaypalButton from "../paypal/paypalButton";
 
 const formControlStyle = { width: "80%", m: "auto", mt: 3 };
 
@@ -27,7 +27,6 @@ interface Account {
 }
 
 export default function CreateAccoutForm({}) {
-  const backend_url = process.env.NEXT_PUBLIC_PREFIX_BACKEND_URL;
   const [nation, setNation] = useState("");
   const [nationData, setNationData] = useState<country>({ code: "+1", iso2: "US", countryCode: "", engName: "" });
   const [dropdown, setDropdown] = useState<Boolean>(false);

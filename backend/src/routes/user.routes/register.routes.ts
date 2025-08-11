@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import createAccountController from '../../controllers/user.controller/register.controller';
+import createAccountController from '../../controllers/user/register.controller';
 import { createAccountValidator } from '../../dto/auth.dto';
 
 const createAccountRoute = Router();
