@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import loginRoute from './user.routes/auth.routes';
-import createAccountRoute from './user.routes/register.routes';
-import verifyEmailRoute from './user.routes/verifyEmail.routes';
-import forgotPasswordRoute from './user.routes/forgotPassword.routes';
-import googleLoginRoute from './user.routes/googleLogin.routes';
-import mainRoute from './home.routes/main.routes';
+import loginRoute from './user/auth.routes';
+import createAccountRoute from './user/register.routes';
+import verifyEmailRoute from './user/verifyEmail.routes';
+import forgotPasswordRoute from './user/forgotPassword.routes';
+import googleLoginRoute from './user/googleLogin.routes';
+import mainRoute from './home/main.routes';
 import paypalRoute from './paypal/paypal.routes';
 
 const routes = Router();

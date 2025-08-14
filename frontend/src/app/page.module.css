@@ -11,7 +11,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgb(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -22,12 +22,23 @@
 
 .backgroundTitle {
   font-size: 2rem;
-  color: white;
+  color: rgb(0, 0, 0);
   font-weight: 900;
   z-index: 1000;
   display: flex;
   justify-content: center;
   flex-direction: column;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.4);
+  padding-top: 1rem;
+  width: 40%;
+  margin-bottom: 1rem;
+}
+
+.backgroundTitleBelow {
+  margin-top: 1rem;
+  background-color: rgba(255, 255, 255, 0.4);
+  padding: 1.2rem;
 }
 
 .buttonHeader {
@@ -36,7 +47,7 @@
 }
 
 .applySection {
-  background-color: #4caf50;
+  background-color: #21706b;
   padding: 3rem;
   color: white;
   font-weight: 900;
@@ -74,3 +85,8 @@
   vertical-align: text-top;
   height: 100%;
 }
+
+/* #21706b */
+/*? #09feec */
+/* #F7F8F3 */
+/* ! red #F7444E  */

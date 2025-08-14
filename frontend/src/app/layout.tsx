@@ -7,7 +7,7 @@ import theme from "./server-side/theme";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "LLB E-Visa",
+  title: "Global E-Visa",
   description: "Apply for get Visa",
 };
 

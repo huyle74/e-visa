@@ -4,10 +4,10 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import styles from "./form.module.css";
 
 interface Nation {
-  code: String;
-  countryCode: String;
-  iso2: String;
-  engName: String;
+  code: string;
+  countryCode: string;
+  iso2: string;
+  engName: string;
 }
 
 interface PhoneFormRowType {
@@ -15,10 +15,10 @@ interface PhoneFormRowType {
   nationData: Nation;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClick: (e: React.MouseEvent<HTMLElement>) => void;
-  dropdown: Boolean;
+  dropdown: boolean;
   onClickDropdown: () => void;
   onChangeSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  phoneNumb: String;
+  phoneNumb: string;
 }
 
 const PhoneFormRow = forwardRef<HTMLDivElement, PhoneFormRowType>((props, ref) => {

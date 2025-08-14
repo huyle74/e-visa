@@ -2,8 +2,8 @@ import { FormControl, TextField } from "@mui/material";
 import styles from "./form.module.css";
 
 interface FormRow {
-  label: String;
-  placeholder: String;
+  label: string;
+  placeholder: string;
   [key: string]: any;
 }
 

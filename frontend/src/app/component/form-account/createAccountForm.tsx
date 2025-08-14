@@ -6,32 +6,31 @@ import PhoneFormRow from "./phoneForm-row";
 import PasswordFormRow from "./textPassword-row";
 import { countries } from "@/app/static/countries";
 import styles from "./form.module.css";
-import PaypalButton from "../paypal/paypalButton";
 
 const formControlStyle = { width: "80%", m: "auto", mt: 3 };
 
 interface country {
-  code: String;
-  countryCode: String;
-  iso2: String;
-  engName: String;
+  code: string;
+  countryCode: string;
+  iso2: string;
+  engName: string;
 }
 
 interface Account {
-  firstName: String;
-  familyName: String;
-  email: String;
-  phone: String;
-  password: String;
-  nation: String;
+  firstName: string;
+  familyName: string;
+  email: string;
+  phone: string;
+  password: string;
+  nation: string;
 }
 
 export default function CreateAccoutForm({}) {
   const [nation, setNation] = useState("");
   const [nationData, setNationData] = useState<country>({ code: "+1", iso2: "US", countryCode: "", engName: "" });
-  const [dropdown, setDropdown] = useState<Boolean>(false);
+  const [dropdown, setDropdown] = useState<boolean>(false);
   const [countriesList, setCountriesList] = useState<country[]>(countries);
-  const [formatPhoneNumb, setFormatPhoneNumb] = useState<String>("");
+  const [formatPhoneNumb, setFormatPhoneNumb] = useState<string>("");
   const [account, setAccount] = useState<Account>({ firstName: "", familyName: "", email: "", phone: "", password: "", nation: "" });
   const ref = useRef<HTMLDivElement>(null);
 
@@ -120,7 +119,6 @@ export default function CreateAccoutForm({}) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setAccount((prev) => ({ ...prev, [name]: value }));
-    // console.log(account);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

@@ -7,8 +7,8 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import logo from "../../../../public/logo.png";
 import style from "./footer.module.css";
 
-const arrayText = ["L", "I", "E", "N", "L", "U", "C", "B", "A", "O"];
-const visaText = ["V", "I", "S", "A"];
+const arrayText = Array.from("Global");
+const visaText = Array.from("E-visa");
 
 export default function Footer() {
   return (
@@ -19,17 +19,17 @@ export default function Footer() {
             {letter}
           </Box>
         ))}
-        <Box sx={{ display: "flex", color: "#4caf50", ml: 2 }}>
+        <Box sx={{ display: "flex", ml: 2 }}>
           {visaText.map((letter, i) => (
-            <Box key={i} className="visa-letter">
+            <Box key={i} className="visa-letter" sx={{ color: "#09feec" }}>
               {letter}
             </Box>
           ))}
         </Box>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <Image alt="logo" src={logo} width={120} height={120} />
-        <Box sx={{ display: "flex", flexDirection: "column", ml: 3, mt: 2 }}>
+        <Image alt="logo" src={logo} width={150} height={150} />
+        <Box sx={{ display: "flex", flexDirection: "column", ml: 2, mt: 2 }}>
           <Box className={style.info}>VIETNAM</Box>
           <Box className={style.info}>(+84) 707 002 003</Box>
           <Box className={style.info}>lienlucbao@gmail.com</Box>

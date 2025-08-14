@@ -5,13 +5,13 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import styles from "./form.module.css";
 
 interface FormRow {
-  label: String;
-  placeholder: String;
+  label: string;
+  placeholder: string;
   [key: string]: any;
 }
 
 export default function PasswordFormRow({ label, placeholder, ...props }: FormRow) {
-  const [hiddenPassword, setHiddenpassword] = useState<Boolean>(false);
+  const [hiddenPassword, setHiddenpassword] = useState<boolean>(false);
 
   const handleRevealPassword = (e: any) => {
     setHiddenpassword(!hiddenPassword);

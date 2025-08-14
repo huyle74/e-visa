@@ -2,7 +2,7 @@
 
 import { Box } from "@mui/material";
 import HeaderMenu from "../component/menu/header-menu";
-import CreateAccoutForm from "../component/form/createAccountForm";
+import CreateAccoutForm from "../component/form-account/createAccountForm";
 import Footer from "../component/footer/footer";
 
 export default function Signup() {

@@ -26,10 +26,10 @@ export default function Home() {
           <div className={styles.backgroundBlur}>
             <Image src={logo} alt="logo" width={300} height={300} />
             <h1 className={styles.backgroundTitle}>
-              LIEN LUC BAO E-VISA <br /> <span style={{ margin: "1rem" }}>OFFCIAL WEBSITE</span>
+              GLOBAL E-VISA <br /> <span style={{ margin: "1rem" }}>OFFCIAL WEBSITE</span>
             </h1>
             <div style={{ height: "2px", width: "50vw", backgroundColor: "white" }}></div>
-            <h2 style={{ color: "white", marginTop: "1rem" }}>A product of Lien Luc Bao Visa</h2>
+            <h2 className={styles.backgroundTitleBelow}>A product of Lien Luc Bao Visa</h2>
           </div>
         </Box>
       </Box>

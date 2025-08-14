@@ -8,3 +8,7 @@
   left: 50%;
   transform: translateX(-50%);
 }
+
+.visa-letter {
+  color: #09feec;
+}

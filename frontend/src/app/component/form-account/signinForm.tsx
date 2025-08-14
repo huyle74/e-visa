@@ -12,13 +12,11 @@ export default function SigninForm({ submit }: actionForm) {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", pt: 4, pb: 4 }}>
-      <Box sx={{ width: "35%", border: "2px #4caf50 solid", m: "auto" }}>
-        <Box sx={{ textAlign: "center", fontSize: "1.2rem", fontWeight: 600, backgroundColor: "#4caf50", padding: "1rem 0 1rem 0", color: "#FFFADC" }}>
-          LIEN LUC BAO VISA ACCOUNT
-        </Box>
+      <Box sx={{ width: "35%", border: "2px #F7444E solid", m: "auto" }}>
+        <Box sx={{ textAlign: "center", fontSize: "1.2rem", fontWeight: 600, backgroundColor: "#F7444E", padding: "1rem 0 1rem 0", color: "#F7F8F3" }}>GLOBAL E-VISA ACCOUNT</Box>
         <Box sx={{ margin: "1rem 3rem 1rem 3rem" }}>
           <Box sx={{ fontWeight: 700, mb: 2 }}>Sign In</Box>
-          <Box>You can sign in using your Lien Luc Bao E-Visa account to apply for a visa and track your application.</Box>
+          <Box>You can sign in using your Global E-Visa account to apply for a visa and track your application.</Box>
         </Box>
         <form
           onSubmit={submit}
@@ -53,7 +51,7 @@ export default function SigninForm({ submit }: actionForm) {
         </Box>
 
         <Box sx={{ margin: "1rem 3rem 2rem 3rem" }}>
-          <Button variant="outlined" fullWidth sx={{ fontWeight: 900 }}>
+          <Button variant="outlined" fullWidth sx={{ fontWeight: 900 }} color="secondary">
             Create Account
           </Button>
         </Box>
