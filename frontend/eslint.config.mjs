@@ -23,7 +23,7 @@ const eslintConfig = [
       "react/jsx-first-prop-new-line": ["error", "multiline-multiprop"],
       "react/jsx-max-props-per-line": ["error", { maximum: 1, when: "multiline" }],
       "react/jsx-closing-bracket-location": [
-        "error",
+        "off",
         { nonEmpty: "after-props", selfClosing: "line-aligned" },
       ],
     },

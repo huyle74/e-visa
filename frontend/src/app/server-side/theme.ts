@@ -16,6 +16,13 @@ const theme = createTheme({
         },
       },
     },
+    MuiTextField:{
+      styleOverrides:{
+        root:{
+          height:'40px'
+        }
+      }
+    }
   },
 });
 

@@ -39,8 +39,15 @@ const EligibilityStep = ({
   onChangeVisitPurpose,
   valueProps,
 }: EligibilityStepProps) => {
-  const { applyAt, currentLocation, documentType, inputCountryPassport, numberOfEntries, visaType, visitPurpose } =
-    valueProps;
+  const {
+    applyAt,
+    currentLocation,
+    documentType,
+    inputCountryPassport,
+    numberOfEntries,
+    visaType,
+    visitPurpose,
+  } = valueProps;
 
   return (
     <Box sx={{ mt: 4 }}>
@@ -50,18 +57,21 @@ const EligibilityStep = ({
           value={inputCountryPassport}
           title="Country/Territory of Passport/TD"
           inputData={eligibilityEntries.inputCountryPassport}
+          placeHolder="Select your Territory of Passport"
         />
         <AutoCompleteForm
           title="Current Location"
           inputData={eligibilityEntries.currentLocation}
           onChange={onChangeCurrentLocation}
           value={currentLocation}
+          placeHolder="Select your current location"
         />
         <AutoCompleteForm
           onChange={onChangeApplyAt}
           title="Apply at"
           inputData={eligibilityEntries.applyAt}
           value={applyAt}
+          placeHolder="Select your apply place"
         />
       </FormContainer>
 
@@ -71,19 +81,28 @@ const EligibilityStep = ({
           title="Travel document type"
           inputData={eligibilityEntries.documentType}
           value={documentType}
+          placeHolder="Select your visit purpose"
         />
-        <AutoCompleteForm onChange={onChangeVisaType} title="Visa Type" inputData={names} value={visaType} />
+        <AutoCompleteForm
+          onChange={onChangeVisaType}
+          title="Visa Type"
+          inputData={names}
+          value={visaType}
+          placeHolder="Select your visa type"
+        />
         <AutoCompleteForm
           title="Purpose of Visit"
           onChange={onChangeVisitPurpose}
           inputData={eligibilityEntries.visitPurpose}
           value={visitPurpose}
-        />{" "}
+          placeHolder="Select your visit's purpose"
+        />
         <AutoCompleteForm
           title="Number of Entries"
           onChange={onChangeNumberOfEntries}
           inputData={eligibilityEntries.numberOfEntries}
           value={numberOfEntries}
+          placeHolder="Select your number of entries"
         />
       </FormContainer>
     </Box>
