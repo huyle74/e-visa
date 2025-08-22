@@ -1,0 +1,4 @@
+model SupportingDocument {
+    applicationId String      @id
+    application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}

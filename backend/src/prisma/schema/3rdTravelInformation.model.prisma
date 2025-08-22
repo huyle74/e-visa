@@ -1,0 +1,47 @@
+model TravelInformation {
+    applicationId String      @id
+    application   Application @relation(fields: [applicationId], references: [id])
+
+    // travelInfo
+    arrivalDate           DateTime
+    departureDate         DateTime
+    country               String
+    arrivalPort           String
+    hadVisited            Boolean
+    didApply              Boolean
+    partOfTour            Boolean
+    transportationVehicle String
+    transportMode         String
+    shipName              String
+    fightNo               String
+    vehicleNumber         String
+
+    // Accommodation
+    accommodations          Accommodation[]
+    additionalAccommodation Boolean         @default(false)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([applicationId])
+}
+
+model Accommodation {
+    id                  String            @id @default(cuid())
+    travelInformationId String
+    travelInformation   TravelInformation @relation(fields: [travelInformationId], references: [applicationId], onDelete: Cascade, onUpdate: Cascade)
+
+    // Accommodation information
+    type      String
+    name      String
+    street    String
+    city      String
+    contactNo String
+    duration  String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([travelInformationId])
+}
+

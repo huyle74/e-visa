@@ -1,0 +1,39 @@
+model Eligibility {
+    applicationId        String       @id
+    application          Application  @relation(fields: [applicationId], references: [id])
+    applyAt              String
+    currentLocation      String
+    documentType         DocumentType
+    inputCountryPassport String
+    numberOfEntries      String
+    visaType             visaType
+    visitPurpose         VisitPurpose
+    createdAt            DateTime     @default(now())
+    userIdApplied        String
+
+    @@index([applicationId])
+}
+
+enum DocumentType {
+    ORDINARY_TRAVEL_DOCUMENT
+    DIPLOMATIC_PASSPORT
+    OFFICIAL_SERVICE_PASSPORT
+    PUBLIC_AFFAIRS
+}
+
+enum visaType {
+    TOURIST
+    TRANSIT
+    NON_IMMIGRANT
+    SMART
+    COURTESY
+    LTR
+    DTV
+    THAILAND_PRIVILEGE_CARD
+}
+
+enum VisitPurpose {
+    VISIT_FAMILY
+    TRAVEL
+    FOR_WORK
+}

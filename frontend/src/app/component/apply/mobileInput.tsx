@@ -5,7 +5,7 @@ const primary = teal[800];
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { countries } from "@/app/static/countries";
 
-import Flag from "@/app/component/nationFlag";
+import Flag from "@/app/component/common/nationFlag";
 
 interface MobileTextFieldProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;

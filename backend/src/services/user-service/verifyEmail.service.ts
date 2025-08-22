@@ -1,7 +1,7 @@
 import userRepos from '../../repositories/user.repository';
 
 const verifyEmailService = async (verifyToken: string) => {
-  const checkUser = await userRepos.findOne({ verifyToken });
+  const checkUser = await userRepos.findOne( verifyToken );
 
   if (!checkUser) throw new Error('Failed to verify Email');
 

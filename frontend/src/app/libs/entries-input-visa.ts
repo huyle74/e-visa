@@ -83,8 +83,11 @@ export const transportationVehicle = {
     values: ["Bus", "Car", "Lorry", "Motocycle", "Rail", "Van"],
     placeholder: "Enter your Vehicle Number",
   },
-  flight: { title: "Flight No.", values: ["Charter (Private)", "Schedule (Commercial)"] },
-  placeholder: "Enter your flight number",
+  flight: {
+    title: "Flight No.",
+    values: ["Charter (Private)", "Schedule (Commercial)"],
+    placeholder: "Enter your flight number",
+  },
 };
 
 export const travelInformationEntries = {
@@ -101,4 +104,3 @@ export const travelInformationEntries = {
     accommodationType: ["Hotel", "Private Property", "Own Property"],
   },
 };
-

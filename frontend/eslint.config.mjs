@@ -26,6 +26,7 @@ const eslintConfig = [
         "off",
         { nonEmpty: "after-props", selfClosing: "line-aligned" },
       ],
+      "@next/next/no-img-element": "off",
     },
 
     settings: { react: { version: "detect" } },

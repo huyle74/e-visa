@@ -2,8 +2,11 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc",
-    "dev": " ts-node-dev  --respawn --transpile-only src/server.ts",
-    "seed": "ts-node src/utils/seed.ts"
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts",
+    "seed": "node --max-old-space-size=6144 -r ts-node/register src/prisma/seed.ts"
+  },
+  "prisma": {
+     "schema": "src/prisma/schema"
   },
   "nodemonConfig": {
     "watch": [
@@ -22,6 +25,7 @@
     "@types/nodemailer": "^6.4.17",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
@@ -33,7 +37,6 @@
     "pg-promise": "^11.15.0",
     "postgres": "^3.4.7",
     "prisma": "^6.13.0",
-    "ts-node-dev": "^2.0.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
@@ -45,6 +48,8 @@
     "eslint-plugin-prettier": "^5.5.3",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
   }
 }

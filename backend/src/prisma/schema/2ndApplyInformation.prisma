@@ -1,0 +1,94 @@
+model ApplyInformation {
+    applicationId String      @id
+    application   Application @relation(fields: [applicationId], references: [id])
+
+    // personalInfo
+    title              String
+    sex                Sex
+    firstName          String
+    middleName         String?
+    familyName         String
+    contactNo          String
+    email              String
+    nationality        String
+    otherNationality   Boolean
+    nationalityBirth   String
+    cityBirth          String
+    birthDate          DateTime
+    maritalStatus      MaritalStatus
+    anotherNationality String
+
+    // travelDocument
+    documentType   TravelDocumentType
+    documentNumber String
+    issuesPlace    String
+    issuesDate     DateTime
+    expiryDate     DateTime
+
+    // address
+    homeAddress    String
+    addressCountry String
+    addressState   String
+    addressCity    String
+    currentAddress Boolean
+
+    // employment
+    occupation    Occupation
+    company       String
+    annualIncome  AnnualIncome
+    userIdApplied String
+
+    @@index([applicationId])
+}
+
+// ---- Enums ----
+enum Title {
+    MR
+    MISS
+    MRS
+    MASTER
+    OTHER
+}
+
+enum Sex {
+    MALE
+    FEMALE
+    OTHER
+}
+
+enum MaritalStatus {
+    SINGLE
+    MARRIED
+    COMMON_LAW_MARRIAGE
+    CIVIL_UNION_DOMESTIC_PARTNERSHIP
+    WIDOWED
+    DIVORCED
+    SEPARATED
+}
+
+enum TravelDocumentType {
+    CERTIFICATE_OF_IDENTITY_CI
+    PASSPORT
+    SEAMANS_BOOK
+    TRAVEL_DOCUMENT
+}
+
+enum Occupation {
+    BUSINESS_OWNER
+    EMPLOYEE
+    FREELANCE
+    GOVERNMENT_OFFICIAL
+    RETIRED
+    STUDENT
+    UNEMPLOYED
+    OTHER
+}
+
+enum AnnualIncome {
+    UNDER_20000_USD
+    BETWEEN_20000_40000_USD
+    BETWEEN_40001_60000_USD
+    BETWEEN_60001_80000_USD
+    MORE_THAN_AND_OVER
+    NO_INCOME
+}

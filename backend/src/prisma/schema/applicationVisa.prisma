@@ -1,0 +1,10 @@
+model Application {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    eligibility        Eligibility?
+    applyInformation   ApplyInformation?
+    TravelInformation  TravelInformation?
+    supportingDocument SupportingDocument?
+}

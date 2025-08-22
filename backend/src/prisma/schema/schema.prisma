@@ -1,0 +1,23 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+model User {
+  id          String   @id @default(uuid())
+  firstName   String
+  lastName    String
+  email       String
+  password    String
+  createAt    DateTime @updatedAt()
+  phoneNumber String?
+  nationIso2  String
+  nation      Country  @relation(fields: [nationIso2], references: [iso2])
+  emailVerify Boolean  @default(false)
+  verifyToken String?  @unique
+}

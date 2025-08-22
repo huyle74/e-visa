@@ -1,14 +1,12 @@
-import prisma from '../prisma/prisma';
-import { Prisma, User } from '@prisma/client';
+import prisma from "@/prisma/prisma";
+import { Prisma, User } from "@prisma/client";
 
-const findOne = async (
-  where: Prisma.UserWhereUniqueInput
-): Promise<User | null> => {
+const findOne = async (where: string): Promise<User | null> => {
   try {
     const user = await prisma.user.findUnique({ where });
     return user;
   } catch (error) {
-    throw new Error('Cannot find user');
+    throw new Error("Cannot find user");
   }
 };
 
@@ -21,21 +19,18 @@ const create = async (data: Prisma.UserCreateInput): Promise<User> => {
     return newUser;
   } catch (error) {
     console.log(error);
-    throw new Error('Cannot create User');
+    throw new Error("Cannot create User");
   }
 };
 
-const update = async (
-  where: Prisma.UserWhereUniqueInput,
-  data: Prisma.UserUpdateInput
-) => {
+const update = async (where: string, data: Prisma.UserUpdateInput) => {
   try {
     const updateUser = await prisma.user.update({ where, data });
     return updateUser;
   } catch (error: any) {
     console.log(error.message);
 
-    throw new Error('Failed to update Database');
+    throw new Error("Failed to update Database");
   }
 };
 

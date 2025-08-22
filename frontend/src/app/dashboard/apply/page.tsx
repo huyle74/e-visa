@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useEffect, DragEvent } from "react";
 import { Box, Button, SelectChangeEvent, SwitchProps } from "@mui/material";
 import ApplicationInformation from "@/app/component/apply/apply-stepper/applyInformation";
 import TravelInformation from "@/app/component/apply/apply-stepper/travel-information";
@@ -13,7 +13,9 @@ import {
   ApplicationInformationInputDto,
   TravelInformationInputDto,
   TransportationVehicleInputDto,
+  SupportingDocumentInputDto,
 } from "@/app/libs/types";
+import ModalComponent from "@/app/component/common/modal";
 import { transportationVehicle } from "@/app/libs/entries-input-visa";
 
 interface Stepper {
@@ -29,17 +31,21 @@ const steps = [
   { activeStep: 4, title: "Payment" },
 ];
 
+const MAX_SIZE = 3 * 1024 * 1024;
+
 const ApplyNewVisa = () => {
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [stepStatus, setStepStatus] = useState<Stepper>(steps[0]);
+  const [currentStep, setCurrentStep] = useState<number>(3);
+  const [stepStatus, setStepStatus] = useState<Stepper>(steps[3]);
+  const [modal, setModal] = useState<boolean>(false);
+  const [modalContent, setModalContent] = useState({ title: "", description: "" });
   const [eligibilityData, setEligibilityData] = useState<EligibilityInputDto>({
-    applyAt: "",
-    currentLocation: "",
-    documentType: "",
-    inputCountryPassport: "",
-    numberOfEntries: "",
-    visaType: "",
-    visitPurpose: "",
+    applyAt: null,
+    currentLocation: null,
+    documentType: null,
+    inputCountryPassport: null,
+    numberOfEntries: null,
+    visaType: null,
+    visitPurpose: null,
   });
   const [applyInfoData, setApplyInfoData] = useState<ApplicationInformationInputDto>({
     personalInfo: {
@@ -104,6 +110,14 @@ const ApplyNewVisa = () => {
       additionalAccommodation: false,
     },
   });
+  const [supportingDoc, setSupportingDoc] = useState<SupportingDocumentInputDto>({
+    biodata: null,
+    photograph: null,
+    currentLocation: null,
+    bookingConfirmation: null,
+    proofOfAccommodation: null,
+    financialEvidence: null,
+  });
   const [transVehicle, setTransVehicle] = useState<TransportationVehicleInputDto>({
     title: "Choose your transportation vehicle above",
     values: [],
@@ -140,6 +154,11 @@ const ApplyNewVisa = () => {
         setEligibilityData((prev) => ({ ...prev, visaType: e.target.value }));
         break;
     }
+  };
+
+  const handleOnCloseModal = () => {
+    setModal(false);
+    setModalContent({ title: "", description: "" });
   };
 
   useEffect(() => {
@@ -239,7 +258,6 @@ const ApplyNewVisa = () => {
   };
 
   const handleOnChangeDepartPort = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
     const vehicle = e.target.value;
     setTravelInfo((prev) => ({
       ...prev,
@@ -255,6 +273,112 @@ const ApplyNewVisa = () => {
       case "Land":
         setTransVehicle(transportationVehicle.land);
         break;
+    }
+  };
+
+  const handleOnChangeInputFile = (e: ChangeEvent<HTMLInputElement>, typeDoc: string) => {
+    if (e.target.files !== null) {
+      const file = e.target.files[0];
+      if (file.size > MAX_SIZE) {
+        setModalContent({
+          title: "Please choose file with size less than 3MB",
+          description: "",
+        });
+        setModal(true);
+        return;
+      }
+      switch (typeDoc) {
+        case "biodata":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            biodata: file,
+          }));
+          break;
+        case "photo":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            photograph: file,
+          }));
+          break;
+        case "accomodationProof":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            proofOfAccommodation: file,
+          }));
+          break;
+        case "financialEvidence":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            financialEvidence: file,
+          }));
+          break;
+        case "travelBooking":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            bookingConfirmation: file,
+          }));
+          break;
+        case "location":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            currentLocation: file,
+          }));
+          break;
+      }
+    }
+  };
+
+  const handleDropFile = (e: DragEvent<HTMLInputElement>, typeDoc: string) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      if (file.size > MAX_SIZE) {
+        setModalContent({
+          title: "Please choose file with size less than 3MB",
+          description: "",
+        });
+        setModal(true);
+        return;
+      }
+      console.log(file);
+      switch (typeDoc) {
+        case "biodata":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            biodata: file,
+          }));
+          break;
+        case "photo":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            photograph: file,
+          }));
+          break;
+        case "accomodationProof":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            proofOfAccommodation: file,
+          }));
+          break;
+        case "financialEvidence":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            financialEvidence: file,
+          }));
+          break;
+        case "travelBooking":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            bookingConfirmation: file,
+          }));
+          break;
+        case "location":
+          setSupportingDoc((prev) => ({
+            ...prev,
+            currentLocation: file,
+          }));
+          break;
+      }
     }
   };
 
@@ -319,7 +443,33 @@ const ApplyNewVisa = () => {
               vehicle={transVehicle}
             />
           )}
-          {stepStatus.activeStep === 3 && <SupportingDocument />}
+          {stepStatus.activeStep === 3 && (
+            <SupportingDocument
+              data={supportingDoc}
+              onChangeFileBiodata={(e) => handleOnChangeInputFile(e, "biodata")}
+              onChangeFileAccomodationProof={(e) =>
+                handleOnChangeInputFile(e, "accomodationProof")
+              }
+              onChangeFileFinancialEvidence={(e) =>
+                handleOnChangeInputFile(e, "financialEvidence")
+              }
+              onChangeFileLocation={(e) => handleOnChangeInputFile(e, "location")}
+              onChangeFilePhoto={(e) => handleOnChangeInputFile(e, "photo")}
+              onChangeFileTravelBooking={(e) =>
+                handleOnChangeInputFile(e, "travelBooking")
+              }
+              handleDropFileBioData={(e) => handleDropFile(e, "biodata")}
+              handleDropFileAccomodationProof={(e) =>
+                handleDropFile(e, "accomodationProof")
+              }
+              handleDropFileFinancialEvidence={(e) =>
+                handleDropFile(e, "financialEvidence")
+              }
+              handleDropFileLocation={(e) => handleDropFile(e, "location")}
+              handleDropFilePhoto={(e) => handleDropFile(e, "photo")}
+              handleDropFileTravelBooking={(e) => handleDropFile(e, "travelBooking")}
+            />
+          )}
           <Button
             type="submit"
             variant="contained"
@@ -330,6 +480,7 @@ const ApplyNewVisa = () => {
           </Button>
         </Box>
       </form>
+      <ModalComponent open={modal} content={modalContent} onClose={handleOnCloseModal} />
     </Box>
   );
 };
