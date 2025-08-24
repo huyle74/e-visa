@@ -1,6 +1,5 @@
 model Eligibility {
-    applicationId        String       @id
-    application          Application  @relation(fields: [applicationId], references: [id])
+    id                   Int          @id @default(autoincrement())
     applyAt              String
     currentLocation      String
     documentType         DocumentType
@@ -9,9 +8,13 @@ model Eligibility {
     visaType             visaType
     visitPurpose         VisitPurpose
     createdAt            DateTime     @default(now())
-    userIdApplied        String
 
-    @@index([applicationId])
+    applicationId String      @unique
+    application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
+
+    userId String
+
+    @@index([id])
 }
 
 enum DocumentType {

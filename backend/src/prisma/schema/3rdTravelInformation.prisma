@@ -1,6 +1,7 @@
 model TravelInformation {
-    applicationId String      @id
-    application   Application @relation(fields: [applicationId], references: [id])
+    id            Int         @id @default(autoincrement())
+    applicationId String      @unique
+    application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
 
     // travelInfo
     arrivalDate           DateTime
@@ -23,13 +24,13 @@ model TravelInformation {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([applicationId])
+    @@index([id])
 }
 
 model Accommodation {
-    id                  String            @id @default(cuid())
-    travelInformationId String
-    travelInformation   TravelInformation @relation(fields: [travelInformationId], references: [applicationId], onDelete: Cascade, onUpdate: Cascade)
+    id                  Int               @id @default(autoincrement())
+    travelInformationId Int
+    travelInformation   TravelInformation @relation(fields: [travelInformationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     // Accommodation information
     type      String
@@ -44,4 +45,3 @@ model Accommodation {
 
     @@index([travelInformationId])
 }
-

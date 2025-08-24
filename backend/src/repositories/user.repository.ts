@@ -3,7 +3,7 @@ import { Prisma, User } from "@prisma/client";
 
 const findOne = async (where: string): Promise<User | null> => {
   try {
-    const user = await prisma.user.findUnique({ where });
+    const user = await prisma.user.findUnique({ where : {id: where}});
     return user;
   } catch (error) {
     throw new Error("Cannot find user");
@@ -23,7 +23,7 @@ const create = async (data: Prisma.UserCreateInput): Promise<User> => {
   }
 };
 
-const update = async (where: string, data: Prisma.UserUpdateInput) => {
+const update = async (where: Prisma.UserWhereUniqueInput, data: any) => {
   try {
     const updateUser = await prisma.user.update({ where, data });
     return updateUser;

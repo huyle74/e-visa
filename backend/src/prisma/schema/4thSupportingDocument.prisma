@@ -1,4 +1,5 @@
 model SupportingDocument {
-    applicationId String      @id
-    application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id            Int         @id @default(autoincrement())
+    applicationId String      @unique
+    application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
 }

@@ -1,6 +1,7 @@
 model ApplyInformation {
-    applicationId String      @id
-    application   Application @relation(fields: [applicationId], references: [id])
+    id            Int         @id @default(autoincrement())
+    applicationId String      @unique
+    application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
 
     // personalInfo
     title              String
@@ -38,7 +39,7 @@ model ApplyInformation {
     annualIncome  AnnualIncome
     userIdApplied String
 
-    @@index([applicationId])
+    @@index([id])
 }
 
 // ---- Enums ----

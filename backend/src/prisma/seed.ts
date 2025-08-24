@@ -1,7 +1,5 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
-import { countries } from "../utils/countries";
-import { Nation } from "../dto/auth.dto";
 
 const prisma = new PrismaClient();
 const API_BASE =
@@ -14,20 +12,18 @@ async function fetchData(endpoint: string) {
 
 async function addCountries() {
   const countries = await fetchData("countries");
-
-  // await prisma.country.createMany({
-  //   data: countries.map((row: any) => {
-  //     return {
-  //       engName: row.name,
-  //       id: row.id,
-  //       iso2: row.iso2,
-  //       city: row.name,
-  //       countryCode: "+" + row.phonecode,
-  //       // code: row.
-  //     };
-  //   }),
-  //   skipDuplicates: true,
-  // });
+  await prisma.country.createMany({
+    data: countries.map((row: any) => {
+      return {
+        engName: row.name,
+        id: row.id,
+        iso2: row.iso2,
+        countryCode: "+" + row.iso3,
+        code: "+" + row.phonecode,
+      };
+    }),
+    skipDuplicates: true,
+  });
 
   console.log(countries[100]);
   console.log("✅ Seeding add Countries done.");
@@ -35,7 +31,7 @@ async function addCountries() {
 
 async function addCities() {
   const cities = await fetchData("cities");
-  await prisma.city.createMany({
+  const test = await prisma.city.createMany({
     data: cities.map((row: any) => {
       return {
         country: row.country_name,
@@ -48,7 +44,7 @@ async function addCities() {
     skipDuplicates: true,
   });
 
-  console.log(cities[0]);
+  console.log(test);
   console.log("----Done! added Cities----");
 }
 

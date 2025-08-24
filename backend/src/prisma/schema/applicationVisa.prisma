@@ -1,10 +1,13 @@
 model Application {
-    id        String   @id @default(uuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    correlationId String   @id @default(uuid())
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
 
-    eligibility        Eligibility?
-    applyInformation   ApplyInformation?
-    TravelInformation  TravelInformation?
+    userId String
+
+    Eligibility        Eligibility?
+    ApplyInformation   ApplyInformation?
+    travelInformation  TravelInformation?
     supportingDocument SupportingDocument?
+    user               User                @relation(fields: [userId], references: [id])
 }

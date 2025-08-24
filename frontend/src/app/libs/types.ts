@@ -1,6 +1,4 @@
-import { Dayjs } from "dayjs";
-
-type DateType = Dayjs | null;
+type DateType = string | null;
 
 export interface EligibilityInputDto {
   applyAt: string | null;

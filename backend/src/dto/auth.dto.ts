@@ -54,3 +54,5 @@ export const changePasswordValidator = [
   body('password').notEmpty().withMessage('Password is required'),
   body('re_password').notEmpty().withMessage('Re-enter Password is required'),
 ];
+
+
