@@ -1,11 +1,12 @@
-import { eligibiltyRepo } from "@/repositories/visaApplication.repository";
+import userRepos from "@/repositories/user.repository";
 
-export const checkApplyExist = async (applicationId: string) => {
-  let isExisted = false;
-  const checkEligibilty = await eligibiltyRepo.findOne(applicationId);
-  if (checkEligibilty) {
-    isExisted = true;
+export const checkUser = async (email: string, id: string) => {
+  const userById = await userRepos.findOne(id);
+  if (!userById) throw new Error("User doesnt exist");
+
+  if (userById.email === email) {
+    return true;
+  } else {
+    return false;
   }
-
-  return isExisted
 };

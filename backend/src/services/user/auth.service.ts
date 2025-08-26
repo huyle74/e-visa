@@ -4,6 +4,7 @@ import userRepos from "../../repositories/user.repository";
 import { generateToken } from "../../utils/jwt";
 
 const loginService = async ({ email, password }: loginDto) => {
+  console.log(email);
   const user = await userRepos.findOne(email);
   if (!user) throw new Error("USer not found");
 

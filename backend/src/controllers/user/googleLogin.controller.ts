@@ -4,7 +4,7 @@ import {
   responseFailed,
   responseError,
 } from '../../utils/response.helper';
-import googleLoginService from '../../services/user-service/googleLogin.service';
+import googleLoginService from '../../services/user/googleLogin.service';
 
 const googleLoginController = async (req: Request, res: Response) => {
   try {

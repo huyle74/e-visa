@@ -10,15 +10,8 @@ const applicationInformationService = {
     const userExisted = await userRepos.findOne(userId);
     if (!userExisted) throw new Error("User not found");
 
-    const applicationId = data.applicationId;
-    const checkApplyExist = await visaApplicationRepo.findOne(applicationId);
-    console.log(checkApplyExist);
-    if (!checkApplyExist) {
-      throw new Error("This application not found");
-    }
-
-    const createNew = await applyInformationRepo.create(data.applicationId, data);
-    return createNew;
+    const result = await applyInformationRepo.upsert(data);
+    return result;
   },
 };
 export default applicationInformationService;

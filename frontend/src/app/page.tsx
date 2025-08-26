@@ -22,14 +22,20 @@ export default function Home() {
       <HeaderMenu />
       <Box>
         <Box sx={{ position: "relative" }}>
-          <img className={styles.backgroundImage} src="https://career-advice.jobs.ac.uk/wp-content/uploads/An-image-of-Vietnam.jpg.optimal.jpg" alt="backdrop" />
+          <img
+            className={styles.backgroundImage}
+            src="https://career-advice.jobs.ac.uk/wp-content/uploads/An-image-of-Vietnam.jpg.optimal.jpg"
+            alt="backdrop"
+          />
           <div className={styles.backgroundBlur}>
             <Image src={logo} alt="logo" width={300} height={300} />
             <h1 className={styles.backgroundTitle}>
               GLOBAL E-VISA <br /> <span style={{ margin: "1rem" }}>OFFCIAL WEBSITE</span>
             </h1>
             <div style={{ height: "2px", width: "50vw", backgroundColor: "white" }}></div>
-            <h2 className={styles.backgroundTitleBelow}>A product of Lien Luc Bao Visa</h2>
+            <h2 className={styles.backgroundTitleBelow}>
+              A product of Lien Luc Bao Visa
+            </h2>
           </div>
         </Box>
       </Box>
@@ -38,7 +44,15 @@ export default function Home() {
           <Box sx={{ mb: 2 }}>HOW TO APPLY ONLINE</Box>
           <div style={{ width: "10vw", height: "4px", backgroundColor: "#eab676" }}></div>
         </Box>
-        <Box sx={{ width: "70vw", display: "flex", alignItems: "center", justifyContent: "center", m: "auto" }}>
+        <Box
+          sx={{
+            width: "70vw",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            m: "auto",
+          }}
+        >
           {steps.map((content, i) => (
             <Box sx={{ display: "flex", alignItems: "center" }} key={i}>
               <Box sx={{ position: "relative" }}>
@@ -50,7 +64,10 @@ export default function Home() {
           ))}
         </Box>
       </Box>
-
+      <img
+        src="https://darkred-crane-929274.hostingersite.com/ChatGPT%20Image%20Aug%2021,%202025,%2010_26_03%20AM.png"
+        alt="HERE"
+      />
       <Footer />
     </Box>
   );

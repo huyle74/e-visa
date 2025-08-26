@@ -5,7 +5,7 @@ import {
   responseError,
   responseFailed,
 } from '../../utils/response.helper';
-import createAccountService from '../../services/user-service/register.service';
+import createAccountService from '../../services/user/register.service';
 
 const createAccountController = async (req: Request, res: Response) => {
   try {

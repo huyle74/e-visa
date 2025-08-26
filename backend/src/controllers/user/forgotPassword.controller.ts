@@ -5,7 +5,7 @@ import {
   responseError,
   responseFailed,
 } from '../../utils/response.helper';
-import forgotPasswordService from '../../services/user-service/forgotPassword.service';
+import forgotPasswordService from '../../services/user/forgotPassword.service';
 
 const forgotPasswordController = async (req: Request, res: Response) => {
   try {

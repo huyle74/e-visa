@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import verifyEmailService from '../../services/user-service/verifyEmail.service';
+import verifyEmailService from '../../services/user/verifyEmail.service';
 import {
   responseSuccess,
   responseError,

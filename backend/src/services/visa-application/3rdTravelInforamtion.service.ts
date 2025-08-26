@@ -12,14 +12,8 @@ const travelInformationService = async (
   const checkUser = await userRepos.findOne(userId);
   if (!checkUser) throw new Error("User not found");
 
-  const applicationId = data.applicationId;
-  const checkApplyExisted = await visaApplicationRepo.findOne(applicationId);
-  if (checkApplyExisted) {
-    const updateData = await travelInfoRepos.update(applicationId, data);
-    return updateData;
-  } else {
-    const createNew = await travelInfoRepos.create(applicationId, data);
-  }
+  const updateData = await travelInfoRepos.upsert(data);
+  return updateData;
 };
 
 export default travelInformationService;

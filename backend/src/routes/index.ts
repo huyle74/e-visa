@@ -1,4 +1,5 @@
 import { Router } from "express";
+import authenticationMiddleware from "@/middleware/verifyAuth.middleware";
 import loginRoute from "./user/auth.routes";
 import createAccountRoute from "./user/register.routes";
 import verifyEmailRoute from "./user/verifyEmail.routes";
@@ -17,6 +18,6 @@ routes.use("/forgot-password", forgotPasswordRoute);
 routes.use("/login-google", googleLoginRoute);
 routes.use("/payment", paypalRoute);
 routes.use("/static", staticRoutes);
-routes.use("/visa-application", applicationRouter);
+routes.use("/visa-application", authenticationMiddleware(), applicationRouter);
 
 export default routes;

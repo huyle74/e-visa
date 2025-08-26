@@ -1,4 +1,11 @@
-type DateType = Date | null;
+import {
+  MaritalStatus,
+  AnnualIncome,
+  Occupation,
+  TravelDocumentType,
+  Sex,
+  Document,
+} from "@prisma/client";
 
 export interface EligibilityInputDto {
   applyAt: string;
@@ -12,41 +19,42 @@ export interface EligibilityInputDto {
 
 export interface ApplicationInformationInputDto {
   applicationId: string;
-  personalInfo: {
-    title: string | null;
-    sex: string | null;
-    fistName: string | null;
-    middleName?: string | null;
-    familyName: string | null;
-    contactNo: string | null;
-    email: string | null;
-    nationality: string | null;
-    otherNationality: boolean | null;
-    nationalityBirth: string | null;
-    cityBirth: string | null;
-    birthDate: DateType | null;
-    maritalStatus: string | null;
-    anotherNationity: string | null;
-  };
-  travelDocument: {
-    type: string | null;
-    docsNumber: string | null;
-    issuesPlace: string | null;
-    issuesDate: DateType | null;
-    expiryDate: DateType | null;
-  };
-  address: {
-    homeAddress: string | null;
-    country: string | null;
-    state: string | null;
-    city: string | null;
-    currentAddress: boolean | null;
-  };
-  employment: {
-    occupation: string | null;
-    company: string | null;
-    annualIncome: string | null;
-  };
+
+  title: string;
+  sex: Sex;
+  firstName: string;
+  middleName?: string;
+  familyName: string;
+  contactNo: string;
+  email: string;
+  nationality: string;
+  otherNationality: boolean;
+  nationalityBirth: string;
+  cityBirth: string;
+  birthDate: Date;
+  maritalStatus: MaritalStatus;
+  anotherNationality: string;
+
+  // travelDocument
+  documentType: TravelDocumentType;
+  documentNumber: string;
+  issuesPlace: string;
+  issuesDate: Date;
+  expiryDate: Date;
+
+  // address
+  homeAddress: string;
+  addressCountry: string;
+  addressState: string;
+  addressCity: string;
+  currentAddress: boolean;
+
+  // Employment
+  annualIncome: AnnualIncome;
+  occupation: Occupation;
+  company: string;
+
+  userIdApplied: string;
 }
 
 export interface AccommodationInputDto {
@@ -60,24 +68,21 @@ export interface AccommodationInputDto {
 
 export interface TravelInformationInputDto {
   applicationId: string;
-  travelInfo: {
-    arrivalDate: DateType | null;
-    departureDate: DateType | null;
-    country: string;
-    arrivalPort: string;
-    hadVisited: boolean;
-    didApply: boolean;
-    partOfTour: boolean;
-    transportationVehicle: string;
-    transportMode: string;
-    shipName?: string;
-    fightNo?: string | null;
-    vehicleNumber?: string | null;
-  };
-  Accommodation: {
-    AccommodationInfo: AccommodationInputDto[];
-    additionalAccommodation: boolean;
-  };
+  arrivalDate: Date;
+  departureDate: Date;
+  country: string;
+  arrivalPort: string;
+  hadVisited: boolean;
+  didApply: boolean;
+  partOfTour: boolean;
+  transportationVehicle: string;
+  transportMode: string;
+  shipName: string;
+  fightNo: string;
+  vehicleNumber: string;
+  accommodations: AccommodationInputDto[];
+
+  additionalAccommodation: boolean;
 }
 
 export interface TransportationVehicleInputDto {
@@ -86,20 +91,14 @@ export interface TransportationVehicleInputDto {
   placeholder: string;
 }
 
-export type FileInputDto = File | null;
-
 export interface SupportingDocumentInputDto {
-  biodata: FileInputDto;
-  photograph: FileInputDto;
-  currentLocation: FileInputDto;
-  bookingConfirmation: FileInputDto;
-  proofOfAccommodation: FileInputDto;
-  financialEvidence: FileInputDto;
-}
-
-export interface ApplicationInputDto {
-  supportingDocument: SupportingDocumentInputDto;
-  travelInformation: TravelInformationInputDto;
-  eligibility: EligibilityInputDto;
-  applicationInformation: ApplicationInformationInputDto;
+  applicationId: string;
+  type: Document;
+  originalName: string;
+  mimeType: string;
+  sizeBytes: number;
+  storageKey: string;
+  fileUrl?: string;
+  sha256?: string;
+  meta?: object;
 }

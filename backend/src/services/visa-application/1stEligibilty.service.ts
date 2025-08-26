@@ -2,12 +2,12 @@ import {
   eligibiltyRepo,
   visaApplicationRepo,
 } from "@/repositories/visaApplication.repository";
-import userRepos from "@/repositories/user.repository";
+import { checkUser } from "./util";
 
 const eligibilityService = {
-  async create(userId: string, data: any) {
-    const userExisted = await userRepos.findOne(userId);
-    if (!userExisted) throw new Error("User not found");
+  async create(user: any, userId: string, data: any) {
+    const checkAuth = await checkUser(user.email, userId);
+    if (checkAuth === false) throw new Error("Cannot authenticate this user");
 
     const applicationId = data.applicationId;
 

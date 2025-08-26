@@ -1,12 +1,21 @@
 import prisma from "@/prisma/prisma";
 import { Prisma, User } from "@prisma/client";
 
-const findOne = async (where: string): Promise<User | null> => {
+const findOne = async (id: string): Promise<User | null> => {
   try {
-    const user = await prisma.user.findUnique({ where : {id: where}});
+    const user = await prisma.user.findUnique({ where: { id } });
     return user;
   } catch (error) {
-    throw new Error("Cannot find user");
+    throw new Error("Cannot find user by id");
+  }
+};
+
+const findByEmail = async (email: string): Promise<User | null> => {
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    return user;
+  } catch (error) {
+    throw new Error("Cannot find user by email");
   }
 };
 
@@ -34,6 +43,6 @@ const update = async (where: Prisma.UserWhereUniqueInput, data: any) => {
   }
 };
 
-const userRepos = { findOne, create, update };
+const userRepos = { findOne, create, update, findByEmail };
 
 export default userRepos;

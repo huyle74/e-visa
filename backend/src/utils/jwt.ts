@@ -1,18 +1,15 @@
-import jwt from 'jsonwebtoken';
-import { JWT_PRIVATE_KEY, JWT_PUBLICK_KEY } from '../config/envLoader';
-import { generateKeyPairSync } from 'crypto';
+import jwt from "jsonwebtoken";
+import { JWT_PRIVATE_KEY, JWT_PUBLIC_KEY } from "../config/envLoader";
+import { generateKeyPairSync } from "crypto";
 
 const generateToken = (payload: object) => {
-  const token = jwt.sign(payload, JWT_PRIVATE_KEY, { algorithm: 'ES256' });
+  const token = jwt.sign(payload, JWT_PRIVATE_KEY, { algorithm: "ES256" });
 
   return token;
 };
 
 const verify = (token: string) => {
-  const decode = jwt.verify(token, JWT_PUBLICK_KEY);
-
-  console.log(decode);
-
+  const decode = jwt.verify(token, JWT_PUBLIC_KEY);
   return decode;
 };
 

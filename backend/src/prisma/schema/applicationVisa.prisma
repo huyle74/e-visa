@@ -8,6 +8,6 @@ model Application {
     Eligibility        Eligibility?
     ApplyInformation   ApplyInformation?
     travelInformation  TravelInformation?
-    supportingDocument SupportingDocument?
-    user               User                @relation(fields: [userId], references: [id])
+    supportingDocument SupportingDocument[]
+    user               User                 @relation(fields: [userId], references: [id])
 }

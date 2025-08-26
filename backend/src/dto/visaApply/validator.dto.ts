@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import type { Request } from "express";
 
 export const eligibiltyValidator = [
   body("applyAt").notEmpty().withMessage("Apply place is required"),
@@ -10,235 +11,238 @@ export const eligibiltyValidator = [
   body("visitPurpose").notEmpty().withMessage("Visit Purpose is required"),
 ];
 
-const personalInfo = (el: string) => `personalInfo.${el}`;
-const travelDocument = (el: string) => `travelDocument.${el}`;
-const address = (el: string) => `address.${el}`;
-const employment = (el: string) => `employment.${el}`;
-
 export const applicationInformationValidator = [
-  // personalInfo
-  body(personalInfo("applyAt")).notEmpty().withMessage("title is required"),
-  body(personalInfo("sex")).notEmpty().withMessage("sex is required"),
-  body(personalInfo("fistName")).notEmpty().withMessage("fistName is required"),
-  body(personalInfo("familyName")).notEmpty().withMessage("familyName is required"),
-  body(personalInfo("contactNo")).notEmpty().withMessage("contact phone is required"),
-  body(personalInfo("email")).isEmail().notEmpty().withMessage("email is required"),
-  body(personalInfo("nationality")).notEmpty().withMessage("nationality is required"),
-  body(personalInfo("otherNationality"))
-    .notEmpty()
-    .withMessage("otherNationality is required"),
-  body(personalInfo("nationalityBirth"))
-    .notEmpty()
-    .withMessage("nationalityBirth is required"),
-  body(personalInfo("cityBirth")).notEmpty().withMessage("cityBirth is required"),
-  body(personalInfo("birthDate")).notEmpty().withMessage("birthDate is required"),
-  body(personalInfo("maritalStatus")).notEmpty().withMessage("maritalStatus is required"),
-  body(personalInfo("anotherNationity"))
-    .notEmpty()
-    .withMessage("anotherNationity is required"),
+  body("applicationId").isUUID().withMessage("applicationId must be a valid UUID"),
 
-  // travelDocument
-  body(travelDocument("type")).notEmpty().withMessage("type is required"),
-  body(travelDocument("docsNumber")).notEmpty().withMessage("docsNumber is required"),
-  body(travelDocument("issuesPlace")).notEmpty().withMessage("issuesPlace is required"),
-  body(travelDocument("issuesDate")).notEmpty().withMessage("issuesDate is required"),
-  body(travelDocument("expiryDate")).notEmpty().withMessage("expiryDate is required"),
+  body("title")
+    .isIn(["MR", "MRS", "MS", "MISS"])
+    .withMessage("title must be one of MR, MRS, MS, MISS"),
 
-  // Address
-  body(address("homeAddress")).notEmpty().withMessage("homeAddress is required"),
-  body(address("country")).notEmpty().withMessage("country is required"),
-  body(address("state")).notEmpty().withMessage("state is required"),
-  body(address("city")).notEmpty().withMessage("city is required"),
-  body(address("currentAddress")).notEmpty().withMessage("currentAddress is required"),
+  body("sex")
+    .isIn(["MALE", "FEMALE", "OTHER"])
+    .withMessage("sex must be MALE, FEMALE or OTHER"),
 
-  // Employment
-  body(employment("occupation")).notEmpty().withMessage("occupation is required"),
-  body(employment("company")).notEmpty().withMessage("company is required"),
-  body(employment("annualIncome")).notEmpty().withMessage("annualIncome is required"),
+  body("firstName").isString().trim().notEmpty().withMessage("firstName is required"),
+
+  body("middleName")
+    .optional({ nullable: true })
+    .isString()
+    .withMessage("middleName must be a string"),
+
+  body("familyName").isString().trim().notEmpty().withMessage("familyName is required"),
+
+  body("contactNo")
+    .isString()
+    .matches(/^\+?[0-9\- ]+$/)
+    .withMessage("contactNo must be a valid phone number"),
+
+  body("email").isEmail().withMessage("email must be a valid email"),
+
+  body("nationality")
+    .isISO31661Alpha2()
+    .withMessage("nationality must be a valid ISO 2 country code"),
+
+  body("otherNationality")
+    .isBoolean()
+    .withMessage("otherNationality must be true or false"),
+
+  body("nationalityBirth")
+    .isISO31661Alpha2()
+    .withMessage("nationalityBirth must be a valid ISO 2 country code"),
+
+  body("cityBirth").isString().notEmpty().withMessage("cityBirth is required"),
+
+  body("birthDate")
+    .isISO8601()
+    .toDate()
+    .withMessage("birthDate must be a valid ISO date"),
+
+  body("maritalStatus")
+    .isIn(["SINGLE", "MARRIED", "DIVORCED", "WIDOWED"])
+    .withMessage("maritalStatus must be one of SINGLE, MARRIED, DIVORCED, WIDOWED"),
+
+  body("anotherNationality")
+    .optional({ nullable: true })
+    .isString()
+    .withMessage("anotherNationality must be a string"),
+
+  body("documentType")
+    .isIn(["PASSPORT", "ID_CARD", "TRAVEL_DOCUMENT"])
+    .withMessage("documentType must be PASSPORT, ID_CARD or TRAVEL_DOCUMENT"),
+
+  body("documentNumber").isString().notEmpty().withMessage("documentNumber is required"),
+
+  body("issuesPlace").isString().notEmpty().withMessage("issuesPlace is required"),
+
+  body("issuesDate").isISO8601().toDate().withMessage("issuesDate must be a valid date"),
+
+  body("expiryDate").isISO8601().toDate().withMessage("expiryDate must be a valid date"),
+
+  body("homeAddress").isString().notEmpty().withMessage("homeAddress is required"),
+
+  body("addressCountry")
+    .isISO31661Alpha2()
+    .withMessage("addressCountry must be a valid ISO 2 country code"),
+
+  body("addressState").isString().notEmpty().withMessage("addressState is required"),
+
+  body("addressCity").isString().notEmpty().withMessage("addressCity is required"),
+
+  body("currentAddress").isBoolean().withMessage("currentAddress must be true or false"),
+
+  body("occupation").isString().notEmpty().withMessage("occupation is required"),
+
+  body("company").isString().notEmpty().withMessage("company is required"),
+
+  body("annualIncome")
+    .isIn([
+      "BELOW_20000_USD",
+      "BETWEEN_20001_40000_USD",
+      "BETWEEN_40001_60000_USD",
+      "BETWEEN_60001_80000_USD",
+      "ABOVE_80001_USD",
+    ])
+    .withMessage("annualIncome must be a valid range"),
+
+  body("userIdApplied").isUUID().withMessage("userIdApplied must be a valid UUID"),
 ];
 
-export const validateApplicationInfo = [
-  // applicationId
+export const travelInformationValidator = [
   body("applicationId")
     .notEmpty()
     .withMessage("applicationId is required")
     .isString()
     .withMessage("applicationId must be a string"),
 
-  // -------------------- Personal Info --------------------
-  body("personalInfo").exists().withMessage("personalInfo is required"),
-
-  body("personalInfo.title")
-    .optional({ nullable: true })
-    .isString()
-    .withMessage("title must be a string"),
-
-  body("personalInfo.sex")
-    .optional({ nullable: true })
-    .isIn(["MALE", "FEMALE", "OTHER"])
-    .withMessage("sex must be one of: MALE, FEMALE, OTHER"),
-
-  body("personalInfo.fistName")
+  body("arrivalDate")
     .notEmpty()
-    .withMessage("fistName is required")
-    .isString()
-    .withMessage("fistName must be a string"),
-
-  body("personalInfo.middleName")
-    .optional({ nullable: true })
-    .isString()
-    .withMessage("middleName must be a string"),
-
-  body("personalInfo.familyName")
-    .notEmpty()
-    .withMessage("familyName is required")
-    .isString()
-    .withMessage("familyName must be a string"),
-
-  body("personalInfo.contactNo")
-    .notEmpty()
-    .withMessage("contactNo is required")
-    .isMobilePhone("any")
-    .withMessage("contactNo must be a valid phone number"),
-
-  body("personalInfo.email")
-    .notEmpty()
-    .withMessage("email is required")
-    .isEmail()
-    .withMessage("Invalid email format"),
-
-  body("personalInfo.nationality")
-    .notEmpty()
-    .withMessage("nationality is required")
-    .isString()
-    .withMessage("nationality must be a string"),
-
-  body("personalInfo.otherNationality")
-    .optional({ nullable: true })
-    .isBoolean()
-    .withMessage("otherNationality must be boolean"),
-
-  body("personalInfo.nationalityBirth")
-    .notEmpty()
-    .withMessage("nationalityBirth is required")
-    .isString()
-    .withMessage("nationalityBirth must be a string"),
-
-  body("personalInfo.cityBirth")
-    .notEmpty()
-    .withMessage("cityBirth is required")
-    .isString()
-    .withMessage("cityBirth must be a string"),
-
-  body("personalInfo.birthDate")
-    .optional({ nullable: true })
+    .withMessage("arrivalDate is required")
     .isISO8601()
-    .withMessage("birthDate must be a valid ISO date"),
+    .toDate()
+    .withMessage("arrivalDate must be a valid date"),
 
-  body("personalInfo.maritalStatus")
-    .optional({ nullable: true })
-    .isIn([
-      "SINGLE",
-      "MARRIED",
-      "COMMON_LAW_MARRIAGE",
-      "CIVIL_UNION_DOMESTIC_PARTNERSHIP",
-      "WIDOWED",
-      "DIVORCED",
-      "SEPARATED",
-    ])
-    .withMessage("Invalid maritalStatus"),
-
-  body("personalInfo.anotherNationity")
-    .optional({ nullable: true })
-    .isString()
-    .withMessage("anotherNationity must be a string"),
-
-  // -------------------- Travel Document --------------------
-  body("travelDocument").exists().withMessage("travelDocument is required"),
-
-  body("travelDocument.type")
+  body("departureDate")
     .notEmpty()
-    .withMessage("travelDocument.type is required")
-    .isIn(["CERTIFICATE_OF_IDENTITY_CI", "PASSPORT", "SEAMANS_BOOK", "TRAVEL_DOCUMENT"])
-    .withMessage("Invalid travelDocument type"),
-
-  body("travelDocument.docsNumber")
-    .notEmpty()
-    .withMessage("docsNumber is required")
-    .isString()
-    .withMessage("docsNumber must be a string"),
-
-  body("travelDocument.issuesPlace")
-    .notEmpty()
-    .withMessage("issuesPlace is required")
-    .isString()
-    .withMessage("issuesPlace must be a string"),
-
-  body("travelDocument.issuesDate")
-    .optional({ nullable: true })
+    .withMessage("departureDate is required")
     .isISO8601()
-    .withMessage("issuesDate must be a valid date"),
+    .toDate()
+    .withMessage("departureDate must be a valid date"),
 
-  body("travelDocument.expiryDate")
-    .optional({ nullable: true })
-    .isISO8601()
-    .withMessage("expiryDate must be a valid date"),
-
-  // -------------------- Address --------------------
-  body("address").exists().withMessage("address is required"),
-
-  body("address.homeAddress")
-    .notEmpty()
-    .withMessage("homeAddress is required")
-    .isString()
-    .withMessage("homeAddress must be a string"),
-
-  body("address.country")
+  body("country")
     .notEmpty()
     .withMessage("country is required")
     .isString()
     .withMessage("country must be a string"),
 
-  body("address.state")
+  body("arrivalPort")
     .notEmpty()
-    .withMessage("state is required")
+    .withMessage("arrivalPort is required")
     .isString()
-    .withMessage("state must be a string"),
+    .withMessage("arrivalPort must be a string"),
 
-  body("address.city")
+  body("hadVisited").isBoolean().withMessage("hadVisited must be a boolean"),
+
+  body("didApply").isBoolean().withMessage("didApply must be a boolean"),
+
+  body("partOfTour").isBoolean().withMessage("partOfTour must be a boolean"),
+
+  body("transportationVehicle")
     .notEmpty()
-    .withMessage("city is required")
+    .withMessage("transportationVehicle is required")
     .isString()
-    .withMessage("city must be a string"),
+    .withMessage("transportationVehicle must be a string"),
 
-  body("address.currentAddress")
-    .optional({ nullable: true })
+  ,
+  body("transportMode")
+    .notEmpty()
+    .withMessage("transportMode is required")
+    .isString()
+    .withMessage("transportMode must be a string"),
+
+  body("shipName").optional().isString().withMessage("shipName must be a string"),
+
+  body("fightNo").optional().isString().withMessage("fightNo must be a string"),
+
+  body("vehicleNumber")
+    .optional()
+    .isString()
+    .withMessage("vehicleNumber must be a string"),
+
+  body("accommodations")
+    .isArray({ min: 1 })
+    .withMessage("accommodations must be an array"),
+
+  body("accommodations.*.type")
+    .notEmpty()
+    .withMessage("accommodation type is required")
+    .isString()
+    .withMessage("accommodation type must be a string"),
+
+  body("accommodations.*.name")
+    .notEmpty()
+    .withMessage("accommodation name is required")
+    .isString()
+    .withMessage("accommodation name must be a string"),
+
+  body("accommodations.*.street")
+    .notEmpty()
+    .withMessage("accommodation street is required")
+    .isString()
+    .withMessage("accommodation street must be a string"),
+
+  body("accommodations.*.city")
+    .notEmpty()
+    .withMessage("accommodation city is required")
+    .isString()
+    .withMessage("accommodation city must be a string"),
+
+  body("accommodations.*.contactNo")
+    .notEmpty()
+    .withMessage("accommodation contactNo is required")
+    .isString()
+    .withMessage("accommodation contactNo must be a string"),
+
+  body("accommodations.*.duration")
+    .notEmpty()
+    .withMessage("accommodation duration is required")
+    .isString()
+    .withMessage("accommodation duration must be a string"),
+
+  body("additionalAccommodation")
     .isBoolean()
-    .withMessage("currentAddress must be boolean"),
-
-  // -------------------- Employment --------------------
-  body("employment").exists().withMessage("employment is required"),
-
-  body("employment.occupation")
-    .notEmpty()
-    .withMessage("occupation is required")
-    .isString()
-    .withMessage("occupation must be a string"),
-
-  body("employment.company")
-    .optional({ nullable: true })
-    .isString()
-    .withMessage("company must be a string"),
-
-  body("employment.annualIncome")
-    .optional({ nullable: true })
-    .isIn([
-      "UNDER_20000_USD",
-      "BETWEEN_20000_40000_USD",
-      "BETWEEN_40001_60000_USD",
-      "BETWEEN_60001_80000_USD",
-      "MORE_THAN_AND_OVER",
-      "NO_INCOME",
-    ])
-    .withMessage("Invalid annualIncome value"),
+    .withMessage("additionalAccommodation must be a boolean"),
 ];
+
+export const supportingDocumentValidator = [
+  body("BIODATA").custom((_, { req }) => checkExceedSize("BIODATA", req)),
+  body("PHOTOGRAPH").custom((_, { req }) => checkExceedSize("PHOTOGRAPH", req)),
+  ,
+  body("CURRENT_LOCATION").custom((_, { req }) =>
+    checkExceedSize("CURRENT_LOCATION", req)
+  ),
+  ,
+  body("BOOKING_CONFIRMATION").custom((_, { req }) =>
+    checkExceedSize("BOOKING_CONFIRMATION", req)
+  ),
+  ,
+  body("PROOF_OF_ACCOMMODATION").custom((_, { req }) =>
+    checkExceedSize("PROOF_OF_ACCOMMODATION", req)
+  ),
+  ,
+  body("FINANCIAL_EVIDENCE").custom((_, { req }) =>
+    checkExceedSize("FINANCIAL_EVIDENCE", req)
+  ),
+  ,
+];
+const MAX_MB = 1024 * 1024 * 3;
+const ALLOWED = ["image/jpeg", "image/png", "application/pdf"];
+function checkExceedSize(field: string, req: any) {
+  const file = req.files[field]?.[0];
+
+  if (!file) throw new Error(`${field} is required!`);
+  if (file.size > MAX_MB) throw new Error(`${field} size exceeds 3MB`);
+  if (!ALLOWED.includes(file.mimeType) === false)
+    throw new Error(`${field} has invalid type: ${file.mimetype}`);
+
+  return true;
+}
