@@ -2,6 +2,10 @@
 
 import { useState, ChangeEvent, useEffect, DragEvent } from "react";
 import { Box, Button, SelectChangeEvent, SwitchProps } from "@mui/material";
+import { DatePickerProps } from "@mui/x-date-pickers";
+import type { Dayjs } from "dayjs";
+import axios from "axios";
+import AuthProvider from "@/app/component/authProvider";
 import ApplicationInformation from "@/app/component/apply/apply-stepper/applyInformation";
 import TravelInformation from "@/app/component/apply/apply-stepper/travel-information";
 import EligibilityStep from "@/app/component/apply/apply-stepper/eligibility";
@@ -17,6 +21,12 @@ import {
 } from "@/app/libs/types";
 import ModalComponent from "@/app/component/common/modal";
 import { transportationVehicle } from "@/app/libs/entries-input-visa";
+import { backend_url } from "@/app/server-side/envLoader";
+import { getUserInfo } from "@/app/libs/getLocalStorage";
+import { getCountriesData } from "@/app/server-side/static-data";
+import dayjs from "dayjs";
+
+const prefix = backend_url + "api" + "/visa-application";
 
 interface Stepper {
   activeStep: number;
@@ -34,11 +44,16 @@ const steps = [
 const MAX_SIZE = 3 * 1024 * 1024;
 
 const ApplyNewVisa = () => {
-  const [currentStep, setCurrentStep] = useState<number>(3);
-  const [stepStatus, setStepStatus] = useState<Stepper>(steps[3]);
+  const [allCountries, setAllCountries] = useState();
+  const [applicatioinId, setApplicationId] = useState<string>("");
+  const [disabled, setDisable] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [stepStatus, setStepStatus] = useState<Stepper>(steps[1]);
   const [modal, setModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState({ title: "", description: "" });
   const [eligibilityData, setEligibilityData] = useState<EligibilityInputDto>({
+    applicationId: null,
     applyAt: null,
     currentLocation: null,
     documentType: null,
@@ -48,41 +63,40 @@ const ApplyNewVisa = () => {
     visitPurpose: null,
   });
   const [applyInfoData, setApplyInfoData] = useState<ApplicationInformationInputDto>({
-    personalInfo: {
-      title: "",
-      sex: "",
-      fistName: "",
-      middleName: "",
-      familyName: "",
-      contactNo: "",
-      email: "",
-      nationality: "",
-      otherNationality: false,
-      nationalityBirth: "",
-      cityBirth: "",
-      birthDate: null,
-      maritalStatus: "",
-      anotherNationity: "",
-    },
-    travelDocument: {
-      type: "",
-      docsNumber: "",
-      issuesPlace: "",
-      issuesDate: null,
-      expiryDate: null,
-    },
-    address: {
-      homeAddress: "",
-      country: "",
-      state: "",
-      city: "",
-      currentAddress: true,
-    },
-    employment: {
-      occupation: "",
-      company: "",
-      annualIncome: "",
-    },
+    applicationId: applicatioinId,
+    title: "",
+    sex: "",
+    firstName: "",
+    middleName: "",
+    familyName: "",
+    contactNo: "",
+    email: "",
+    nationality: "",
+    otherNationality: false,
+    nationalityBirth: "",
+    cityBirth: "",
+    birthDate: null,
+    maritalStatus: "",
+    anotherNationality: "",
+
+    // travelDocument
+    documentType: "",
+    documentNumber: "",
+    issuesPlace: "",
+    issuesDate: null,
+    expiryDate: null,
+
+    // address
+    homeAddress: "",
+    addressCountry: "",
+    addressState: "",
+    addressCity: "",
+    currentAddress: false,
+
+    // Employment
+    annualIncome: "",
+    occupation: "",
+    company: "",
   });
   const [travelInfo, setTravelInfo] = useState<TravelInformationInputDto>({
     travelInfo: {
@@ -124,10 +138,14 @@ const ApplyNewVisa = () => {
     placeholder: "Choose your transportation vehicle first",
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
-    e.preventDefault();
-    // console.log(eligibilityData);
-  };
+  const { accessToken, id } = getUserInfo();
+
+  useEffect(() => {
+    (async () => {
+      const countries = await getCountriesData();
+      setAllCountries(countries);
+    })();
+  }, []);
 
   const handleOnchangeEligibility = (e: SelectChangeEvent, type: string) => {
     e.preventDefault();
@@ -161,75 +179,133 @@ const ApplyNewVisa = () => {
     setModalContent({ title: "", description: "" });
   };
 
-  useEffect(() => {
-    console.log(applyInfoData);
-  }, [applyInfoData]);
+  // const handleOnchangeApplicationInformation = ({
+  //   eSelect,
+  //   eText,
+  //   type,
+  // }: {
+  //   eSelect?: SelectChangeEvent | undefined;
+  //   eText?: ChangeEvent<HTMLInputElement> | undefined;
+  //   type: string;
+  // }) => {
+
+  // switch (type) {
+  //   // PERSONAL INFORMATION
+  //   case "title":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       title: eSelect?.target.value || "",
+  //     }));
+  //     break;
+  //   case "firstName":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       fistName: eText?.target.value || "",
+  //     }));
+  //     break;
+  //   case "familyName":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       familyName: eText?.target.value || "",
+  //     }));
+  //     break;
+  //   case "middleName":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       middleName: eText?.target.value,
+  //     }));
+  //     break;
+  //   case "sex":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       sex: eSelect?.target.value || "",
+  //     }));
+  //     break;
+  //   case "contactNo":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       contactNo: eText?.target.value || "",
+  //     }));
+  //     break;
+  //   case "anotherNationity":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       anotherNationity: eSelect?.target.value || "",
+  //     }));
+  //     break;
+  //   case "nationalityBirth":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       nationalityBirth: eSelect?.target.value || "",
+  //     }));
+  //     break;
+  //   case "anotherNationity":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       anotherNationity: eSelect?.target.value || "",
+  //     }));
+  //   case "annualIncome":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       annualIncome: eSelect?.target.value || "",
+  //     }));
+  //   case "cityAddress":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       addressCity: eSelect?.target.value || "",
+  //     }));
+  //   case "addressState":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       addressState: eSelect?.target.value || "",
+  //     }));
+  //   case "issuedPlace":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       issuedPlace: eText?.target.value || "",
+  //     }));
+  //   case "occupation":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       occupation: eSelect?.target.value || "",
+  //     }));
+  //   case "countryAddress":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       countryAddress: eText?.target.value || "",
+  //     }));
+  //     break;
+  //   case "company":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       company: eText?.target.value || "",
+  //     }));
+  //     break;
+  //   case "documentType":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       documentType: eSelect?.target.value || "",
+  //     }));
+  //   case "maritalStatus":
+  //     setApplyInfoData((prev) => ({
+  //       ...prev,
+  //       maritalStatus: eSelect?.target.value || "",
+  //     }));
+  // }
+  // };
 
   const handleOnchangeApplicationInformation = (
-    eSelect: SelectChangeEvent | undefined,
-    eText: ChangeEvent<HTMLInputElement> | undefined,
-    type: string
+    e: SelectChangeEvent | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    name: string
   ) => {
-    switch (type) {
-      // PERSONAL INFORMATION
-      case "title":
-        setApplyInfoData((prev) => ({
-          ...prev,
-          personalInfo: { ...prev["personalInfo"], title: eSelect?.target.value || "" },
-        }));
-        break;
-      case "firstName":
-        setApplyInfoData((prev) => ({
-          ...prev,
-          personalInfo: { ...prev["personalInfo"], fistName: eText?.target.value || "" },
-        }));
-        break;
-      case "familyName":
-        setApplyInfoData((prev) => ({
-          ...prev,
-          personalInfo: {
-            ...prev["personalInfo"],
-            familyName: eText?.target.value || "",
-          },
-        }));
-        break;
-      case "middleName":
-        setApplyInfoData((prev) => ({
-          ...prev,
-          personalInfo: { ...prev["personalInfo"], middleName: eText?.target.value },
-        }));
-        break;
-      case "sex":
-        setApplyInfoData((prev) => ({
-          ...prev,
-          personalInfo: { ...prev["personalInfo"], sex: eSelect?.target.value || "" },
-        }));
-        break;
-      case "contactNo":
-        setApplyInfoData((prev) => ({
-          ...prev,
-          personalInfo: { ...prev["personalInfo"], contactNo: eText?.target.value || "" },
-        }));
-        break;
-      case "anotherNationity":
-        setApplyInfoData((prev) => ({
-          ...prev,
-          personalInfo: {
-            ...prev["personalInfo"],
-            anotherNationity: eSelect?.target.value || "",
-          },
-        }));
-        break;
-      case "nationalityBirth":
-        setApplyInfoData((prev) => ({
-          ...prev,
-          personalInfo: {
-            ...prev["personalInfo"],
-            nationalityBirth: eSelect?.target.value || "",
-          },
-        }));
-        break;
-    }
+    e.preventDefault();
+    console.log(e.target.value, name);
+    setApplyInfoData((prev) => ({ ...prev, [name]: e.target.value }));
+  };
+
+  const handlePickDate = (value: Dayjs | null, name: string) => {
+    const date = value?.toDate();
+    setApplyInfoData((prev) => ({ ...prev, [name]: date }));
   };
 
   const handleChangeOtherNationality: NonNullable<SwitchProps["onChange"]> = (
@@ -238,14 +314,11 @@ const ApplyNewVisa = () => {
   ) => {
     setApplyInfoData((prev) => ({
       ...prev,
-      personalInfo: {
-        ...prev["personalInfo"],
-        otherNationality: checked,
-      },
+      otherNationality: checked,
     }));
   };
 
-  const handleNextButton = () => {
+  const triggerNext = () => {
     if (stepStatus.activeStep > steps.length - 1) return;
     setCurrentStep((prev) => prev + 1);
     setStepStatus((pre) => steps[pre.activeStep + 1]);
@@ -382,106 +455,174 @@ const ApplyNewVisa = () => {
     }
   };
 
+  const handleSumbitEligibility = async () => {
+    try {
+      setLoading(true);
+      setDisable(true);
+      const endpoint = prefix + "/1st-eligibilty";
+      const response = await axios.post(endpoint, eligibilityData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: {
+          userId: id,
+        },
+      });
+      if (response.data.success === "OK") {
+        setApplicationId(response.data.data.applicationId);
+        setEligibilityData(response.data.data);
+        setLoading(false);
+        setDisable(false);
+        triggerNext();
+      }
+    } catch (error: any) {
+      console.log(error.response);
+      setLoading(false);
+      setDisable(false);
+    }
+  };
+
+  const handleSubmitApplicationInformation = async () => {
+    try {
+      console.log(applyInfoData);
+    } catch (error: any) {
+      console.log(error.response.data.message);
+      setLoading(false);
+      setDisable(false);
+    }
+  };
+
   return (
-    <Box sx={{ backgroundColor: "#F2FCFC", height: "100%", pb: 6 }}>
-      <MenuDashboard />
-      <form onSubmit={handleSubmit}>
-        <Box sx={{ width: "70%", m: "auto", mt: 4, mb: 6, height: "100%" }}>
-          <HeaderTitleApplyStepper data={stepStatus} onClick={handleBackButton} />
-          {stepStatus.activeStep === 0 && (
-            <EligibilityStep
-              valueProps={eligibilityData}
-              onChangeApplyAt={(e) => handleOnchangeEligibility(e, "applyAt")}
-              onChangeCurrentLocation={(e) =>
-                handleOnchangeEligibility(e, "currentLocation")
-              }
-              onChangeDocumentType={(e) => handleOnchangeEligibility(e, "documentType")}
-              onChangeInpurtCountryPassport={(e) =>
-                handleOnchangeEligibility(e, "inputCountryPassport")
-              }
-              onChangeNumberOfEntries={(e) =>
-                handleOnchangeEligibility(e, "numberOfEntries")
-              }
-              onChangeVisaType={(e) => handleOnchangeEligibility(e, "visaType")}
-              onChangeVisitPurpose={(e) => handleOnchangeEligibility(e, "visitPurpose")}
-            />
-          )}
-          {stepStatus.activeStep === 1 && (
-            <ApplicationInformation
-              dataProps={applyInfoData}
-              onChangeBirthNation={(e) =>
-                handleOnchangeApplicationInformation(e, undefined, "nationalityBirth")
-              }
-              onChangeFamilyName={(e) =>
-                handleOnchangeApplicationInformation(undefined, e, "familyName")
-              }
-              onChangeFirstName={(e) =>
-                handleOnchangeApplicationInformation(undefined, e, "firstName")
-              }
-              onChangeMiddletName={(e) =>
-                handleOnchangeApplicationInformation(undefined, e, "middleName")
-              }
-              onChangeOtherNationality={handleChangeOtherNationality}
-              onChangeSex={(e) =>
-                handleOnchangeApplicationInformation(e, undefined, "sex")
-              }
-              onChangeTitle={(e) =>
-                handleOnchangeApplicationInformation(e, undefined, "title")
-              }
-              onChangeContactNo={(e) =>
-                handleOnchangeApplicationInformation(undefined, e, "contactNo")
-              }
-              onChangeAnotherNationality={(e) =>
-                handleOnchangeApplicationInformation(e, undefined, "anotherNationity")
-              }
-            />
-          )}
-          {stepStatus.activeStep === 2 && (
-            <TravelInformation
-              data={travelInfo}
-              onChangeDepartPort={handleOnChangeDepartPort}
-              vehicle={transVehicle}
-            />
-          )}
-          {stepStatus.activeStep === 3 && (
-            <SupportingDocument
-              data={supportingDoc}
-              onChangeFileBiodata={(e) => handleOnChangeInputFile(e, "biodata")}
-              onChangeFileAccomodationProof={(e) =>
-                handleOnChangeInputFile(e, "accomodationProof")
-              }
-              onChangeFileFinancialEvidence={(e) =>
-                handleOnChangeInputFile(e, "financialEvidence")
-              }
-              onChangeFileLocation={(e) => handleOnChangeInputFile(e, "location")}
-              onChangeFilePhoto={(e) => handleOnChangeInputFile(e, "photo")}
-              onChangeFileTravelBooking={(e) =>
-                handleOnChangeInputFile(e, "travelBooking")
-              }
-              handleDropFileBioData={(e) => handleDropFile(e, "biodata")}
-              handleDropFileAccomodationProof={(e) =>
-                handleDropFile(e, "accomodationProof")
-              }
-              handleDropFileFinancialEvidence={(e) =>
-                handleDropFile(e, "financialEvidence")
-              }
-              handleDropFileLocation={(e) => handleDropFile(e, "location")}
-              handleDropFilePhoto={(e) => handleDropFile(e, "photo")}
-              handleDropFileTravelBooking={(e) => handleDropFile(e, "travelBooking")}
-            />
-          )}
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{ p: 1, width: "100px", mt: 2, float: "right" }}
-            onClick={handleNextButton}
-          >
-            Next
-          </Button>
-        </Box>
-      </form>
-      <ModalComponent open={modal} content={modalContent} onClose={handleOnCloseModal} />
-    </Box>
+    <AuthProvider>
+      <Box sx={{ backgroundColor: "#F2FCFC", height: "100%", pb: 6 }}>
+        <MenuDashboard />
+        <form>
+          <Box sx={{ width: "70%", m: "auto", mt: 4, mb: 6, height: "100%" }}>
+            <HeaderTitleApplyStepper data={stepStatus} onClick={handleBackButton} />
+            {stepStatus.activeStep === 0 && (
+              <EligibilityStep
+                disabled={disabled}
+                loading={loading}
+                onClickNext={handleSumbitEligibility}
+                valueProps={eligibilityData}
+                onChangeApplyAt={(e) => handleOnchangeEligibility(e, "applyAt")}
+                onChangeCurrentLocation={(e) =>
+                  handleOnchangeEligibility(e, "currentLocation")
+                }
+                onChangeDocumentType={(e) => handleOnchangeEligibility(e, "documentType")}
+                onChangeInpurtCountryPassport={(e) =>
+                  handleOnchangeEligibility(e, "inputCountryPassport")
+                }
+                onChangeNumberOfEntries={(e) =>
+                  handleOnchangeEligibility(e, "numberOfEntries")
+                }
+                onChangeVisaType={(e) => handleOnchangeEligibility(e, "visaType")}
+                onChangeVisitPurpose={(e) => handleOnchangeEligibility(e, "visitPurpose")}
+              />
+            )}
+            {stepStatus.activeStep === 1 && (
+              <ApplicationInformation
+                onclickNext={handleSubmitApplicationInformation}
+                onClickBack={handleBackButton}
+                countries={allCountries}
+                dataProps={applyInfoData}
+                onChangeBirthNation={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeDocumentType={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeMaritalStatus={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeFamilyName={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeFirstName={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeMiddletName={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeOtherNationality={handleChangeOtherNationality}
+                onChangeSex={(e, name) => handleOnchangeApplicationInformation(e, name)}
+                onChangeTitle={(e, name) => handleOnchangeApplicationInformation(e, name)}
+                onChangeContactNo={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeAnotherNationality={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeAnnualIncome={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeCityAddress={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeStateAddress={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeIssuedPlace={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeExpiredDate={(value, name) => handlePickDate(value, name)}
+                onChangeDocumentNo={(e) => handleOnchangeApplicationInformation(e, name)}
+                onChangeIssuedDate={(value, name) => handlePickDate(value, name)}
+                onChangeOccupation={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeBirthDate={(value, name) => handlePickDate(value, name)}
+                onChangeCountryAddress={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+                onChangeCompanyPlace={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
+              />
+            )}
+            {stepStatus.activeStep === 2 && (
+              <TravelInformation
+                data={travelInfo}
+                onChangeDepartPort={handleOnChangeDepartPort}
+                vehicle={transVehicle}
+              />
+            )}
+            {stepStatus.activeStep === 3 && (
+              <SupportingDocument
+                data={supportingDoc}
+                onChangeFileBiodata={(e) => handleOnChangeInputFile(e, "biodata")}
+                onChangeFileAccomodationProof={(e) =>
+                  handleOnChangeInputFile(e, "accomodationProof")
+                }
+                onChangeFileFinancialEvidence={(e) =>
+                  handleOnChangeInputFile(e, "financialEvidence")
+                }
+                onChangeFileLocation={(e) => handleOnChangeInputFile(e, "location")}
+                onChangeFilePhoto={(e) => handleOnChangeInputFile(e, "photo")}
+                onChangeFileTravelBooking={(e) =>
+                  handleOnChangeInputFile(e, "travelBooking")
+                }
+                handleDropFileBioData={(e) => handleDropFile(e, "biodata")}
+                handleDropFileAccomodationProof={(e) =>
+                  handleDropFile(e, "accomodationProof")
+                }
+                handleDropFileFinancialEvidence={(e) =>
+                  handleDropFile(e, "financialEvidence")
+                }
+                handleDropFileLocation={(e) => handleDropFile(e, "location")}
+                handleDropFilePhoto={(e) => handleDropFile(e, "photo")}
+                handleDropFileTravelBooking={(e) => handleDropFile(e, "travelBooking")}
+              />
+            )}
+          </Box>
+        </form>
+        <ModalComponent
+          open={modal}
+          content={modalContent}
+          onClose={handleOnCloseModal}
+        />
+      </Box>
+    </AuthProvider>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { forwardRef } from "react";
 import { Box, TextField, Button, Input } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import styles from "./form.module.css";
+import { white } from "@/app/libs/color-config";
 
 interface Nation {
   code: string;
@@ -21,7 +22,10 @@ interface PhoneFormRowType {
   phoneNumb: string;
 }
 
-const PhoneFormRow = forwardRef<HTMLDivElement, PhoneFormRowType>((props, ref) => {
+const PhoneFormRow = forwardRef<HTMLDivElement, PhoneFormRowType>(function phoneRow(
+  props,
+  ref
+) {
   const {
     countries,
     nationData,
@@ -68,7 +72,7 @@ const PhoneFormRow = forwardRef<HTMLDivElement, PhoneFormRowType>((props, ref) =
           endIcon={<ArrowDropDownIcon />}
           variant="contained"
           sx={{ mr: 1 }}
-          color="secondary"
+          color="primary"
           onClick={onClickDropdown}
         >
           <FlageNation iso2={nationData?.iso2} />
@@ -79,7 +83,9 @@ const PhoneFormRow = forwardRef<HTMLDivElement, PhoneFormRowType>((props, ref) =
             color: "black",
             alignItems: "center",
             width: "100%",
-            backgroundColor: "#fffadc",
+            backgroundColor: white,
+            border: "1px solid gray",
+            borderRadius: "4px",
           }}
         >
           <Box sx={{ ml: 1.5, mr: 1 }}>{nationData.code}</Box>
@@ -91,7 +97,7 @@ const PhoneFormRow = forwardRef<HTMLDivElement, PhoneFormRowType>((props, ref) =
             fullWidth={true}
             onChange={onChange}
             color="secondary"
-            // required
+            required
             disableUnderline={true}
           />
         </Box>

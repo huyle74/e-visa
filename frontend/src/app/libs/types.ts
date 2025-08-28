@@ -1,6 +1,9 @@
-type DateType = string | null;
+import { Dayjs } from "dayjs";
+
+type DateType = Dayjs | null;
 
 export interface EligibilityInputDto {
+  applicationId?: string | null;
   applyAt: string | null;
   currentLocation: string | null;
   documentType: string | null;
@@ -11,41 +14,41 @@ export interface EligibilityInputDto {
 }
 
 export interface ApplicationInformationInputDto {
-  personalInfo: {
-    title: string | null;
-    sex: string | null;
-    fistName: string | null;
-    middleName?: string | null;
-    familyName: string | null;
-    contactNo: string | null;
-    email: string | null;
-    nationality: string | null;
-    otherNationality: boolean | null;
-    nationalityBirth: string | null;
-    cityBirth: string | null;
-    birthDate: DateType | null;
-    maritalStatus: string | null;
-    anotherNationity: string | null;
-  };
-  travelDocument: {
-    type: string | null;
-    docsNumber: string | null;
-    issuesPlace: string | null;
-    issuesDate: DateType | null;
-    expiryDate: DateType | null;
-  };
-  address: {
-    homeAddress: string | null;
-    country: string | null;
-    state: string | null;
-    city: string | null;
-    currentAddress: boolean | null;
-  };
-  employment: {
-    occupation: string | null;
-    company: string | null;
-    annualIncome: string | null;
-  };
+  applicationId: string;
+
+  title: string;
+  sex: string;
+  firstName: string;
+  middleName?: string;
+  familyName: string;
+  contactNo: string;
+  email: string;
+  nationality: string;
+  otherNationality: boolean;
+  nationalityBirth: string;
+  cityBirth: string;
+  birthDate: DateType;
+  maritalStatus: string;
+  anotherNationality: string;
+
+  // travelDocument
+  documentType: string;
+  documentNumber: string;
+  issuesPlace: string;
+  issuesDate: DateType;
+  expiryDate: DateType;
+
+  // address
+  homeAddress: string;
+  addressCountry: string;
+  addressState: string;
+  addressCity: string;
+  currentAddress: boolean;
+
+  // Employment
+  annualIncome: string;
+  occupation: string;
+  company: string;
 }
 
 export interface AccommodationInputDto {

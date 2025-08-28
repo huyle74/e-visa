@@ -6,19 +6,47 @@ interface ButtonMenuProps {
   loggedIn?: boolean;
 }
 
-const ButtonMenuHomePage = ({ loggedIn = true, disabledSignIn = false, disabledCreateAccount = false }: ButtonMenuProps) => {
+const ButtonMenuHomePage = ({
+  loggedIn = false,
+  disabledSignIn = false,
+  disabledCreateAccount = false,
+}: ButtonMenuProps) => {
   return (
-    <Box sx={{ display: "flex", alignItems: "center", marginLeft: "auto", justifyContent: "space-between", pr: 2, fontWeight: 900 }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        marginLeft: "auto",
+        justifyContent: "space-between",
+        pr: 2,
+        fontWeight: 900,
+      }}
+    >
       {loggedIn && (
-        <Button variant="contained" href="/dashboard" color="secondary" sx={{ fontWeight: 1000, mr: 1 }}>
+        <Button
+          variant="contained"
+          href="/dashboard"
+          color="secondary"
+          sx={{ fontWeight: 1000, mr: 1 }}
+        >
           DASHBOARD
         </Button>
       )}
 
-      <Button disabled={disabledSignIn} variant="outlined" href="/login" sx={{ fontWeight: 1000, mr: 1 }}>
+      <Button
+        disabled={disabledSignIn}
+        variant="outlined"
+        href="/login"
+        sx={{ fontWeight: 1000, mr: 1 }}
+      >
         SIGN IN
       </Button>
-      <Button variant="contained" href="/signup" disabled={disabledCreateAccount} sx={{ fontWeight: 1000, mr: 1 }}>
+      <Button
+        variant="contained"
+        href="/signup"
+        disabled={disabledCreateAccount}
+        sx={{ fontWeight: 1000, mr: 1 }}
+      >
         CREATE ACCOUNT
       </Button>
     </Box>

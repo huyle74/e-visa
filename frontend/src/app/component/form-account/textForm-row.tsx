@@ -1,5 +1,6 @@
-import { FormControl, TextField } from "@mui/material";
+import { FormControl, TextField, TextFieldProps } from "@mui/material";
 import styles from "./form.module.css";
+import { success, white } from "@/app/libs/color-config";
 
 interface FormRow {
   label: string;
@@ -14,13 +15,13 @@ export default function TextFormRow({ label, placeholder, ...props }: FormRow) {
         {label} <span className={styles.star}>&nbsp;*</span>
       </div>
       <TextField
-        required
+        // required
         fullWidth
-        placeholder={`${placeholder}`}
+        placeholder={placeholder}
         {...props}
         variant="outlined"
         size="small"
-        sx={{ backgroundColor: "#fffadc", fontWeight: 900 }}
+        sx={{ backgroundColor: white, fontWeight: 900 }}
       />
     </FormControl>
   );

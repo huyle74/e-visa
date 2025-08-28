@@ -1,15 +1,18 @@
 import { ChangeEvent, useState, useRef, useEffect } from "react";
 import { TextField, Box, Button, styled } from "@mui/material";
-import { teal } from "@mui/material/colors";
-const primary = teal[800];
+import { primary } from "@/app/libs/color-config";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { countries } from "@/app/static/countries";
 
 import Flag from "@/app/component/common/nationFlag";
 
 interface MobileTextFieldProps {
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    name: string
+  ) => void;
   value: string;
+  name: string;
 }
 
 interface Nation {
@@ -18,7 +21,7 @@ interface Nation {
   code: string;
 }
 
-const MobileTextField = ({ onChange, value }: MobileTextFieldProps) => {
+const MobileTextField = ({ onChange, value, name }: MobileTextFieldProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [selectNation, setSelectNation] = useState<Nation>({
     iso2: "US",
@@ -163,9 +166,10 @@ const MobileTextField = ({ onChange, value }: MobileTextFieldProps) => {
         >
           <CssTextField
             value={value}
-            onChange={onChange}
+            onChange={(e) => onChange(e, name)}
             fullWidth
             // type="number"
+            name={name}
           />
         </Box>
       </Box>

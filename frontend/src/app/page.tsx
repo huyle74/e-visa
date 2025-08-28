@@ -4,8 +4,9 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { Box } from "@mui/material";
 import HeaderMenu from "./component/menu/header-menu";
-import logo from "../../public/logo.png";
 import Footer from "./component/footer/footer";
+import { logoWhite, backgroundImage } from "./libs/image-config";
+import { primary, white } from "./libs/color-config";
 
 export default function Home() {
   const steps = [
@@ -22,27 +23,21 @@ export default function Home() {
       <HeaderMenu />
       <Box>
         <Box sx={{ position: "relative" }}>
-          <img
-            className={styles.backgroundImage}
-            src="https://career-advice.jobs.ac.uk/wp-content/uploads/An-image-of-Vietnam.jpg.optimal.jpg"
-            alt="backdrop"
-          />
+          <img className={styles.backgroundImage} src={backgroundImage} alt="backdrop" />
           <div className={styles.backgroundBlur}>
-            <Image src={logo} alt="logo" width={300} height={300} />
+            <Image src={logoWhite} alt="logo" width={600} height={200} />
             <h1 className={styles.backgroundTitle}>
-              GLOBAL E-VISA <br /> <span style={{ margin: "1rem" }}>OFFCIAL WEBSITE</span>
+              MY E-VISA <br /> <span style={{ margin: "1rem" }}>OFFCIAL WEBSITE</span>
             </h1>
             <div style={{ height: "2px", width: "50vw", backgroundColor: "white" }}></div>
-            <h2 className={styles.backgroundTitleBelow}>
-              A product of Lien Luc Bao Visa
-            </h2>
+            <h2 className={styles.backgroundTitleBelow}>A product of My E-Visa</h2>
           </div>
         </Box>
       </Box>
-      <Box className={styles.applySection}>
+      <Box className={styles.applySection} sx={{ backgroundColor: primary }}>
         <Box sx={{ ml: 4 }}>
           <Box sx={{ mb: 2 }}>HOW TO APPLY ONLINE</Box>
-          <div style={{ width: "10vw", height: "4px", backgroundColor: "#eab676" }}></div>
+          <div style={{ width: "10vw", height: "4px", backgroundColor: white }}></div>
         </Box>
         <Box
           sx={{
@@ -64,10 +59,7 @@ export default function Home() {
           ))}
         </Box>
       </Box>
-      <img
-        src="https://darkred-crane-929274.hostingersite.com/ChatGPT%20Image%20Aug%2021,%202025,%2010_26_03%20AM.png"
-        alt="HERE"
-      />
+
       <Footer />
     </Box>
   );

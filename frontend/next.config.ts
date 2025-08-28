@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       new URL(
         "https://cdn4.iconfinder.com/data/icons/flat-pro-business-set-1/32/people-customer-unknown-512.png"
       ),
+      new URL("https://darkred-crane-929274.hostingersite.com/*"),
     ],
   },
   styledComponents: true,

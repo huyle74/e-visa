@@ -13,7 +13,7 @@ import {
 import { unstable_useDateField as useDateField } from "@mui/x-date-pickers/DateField";
 import { Unstable_PickersSectionList as PickersSectionList } from "@mui/x-date-pickers/PickersSectionList";
 import { usePickerContext } from "@mui/x-date-pickers/hooks";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { teal } from "@mui/material/colors";
 
 const primary = teal[800];
@@ -142,14 +142,16 @@ function BrowserDatePicker(props: DatePickerProps) {
 
 interface DatePickerComponentProps {
   title: string;
-  onChange: NonNullable<DatePickerProps["onChange"]>;
+  onChange: (newValue: Dayjs | null, name: string) => void;
   value: Dayjs | null;
+  name: string;
 }
 
 export default function DatePickerComponent({
   title,
   onChange,
   value,
+  name,
 }: DatePickerComponentProps) {
   return (
     <Box sx={{ width: "100%", p: 1.5 }}>
@@ -159,11 +161,12 @@ export default function DatePickerComponent({
       </Box>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <BrowserDatePicker
+          name={name}
           slotProps={{
             field: { clearable: true },
           }}
-          onChange={onChange}
-          value={value}
+          onChange={(newValue) => onChange(newValue, name)}
+          value={dayjs(value)}
         />
       </LocalizationProvider>
     </Box>

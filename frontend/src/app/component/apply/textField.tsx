@@ -1,14 +1,17 @@
 import { ChangeEvent } from "react";
 import { Box, TextField, styled } from "@mui/material";
-import { teal } from "@mui/material/colors";
-const primary = teal[800];
+import { primary } from "@/app/libs/color-config";
 
 interface TextFieldProps {
   title: string;
   placeholder: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    name: string
+  ) => void;
   requiredMasked?: boolean;
   type?: React.HTMLInputTypeAttribute;
+  name: string;
 }
 
 const TextFieldApply = ({
@@ -17,6 +20,7 @@ const TextFieldApply = ({
   onChange,
   requiredMasked = false,
   type,
+  name,
 }: TextFieldProps) => {
   return (
     <Box sx={{ width: "100%", p: 1.5 }}>
@@ -42,7 +46,7 @@ const TextFieldApply = ({
       >
         <CssTextField
           placeholder={placeholder}
-          onChange={onChange}
+          onChange={(e) => onChange(e, name)}
           fullWidth
           type={type}
         />

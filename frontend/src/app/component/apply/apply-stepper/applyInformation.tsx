@@ -1,4 +1,4 @@
-import { ReactNode, ChangeEvent } from "react";
+import { ReactNode, ChangeEvent, useEffect, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Box,
@@ -10,7 +10,7 @@ import {
   SwitchProps,
 } from "@mui/material";
 import Image from "next/image";
-import { DatePickerProps } from "@mui/x-date-pickers";
+import { Dayjs } from "dayjs";
 import FormContainer from "../containerForm";
 import AutoCompleteForm from "../autocompleteForm";
 import { applicationInformationEntries } from "@/app/libs/entries-input-visa";
@@ -19,32 +19,45 @@ import TextFieldApply from "../textField";
 import MobileTextField from "../mobileInput";
 import DatePickerComponent from "../date-picker";
 import InputContainer from "../input-containter";
-import { countries } from "@/app/static/countries";
+import ButtonSumbit from "../button-submit-group";
+import { getApplicationInfoEnum } from "@/app/server-side/static-data";
 
 type E = SelectChangeEvent;
+type PickDate = (newValue: Dayjs | null, name: string) => void;
+type Text = (
+  e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  name: string
+) => void;
 
 interface ApplicationInforProps {
   dataProps: ApplicationInformationInputDto;
-  onChangeTitle: (e: E) => void;
-  onChangeSex: (e: E) => void;
-  onChangeFirstName: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeMiddletName: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeFamilyName: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeBirthNation: (e: SelectChangeEvent) => void;
+  onChangeTitle: (e: E, name: string) => void;
+  onChangeSex: (e: E, name: string) => void;
+  onChangeFirstName: Text;
+  onChangeMiddletName: Text;
+  onChangeFamilyName: Text;
+  onChangeBirthNation: (e: E, name: string) => void;
   onChangeOtherNationality: NonNullable<SwitchProps["onChange"]>;
-  onChangeAnotherNationality: (e: E) => void;
-  onChangeContactNo: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeBirthDate: NonNullable<DatePickerProps["onChange"]>;
-  onChangeDocumentNo: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeIssuedPlace: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeIssuedDate: NonNullable<DatePickerProps["onChange"]>;
-  onChangeExpiredDate: NonNullable<DatePickerProps["onChange"]>;
-  onChangeCountryAddress: (e: E) => void;
-  onChangeStateAddress: (e: E) => void;
-  onChangeCityAddress: (e: E) => void;
-  onChangeOccupation: (e: E) => void;
-  onChangeCompanyPlace: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeAnnualIncome: (e: E) => void;
+  onChangeAnotherNationality: (e: E, name: string) => void;
+  onChangeContactNo: Text;
+  onChangeDocumentNo: Text;
+  onChangeIssuedPlace: Text;
+  onChangeMaritalStatus: (e: E, name: string) => void;
+  onChangeDocumentType: (e: E, name: string) => void;
+
+  onChangeIssuedDate: PickDate;
+  onChangeBirthDate: PickDate;
+  onChangeExpiredDate: PickDate;
+
+  onChangeCountryAddress: (e: E, name: string) => void;
+  onChangeStateAddress: (e: E, name: string) => void;
+  onChangeCityAddress: (e: E, name: string) => void;
+  onChangeOccupation: (e: E, name: string) => void;
+  onChangeCompanyPlace: Text;
+  onChangeAnnualIncome: (e: E, name: string) => void;
+  countries: any;
+  onclickNext: () => void;
+  onClickBack: () => void;
 }
 
 const ApplicationInformation = ({
@@ -69,7 +82,30 @@ const ApplicationInformation = ({
   onChangeOccupation,
   onChangeCompanyPlace,
   onChangeAnnualIncome,
+  countries = [],
+  onclickNext,
+  onClickBack,
+  onChangeMaritalStatus,
+  onChangeDocumentType,
 }: ApplicationInforProps) => {
+  const [entriesEnum, setEntriesEnum] = useState({
+    annualIncome: [],
+    maritalStatus: [],
+    occupation: [],
+    sex: [],
+    title: [],
+    travelDocumentType: [],
+  });
+
+  const countriesNameArr = countries.map((nation: any) => nation.engName);
+
+  useEffect(() => {
+    (async () => {
+      const data = await getApplicationInfoEnum();
+      setEntriesEnum(data);
+    })();
+  }, []);
+
   return (
     <Box sx={{ position: "relative" }}>
       <Box
@@ -170,60 +206,68 @@ const ApplicationInformation = ({
       <FormContainer title="Personal Information">
         <InputContainer width={66.6}>
           <AutoCompleteForm
-            onChange={onChangeTitle}
+            name="title"
+            onChange={(e) => onChangeTitle(e, "title")}
             title="Title"
-            inputData={applicationInformationEntries.personalInfo.title}
-            value={dataProps.personalInfo.title}
+            inputData={entriesEnum.title}
+            value={dataProps.title}
             placeHolder="Select your title"
           />
           <AutoCompleteForm
+            name="sex"
             placeHolder="Select your Sex"
-            value={dataProps.personalInfo.sex}
-            onChange={onChangeSex}
+            value={dataProps.sex}
+            onChange={(e) => onChangeSex(e, "sex")}
             title="Sex"
-            inputData={applicationInformationEntries.personalInfo.sex}
+            inputData={entriesEnum.sex}
           />
         </InputContainer>
 
         <InputContainer width={100}>
           <TextFieldApply
+            name="firstName"
             requiredMasked={true}
             title="First name"
             placeholder="Enter your first name"
-            onChange={onChangeFirstName}
+            onChange={(e) => onChangeFirstName(e, "firstName")}
           />
           <TextFieldApply
+            name="middleName"
             title="Middle name (If applicable)"
             placeholder="Enter your middle name"
-            onChange={onChangeMiddletName}
+            onChange={(e) => onChangeMiddletName(e, "middleName")}
           />
           <TextFieldApply
+            name="familyName"
             title="Family name"
             requiredMasked={true}
             placeholder="Enter your family name"
-            onChange={onChangeFamilyName}
+            onChange={(e) => onChangeFamilyName(e, "familyName")}
           />
         </InputContainer>
 
         <InputContainer width={66.6}>
           <MobileTextField
-            onChange={onChangeContactNo}
-            value={dataProps.personalInfo.contactNo}
+            name="contactNo"
+            onChange={(e) => onChangeContactNo(e, "contactNo")}
+            value={dataProps.contactNo}
           />
           <TextFieldApply
+            name="email"
             title="Email"
             placeholder="Enter your Email"
-            onChange={onChangeFamilyName}
+            onChange={(e) => onChangeFamilyName(e, "email")}
           />
         </InputContainer>
 
         <InputContainer width={66.6}>
           <AutoCompleteForm
-            value={dataProps.personalInfo.nationalityBirth}
+            name="nationalityBirth"
+            value={dataProps.nationalityBirth}
             inputData={applicationInformationEntries.personalInfo.nationalityBirth}
             title="Nationality at birth"
             placeHolder="Select your place of birth"
-            onChange={onChangeBirthNation}
+            onChange={(e) => onChangeBirthNation(e, "nationalityBirth")}
           />
         </InputContainer>
 
@@ -234,51 +278,56 @@ const ApplicationInformation = ({
             No
             <Switch
               slotProps={{ input: { "aria-label": "controlled" } }}
-              checked={dataProps.personalInfo.otherNationality}
+              checked={dataProps.otherNationality}
               onChange={onChangeOtherNationality}
             />
             Yes
           </span>
         </Box>
 
-        {dataProps.personalInfo.otherNationality && (
+        {dataProps.otherNationality && (
           <InputContainer width={66.6}>
             <AutoCompleteForm
+              name="anotherNationality"
               title="Other country/territory of nationality"
               inputData={countriesNameArr}
-              value={dataProps.personalInfo.anotherNationity}
+              value={dataProps.anotherNationality}
               placeHolder="Select your other country/territory of nationality"
-              onChange={onChangeAnotherNationality}
+              onChange={(e) => onChangeAnotherNationality(e, "anotherNationality")}
             />
           </InputContainer>
         )}
         <InputContainer width={66.6}>
           <AutoCompleteForm
-            onChange={onChangeTitle}
+            name="nationalityBirth"
+            onChange={(e) => onChangeTitle(e, "nationalityBirth")}
             title="Place of birth"
             inputData={countriesNameArr}
-            value={dataProps.personalInfo.nationalityBirth}
+            value={dataProps.nationalityBirth}
             placeHolder="Select your Place of birth"
           />
           <TextFieldApply
+            name="cityBirth"
             title="City of birth"
             placeholder="Enter your City of birth"
-            onChange={onChangeFamilyName}
+            onChange={(e) => onChangeFamilyName(e, "cityBirth")}
             requiredMasked={true}
           />
         </InputContainer>
 
         <InputContainer width={66.6}>
           <DatePickerComponent
-            value={dataProps.personalInfo.birthDate}
+            name="birthDate"
+            value={dataProps.birthDate}
             title="Date of birth"
             onChange={onChangeBirthDate}
           />
           <AutoCompleteForm
-            onChange={onChangeTitle}
+            name="maritalStatus"
+            onChange={(e) => onChangeMaritalStatus(e, "maritalStatus")}
             title="Marital status"
-            inputData={applicationInformationEntries.travelDocument.type}
-            value={dataProps.personalInfo.nationalityBirth}
+            inputData={entriesEnum.maritalStatus}
+            value={dataProps.maritalStatus}
             placeHolder="Select your Marital status"
           />
         </InputContainer>
@@ -288,40 +337,45 @@ const ApplicationInformation = ({
       <FormContainer title="Travel Document">
         <InputContainer width={66.6}>
           <AutoCompleteForm
-            onChange={onChangeTitle}
+            name="documentType"
+            onChange={(e) => onChangeDocumentType(e, "documentType")}
             title="Type of Travel Document "
-            inputData={applicationInformationEntries.travelDocument.type}
-            value={dataProps.personalInfo.nationalityBirth}
+            inputData={entriesEnum.travelDocumentType}
+            value={dataProps.documentType}
             placeHolder="Select your Type of Travel Document"
           />
         </InputContainer>
         <InputContainer width={66.6}>
           <TextFieldApply
+            name="documentNumber"
             title="Travel Document No. "
             placeholder="Enter your Travel Document No."
             requiredMasked={true}
-            onChange={onChangeDocumentNo}
+            onChange={(e) => onChangeDocumentNo(e, "documentNumber")}
           />
         </InputContainer>
         <InputContainer width={66.6}>
           <TextFieldApply
+            name="issuesPlace"
             title="Place of issue"
             placeholder="Enter your Place of issue"
             requiredMasked={true}
-            onChange={onChangeIssuedPlace}
+            onChange={(e) => onChangeIssuedPlace(e, "issuesPlace")}
           />
         </InputContainer>
 
         <InputContainer width={66.6}>
           <DatePickerComponent
+            name="issuesDate"
             title="Date of issue"
             onChange={onChangeIssuedDate}
-            value={dataProps.travelDocument.issuesDate}
+            value={dataProps.issuesDate}
           />
           <DatePickerComponent
+            name="expiryDate"
             title="Date of expiry"
             onChange={onChangeExpiredDate}
-            value={dataProps.travelDocument.expiryDate}
+            value={dataProps.expiryDate}
           />
         </InputContainer>
       </FormContainer>
@@ -330,37 +384,41 @@ const ApplicationInformation = ({
       <FormContainer title="Address information">
         <InputContainer width={100}>
           <TextFieldApply
+            name="homeAddress"
             title="Home address"
             placeholder="Enter your Home address"
-            onChange={onChangeFamilyName}
+            onChange={(e) => onChangeFamilyName(e, "homeAddress")}
             requiredMasked={true}
           />
         </InputContainer>
 
         <InputContainer width={100}>
           <AutoCompleteForm
+            name="addressCountry"
             title="Country / Territory"
             placeHolder="Select your Country / Territory"
-            value={dataProps.address.country}
+            value={dataProps.addressCountry}
             inputData={countriesNameArr}
-            onChange={onChangeCountryAddress}
+            onChange={(e) => onChangeCountryAddress(e, "addressCountry")}
           />
           <AutoCompleteForm
+            name="addressState"
             title="States / City"
             placeHolder="Select your States / City"
-            value={dataProps.address.state}
+            value={dataProps.addressState}
             inputData={countriesNameArr}
-            onChange={onChangeStateAddress}
+            onChange={(e) => onChangeStateAddress(e, "addressState")}
           />
         </InputContainer>
 
         <Box sx={{ display: "flex", width: "33.3%" }}>
           <AutoCompleteForm
+            name="addressCity"
             title="City"
             placeHolder="Select your City"
-            value={dataProps.address.city}
+            value={dataProps.addressCity}
             inputData={countriesNameArr}
-            onChange={onChangeCityAddress}
+            onChange={(e) => onChangeCityAddress(e, "addressCity")}
           />
         </Box>
         <Box sx={{ pr: 2, mt: 1, pl: 2, mb: 1 }}>
@@ -370,7 +428,7 @@ const ApplicationInformation = ({
             No
             <Switch
               slotProps={{ input: { "aria-label": "controlled" } }}
-              checked={dataProps.address.currentAddress}
+              checked={dataProps.currentAddress}
               onChange={onChangeOtherNationality}
             />
             Yes
@@ -383,26 +441,34 @@ const ApplicationInformation = ({
         <InputContainer width={100}>
           <AutoCompleteForm
             title="Occupation "
+            name="occupation"
             placeHolder="Select your Occupation"
-            value={dataProps.employment.occupation}
-            onChange={onChangeOccupation}
-            inputData={applicationInformationEntries.employment.occupation}
+            value={dataProps.occupation}
+            onChange={(e) => onChangeOccupation(e, "occupation")}
+            inputData={entriesEnum.occupation}
           />
           <TextFieldApply
+            name="company"
             title="Company/Institute"
             requiredMasked={true}
             placeholder="Enter your Company/Institute"
-            onChange={onChangeCompanyPlace}
+            onChange={(e) => onChangeCompanyPlace(e, "company")}
           />
           <AutoCompleteForm
             title="Annual income"
+            name="annualIncome"
             placeHolder="Select your Annual income"
-            value={dataProps.employment.annualIncome}
-            onChange={onChangeAnnualIncome}
-            inputData={applicationInformationEntries.employment.annualIncome}
+            value={dataProps.annualIncome}
+            onChange={(e) => onChangeAnnualIncome(e, "annualIncome")}
+            inputData={entriesEnum.annualIncome}
           />
         </InputContainer>
       </FormContainer>
+      <ButtonSumbit
+        displayBackButton={true}
+        onClickNext={onclickNext}
+        onClickBack={onClickBack}
+      />
     </Box>
   );
 };
@@ -428,5 +494,3 @@ const PaperDiv = ({ children }: { children: ReactNode }) => {
 };
 
 export default ApplicationInformation;
-
-const countriesNameArr = countries.map((nation) => nation.engName);
