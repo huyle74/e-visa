@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 
 import { eligibilityEntries } from "@/app/libs/entries-input-visa";
-import { EligibilityInput } from "@/app/libs/types";
+import { EligibilityInputDto } from "@/app/libs/types";
 import { Box, SelectChangeEvent } from "@mui/material";
 import AutoCompleteForm from "../autocompleteForm";
 import FormContainer from "../containerForm";
 import { getEligibilltyEnum, getCountriesData } from "@/app/server-side/static-data";
 import ButtonSumbit from "../button-submit-group";
 
-type E = SelectChangeEvent;
+type Select = (e: SelectChangeEvent, name: string) => void;
 
 interface EligibilityEntries {
   documentType: string[];
@@ -17,17 +17,17 @@ interface EligibilityEntries {
 }
 
 interface EligibilityStepProps {
-  onChangeInpurtCountryPassport: (e: E) => void;
-  onChangeCurrentLocation: (e: E) => void;
-  onChangeApplyAt: (e: E) => void;
-  onChangeDocumentType: (e: E) => void;
-  onChangeVisaType: (e: E) => void;
-  onChangeVisitPurpose: (e: E) => void;
-  onChangeNumberOfEntries: (e: E) => void;
+  onChangeInpurtCountryPassport: Select;
+  onChangeCurrentLocation: Select;
+  onChangeApplyAt: Select;
+  onChangeDocumentType: Select;
+  onChangeVisaType: Select;
+  onChangeVisitPurpose: Select;
+  onChangeNumberOfEntries: Select;
   onClickNext: () => void;
   loading: boolean;
   disabled: boolean;
-  valueProps: EligibilityInput;
+  valueProps: EligibilityInputDto;
 }
 const EligibilityStep = ({
   onChangeInpurtCountryPassport,
@@ -75,7 +75,8 @@ const EligibilityStep = ({
     <Box sx={{ mt: 4 }}>
       <FormContainer title="Check your eligibility">
         <AutoCompleteForm
-          onChange={onChangeInpurtCountryPassport}
+          name="inputCountryPassport"
+          onChange={(e) => onChangeInpurtCountryPassport(e, "inputCountryPassport")}
           value={inputCountryPassport}
           title="Country/Territory of Passport/TD"
           inputData={countriesName}
@@ -83,15 +84,17 @@ const EligibilityStep = ({
           disabled={disabled}
         />
         <AutoCompleteForm
+          name="currentLocation"
           title="Current Location"
           inputData={countriesName}
-          onChange={onChangeCurrentLocation}
+          onChange={(e) => onChangeCurrentLocation(e, "currentLocation")}
           value={currentLocation}
           placeHolder="Select your current location"
           disabled={disabled}
         />
         <AutoCompleteForm
-          onChange={onChangeApplyAt}
+          name="applyAt"
+          onChange={(e) => onChangeApplyAt(e, "applyAt")}
           title="Apply at"
           inputData={eligibilityEntries.applyAt}
           value={applyAt}
@@ -102,7 +105,8 @@ const EligibilityStep = ({
 
       <FormContainer title="Purpose of Visit">
         <AutoCompleteForm
-          onChange={onChangeDocumentType}
+          name="documentType"
+          onChange={(e) => onChangeDocumentType(e, "documentType")}
           title="Travel document type"
           inputData={eligibilityEntry?.documentType}
           value={documentType}
@@ -110,7 +114,8 @@ const EligibilityStep = ({
           placeHolder="Select your visit purpose"
         />
         <AutoCompleteForm
-          onChange={onChangeVisaType}
+          name="visaType"
+          onChange={(e) => onChangeVisaType(e, "visaType")}
           title="Visa Type"
           inputData={eligibilityEntry?.visaTypes}
           value={visaType}
@@ -118,16 +123,18 @@ const EligibilityStep = ({
           placeHolder="Select your visa type"
         />
         <AutoCompleteForm
+          name="visitPurpose"
           title="Purpose of Visit"
-          onChange={onChangeVisitPurpose}
+          onChange={(e) => onChangeVisitPurpose(e, "visitPurpose")}
           inputData={eligibilityEntry.visitPurpose}
           disabled={disabled}
           value={visitPurpose}
           placeHolder="Select your visit's purpose"
         />
         <AutoCompleteForm
+          name="numberOfEntries"
           title="Number of Entries"
-          onChange={onChangeNumberOfEntries}
+          onChange={(e) => onChangeNumberOfEntries(e, "numberOfEntries")}
           inputData={eligibilityEntries.numberOfEntries}
           value={numberOfEntries}
           disabled={disabled}

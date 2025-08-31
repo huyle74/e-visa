@@ -16,6 +16,7 @@ import SwithYesNo from "../switch";
 import RadioComponent from "../select-ratio";
 import DatePickerComponent from "../date-picker";
 import MobileTextField from "../mobileInput";
+import ButtonSumbit from "../button-submit-group";
 
 type EventTextField = (e: ChangeEvent<HTMLInputElement>) => void;
 type EventSelect = (e: SelectChangeEvent) => void;
@@ -39,6 +40,7 @@ interface TravelInformationProps {
   onChangeAccommodationCity: EventSelect;
   onChangeAccommodationPhone: EventTextField;
   onChangeAccommodationDurationDay: EventTextField;
+  onClickNext: () => void;
 }
 
 const TravelInformation = ({
@@ -59,6 +61,7 @@ const TravelInformation = ({
   onChangeTransportVehicleCode,
   onChangeAccommodationType,
   onChangeAccommodationName,
+  onClickNext,
 }: TravelInformationProps) => {
   return (
     <Box>
@@ -169,6 +172,7 @@ const TravelInformation = ({
           />
         )}
       </FormContainer>
+      <ButtonSumbit onClickNext={onClickNext} />
     </Box>
   );
 };

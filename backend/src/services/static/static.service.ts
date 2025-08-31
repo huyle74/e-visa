@@ -1,4 +1,15 @@
 import countryRepo from "@/repositories/country.repository";
+import {
+  visaType,
+  DocumentType,
+  VisitPurpose,
+  Title,
+  Sex,
+  MaritalStatus,
+  TravelDocumentType,
+  Occupation,
+  AnnualIncome,
+} from "@prisma/client";
 
 export const staticService = {
   async getAllCountries() {
@@ -20,5 +31,24 @@ export const staticService = {
     if (!states) throw new Error("Cannot find citis with this state");
 
     return states;
+  },
+
+  async getEligibiltyOption() {
+    const visaTypes = Object.values(visaType);
+    const documentType = Object.values(DocumentType);
+    const visitPurpose = Object.values(VisitPurpose);
+
+    return { visaTypes, documentType, visitPurpose };
+  },
+
+  async getApplicationInformationOption() {
+    const title = Object.values(Title);
+    const sex = Object.values(Sex);
+    const maritalStatus = Object.values(MaritalStatus);
+    const travelDocumentType = Object.values(TravelDocumentType);
+    const occupation = Object.values(Occupation);
+    const annualIncome = Object.values(AnnualIncome);
+
+    return { title, sex, maritalStatus, travelDocumentType, occupation, annualIncome };
   },
 };

@@ -11,7 +11,7 @@ const createAccountService = async (data: CreateUserDto) => {
   const verifyToken = generateToken({ email });
   const link = url + "/verify-email?token=" + verifyToken;
 
-  const checkExist = await userRepos.findOne(email);
+  const checkExist = await userRepos.findByEmail(email);
   if (checkExist) throw new Error("This Email already in used");
   const hashedPassword = await bcrypt.hash(password, 10);
 

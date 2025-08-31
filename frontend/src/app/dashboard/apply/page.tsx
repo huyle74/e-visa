@@ -2,7 +2,6 @@
 
 import { useState, ChangeEvent, useEffect, DragEvent } from "react";
 import { Box, Button, SelectChangeEvent, SwitchProps } from "@mui/material";
-import { DatePickerProps } from "@mui/x-date-pickers";
 import type { Dayjs } from "dayjs";
 import axios from "axios";
 import AuthProvider from "@/app/component/authProvider";
@@ -53,14 +52,14 @@ const ApplyNewVisa = () => {
   const [modal, setModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState({ title: "", description: "" });
   const [eligibilityData, setEligibilityData] = useState<EligibilityInputDto>({
-    applicationId: null,
-    applyAt: null,
-    currentLocation: null,
-    documentType: null,
-    inputCountryPassport: null,
-    numberOfEntries: null,
-    visaType: null,
-    visitPurpose: null,
+    applicationId: "",
+    applyAt: "",
+    currentLocation: "",
+    documentType: "",
+    inputCountryPassport: "",
+    numberOfEntries: "",
+    visaType: "",
+    visitPurpose: "",
   });
   const [applyInfoData, setApplyInfoData] = useState<ApplicationInformationInputDto>({
     applicationId: applicatioinId,
@@ -147,31 +146,9 @@ const ApplyNewVisa = () => {
     })();
   }, []);
 
-  const handleOnchangeEligibility = (e: SelectChangeEvent, type: string) => {
+  const handleOnchangeEligibility = (e: SelectChangeEvent, name: string) => {
     e.preventDefault();
-    switch (type) {
-      case "applyAt":
-        setEligibilityData((prev) => ({ ...prev, applyAt: e.target.value }));
-        break;
-      case "documentType":
-        setEligibilityData((prev) => ({ ...prev, documentType: e.target.value }));
-        break;
-      case "currentLocation":
-        setEligibilityData((prev) => ({ ...prev, currentLocation: e.target.value }));
-        break;
-      case "inputCountryPassport":
-        setEligibilityData((prev) => ({ ...prev, inputCountryPassport: e.target.value }));
-        break;
-      case "visitPurpose":
-        setEligibilityData((prev) => ({ ...prev, visitPurpose: e.target.value }));
-        break;
-      case "numberOfEntries":
-        setEligibilityData((prev) => ({ ...prev, numberOfEntries: e.target.value }));
-        break;
-      case "visaType":
-        setEligibilityData((prev) => ({ ...prev, visaType: e.target.value }));
-        break;
-    }
+    setEligibilityData((prev) => ({ ...prev, [name]: e.target.value }));
   };
 
   const handleOnCloseModal = () => {
@@ -179,127 +156,11 @@ const ApplyNewVisa = () => {
     setModalContent({ title: "", description: "" });
   };
 
-  // const handleOnchangeApplicationInformation = ({
-  //   eSelect,
-  //   eText,
-  //   type,
-  // }: {
-  //   eSelect?: SelectChangeEvent | undefined;
-  //   eText?: ChangeEvent<HTMLInputElement> | undefined;
-  //   type: string;
-  // }) => {
-
-  // switch (type) {
-  //   // PERSONAL INFORMATION
-  //   case "title":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       title: eSelect?.target.value || "",
-  //     }));
-  //     break;
-  //   case "firstName":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       fistName: eText?.target.value || "",
-  //     }));
-  //     break;
-  //   case "familyName":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       familyName: eText?.target.value || "",
-  //     }));
-  //     break;
-  //   case "middleName":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       middleName: eText?.target.value,
-  //     }));
-  //     break;
-  //   case "sex":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       sex: eSelect?.target.value || "",
-  //     }));
-  //     break;
-  //   case "contactNo":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       contactNo: eText?.target.value || "",
-  //     }));
-  //     break;
-  //   case "anotherNationity":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       anotherNationity: eSelect?.target.value || "",
-  //     }));
-  //     break;
-  //   case "nationalityBirth":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       nationalityBirth: eSelect?.target.value || "",
-  //     }));
-  //     break;
-  //   case "anotherNationity":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       anotherNationity: eSelect?.target.value || "",
-  //     }));
-  //   case "annualIncome":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       annualIncome: eSelect?.target.value || "",
-  //     }));
-  //   case "cityAddress":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       addressCity: eSelect?.target.value || "",
-  //     }));
-  //   case "addressState":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       addressState: eSelect?.target.value || "",
-  //     }));
-  //   case "issuedPlace":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       issuedPlace: eText?.target.value || "",
-  //     }));
-  //   case "occupation":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       occupation: eSelect?.target.value || "",
-  //     }));
-  //   case "countryAddress":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       countryAddress: eText?.target.value || "",
-  //     }));
-  //     break;
-  //   case "company":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       company: eText?.target.value || "",
-  //     }));
-  //     break;
-  //   case "documentType":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       documentType: eSelect?.target.value || "",
-  //     }));
-  //   case "maritalStatus":
-  //     setApplyInfoData((prev) => ({
-  //       ...prev,
-  //       maritalStatus: eSelect?.target.value || "",
-  //     }));
-  // }
-  // };
-
   const handleOnchangeApplicationInformation = (
     e: SelectChangeEvent | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     name: string
   ) => {
     e.preventDefault();
-    console.log(e.target.value, name);
     setApplyInfoData((prev) => ({ ...prev, [name]: e.target.value }));
   };
 
@@ -484,12 +345,21 @@ const ApplyNewVisa = () => {
 
   const handleSubmitApplicationInformation = async () => {
     try {
+      triggerNext();
       console.log(applyInfoData);
     } catch (error: any) {
       console.log(error.response.data.message);
       setLoading(false);
       setDisable(false);
     }
+  };
+
+  const handleSumbitTravelInformation = () => {
+    triggerNext();
+  };
+
+  const handleSubmitsupportingDocument = () => {
+    triggerNext();
   };
 
   return (
@@ -505,19 +375,15 @@ const ApplyNewVisa = () => {
                 loading={loading}
                 onClickNext={handleSumbitEligibility}
                 valueProps={eligibilityData}
-                onChangeApplyAt={(e) => handleOnchangeEligibility(e, "applyAt")}
-                onChangeCurrentLocation={(e) =>
-                  handleOnchangeEligibility(e, "currentLocation")
+                onChangeApplyAt={(e, name) => handleOnchangeEligibility(e, name)}
+                onChangeCurrentLocation={(e, name) => handleOnchangeEligibility(e, name)}
+                onChangeDocumentType={(e, name) => handleOnchangeEligibility(e, name)}
+                onChangeInpurtCountryPassport={(e, name) =>
+                  handleOnchangeEligibility(e, name)
                 }
-                onChangeDocumentType={(e) => handleOnchangeEligibility(e, "documentType")}
-                onChangeInpurtCountryPassport={(e) =>
-                  handleOnchangeEligibility(e, "inputCountryPassport")
-                }
-                onChangeNumberOfEntries={(e) =>
-                  handleOnchangeEligibility(e, "numberOfEntries")
-                }
-                onChangeVisaType={(e) => handleOnchangeEligibility(e, "visaType")}
-                onChangeVisitPurpose={(e) => handleOnchangeEligibility(e, "visitPurpose")}
+                onChangeNumberOfEntries={(e, name) => handleOnchangeEligibility(e, name)}
+                onChangeVisaType={(e, name) => handleOnchangeEligibility(e, name)}
+                onChangeVisitPurpose={(e, name) => handleOnchangeEligibility(e, name)}
               />
             )}
             {stepStatus.activeStep === 1 && (
@@ -566,7 +432,9 @@ const ApplyNewVisa = () => {
                   handleOnchangeApplicationInformation(e, name)
                 }
                 onChangeExpiredDate={(value, name) => handlePickDate(value, name)}
-                onChangeDocumentNo={(e) => handleOnchangeApplicationInformation(e, name)}
+                onChangeDocumentNo={(e, name) =>
+                  handleOnchangeApplicationInformation(e, name)
+                }
                 onChangeIssuedDate={(value, name) => handlePickDate(value, name)}
                 onChangeOccupation={(e, name) =>
                   handleOnchangeApplicationInformation(e, name)
@@ -585,10 +453,12 @@ const ApplyNewVisa = () => {
                 data={travelInfo}
                 onChangeDepartPort={handleOnChangeDepartPort}
                 vehicle={transVehicle}
+                onClickNext={handleSumbitTravelInformation}
               />
             )}
             {stepStatus.activeStep === 3 && (
               <SupportingDocument
+                onClickNext={handleSubmitsupportingDocument}
                 data={supportingDoc}
                 onChangeFileBiodata={(e) => handleOnChangeInputFile(e, "biodata")}
                 onChangeFileAccomodationProof={(e) =>

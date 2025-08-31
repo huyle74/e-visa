@@ -110,7 +110,6 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(function FileInpu
               justifyContent: "space-between",
               alignItems: "center",
               p: 2,
-              // backgroundColor: "gray",
               border: "1px gray solid",
             }}
           >

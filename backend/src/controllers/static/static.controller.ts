@@ -44,4 +44,26 @@ export const staticController = {
       return responseError({ res, message });
     }
   },
+
+  async getDataforEligibilty(req: Request, res: Response) {
+    try {
+      const data = await staticService.getEligibiltyOption();
+      responseSuccess({ res, data });
+    } catch (error: any) {
+      console.error(error);
+      const message = error?.message;
+      return responseError({ res, message });
+    }
+  },
+
+  async getDataforApplicationInformation(req: Request, res: Response) {
+    try {
+      const data = await staticService.getApplicationInformationOption();
+      responseSuccess({ res, data });
+    } catch (error: any) {
+      console.error(error);
+      const message = error?.message;
+      return responseError({ res, message });
+    }
+  },
 };

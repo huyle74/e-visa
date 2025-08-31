@@ -3,14 +3,14 @@ import { Dayjs } from "dayjs";
 type DateType = Dayjs | null;
 
 export interface EligibilityInputDto {
-  applicationId?: string | null;
-  applyAt: string | null;
-  currentLocation: string | null;
-  documentType: string | null;
-  inputCountryPassport: string | null;
-  numberOfEntries: string | null;
-  visaType: string | null;
-  visitPurpose: string | null;
+  applicationId?: string;
+  applyAt: string;
+  currentLocation: string;
+  documentType: string;
+  inputCountryPassport: string;
+  numberOfEntries: string;
+  visaType: string;
+  visitPurpose: string;
 }
 
 export interface ApplicationInformationInputDto {

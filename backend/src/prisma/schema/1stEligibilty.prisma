@@ -12,8 +12,6 @@ model Eligibility {
     applicationId String      @unique
     application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
 
-    userId String
-
     @@index([id])
 }
 

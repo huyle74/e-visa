@@ -8,6 +8,7 @@ import googleLoginRoute from "./user/googleLogin.routes";
 import paypalRoute from "./paypal/paypal.routes";
 import staticRoutes from "./static/static.routes";
 import applicationRouter from "./visa-application/allApplicationStep.routes";
+import guardRoute from "./user/guard.routes";
 
 const routes = Router();
 
@@ -19,5 +20,6 @@ routes.use("/login-google", googleLoginRoute);
 routes.use("/payment", paypalRoute);
 routes.use("/static", staticRoutes);
 routes.use("/visa-application", authenticationMiddleware(), applicationRouter);
+routes.use("/guard", guardRoute);
 
 export default routes;

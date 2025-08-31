@@ -30,7 +30,6 @@ export const loginValidator = [
 export const createAccountValidator = [
   body('email')
     .isEmail()
-    .notEmpty()
     .withMessage('Invalid Email')
     .trim()
     .not()

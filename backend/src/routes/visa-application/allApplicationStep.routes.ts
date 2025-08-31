@@ -6,31 +6,51 @@ import {
   supportingDocumentValidator,
   travelInformationValidator,
 } from "@/dto/visaApply/validator.dto";
+import { eligibilityController } from "@/controllers/visa-application/1stEligibilty.controller";
+import { applicationInformationController } from "@/controllers/visa-application/2ndApplicationInformation.controller";
+import { travelInformationController } from "@/controllers/visa-application/3rdTravelInformation.controller";
 import multer from "multer";
 import { responseFailed } from "@/utils/response.helper";
 import { uploadDisk } from "@/config/multer";
 
 const applicationRouter = Router();
 
-applicationRouter.post(
+applicationRouter.get(
   "/list-visa-application",
   visaApplicationController.listVisaApplicationByUserId
 );
+
+// 1ST
 applicationRouter.post(
   "/1st-eligibilty",
   eligibiltyValidator,
-  visaApplicationController.firstStepEligibilty
+  eligibilityController.firstStepEligibilty
 );
+applicationRouter.post("/find-eligibilty-form", eligibilityController.findOne);
+
+// 2ND
 applicationRouter.post(
   "/2nd-applicationInformation",
   applicationInformationValidator,
-  visaApplicationController.secondStepApplicationInformation
+  applicationInformationController.secondStepApplicationInformation
 );
+applicationRouter.post(
+  "/find-application-information-form",
+  applicationInformationController.findOne
+);
+
+// 3RD travelInformation
 applicationRouter.post(
   "/3rd-travelInformation",
   travelInformationValidator,
-  visaApplicationController.thirdStepTravelInformation
+  travelInformationController.thirdStepTravelInformation
 );
+applicationRouter.post(
+  "/find-travel-information-form",
+  travelInformationController.findOne
+);
+
+// 4TH
 applicationRouter.post(
   "/4th-supportingDocument",
   uploadDisk.fields([

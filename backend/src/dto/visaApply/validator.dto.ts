@@ -1,5 +1,4 @@
 import { body } from "express-validator";
-import type { Request } from "express";
 
 export const eligibiltyValidator = [
   body("applyAt").notEmpty().withMessage("Apply place is required"),
@@ -38,17 +37,17 @@ export const applicationInformationValidator = [
 
   body("email").isEmail().withMessage("email must be a valid email"),
 
-  body("nationality")
-    .isISO31661Alpha2()
-    .withMessage("nationality must be a valid ISO 2 country code"),
+  // CHECK files
+  body("photograph").notEmpty().withMessage("photograph is required"),
+  body("biodata").notEmpty().withMessage("biodata is required"),
+
+  body("nationality").notEmpty().withMessage("nationality is required"),
 
   body("otherNationality")
     .isBoolean()
     .withMessage("otherNationality must be true or false"),
 
-  body("nationalityBirth")
-    .isISO31661Alpha2()
-    .withMessage("nationalityBirth must be a valid ISO 2 country code"),
+  body("nationalityBirth").notEmpty().withMessage("nationalityBirth is required"),
 
   body("cityBirth").isString().notEmpty().withMessage("cityBirth is required"),
 
@@ -80,9 +79,7 @@ export const applicationInformationValidator = [
 
   body("homeAddress").isString().notEmpty().withMessage("homeAddress is required"),
 
-  body("addressCountry")
-    .isISO31661Alpha2()
-    .withMessage("addressCountry must be a valid ISO 2 country code"),
+  body("addressCountry").notEmpty().withMessage("addressCountry is required"),
 
   body("addressState").isString().notEmpty().withMessage("addressState is required"),
 
@@ -103,8 +100,6 @@ export const applicationInformationValidator = [
       "ABOVE_80001_USD",
     ])
     .withMessage("annualIncome must be a valid range"),
-
-  body("userIdApplied").isUUID().withMessage("userIdApplied must be a valid UUID"),
 ];
 
 export const travelInformationValidator = [

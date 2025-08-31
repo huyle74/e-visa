@@ -13,6 +13,7 @@ import Image from "next/image";
 import { Dayjs } from "dayjs";
 import FormContainer from "../containerForm";
 import AutoCompleteForm from "../autocompleteForm";
+import FileInput from "../fileInput";
 import { applicationInformationEntries } from "@/app/libs/entries-input-visa";
 import { ApplicationInformationInputDto } from "@/app/libs/types";
 import TextFieldApply from "../textField";
@@ -144,6 +145,8 @@ const ApplicationInformation = ({
                 type="file"
                 onChange={(event) => console.log(event.target.files)}
                 multiple
+                accept=".png, .jpg, .jpeg, .pdf"
+                required
               />
             </Button>
           </Box>

@@ -10,8 +10,6 @@ const visaApplicationService = async (userId: string, user: any) => {
 
   const listAll = await visaApplicationRepo.listAll(userId);
 
-  console.log(listAll);
-
   const results = listAll.map((rows) => {
     const firstName = rows.ApplyInformation?.firstName || "";
     const familyName = rows.ApplyInformation?.familyName || "";

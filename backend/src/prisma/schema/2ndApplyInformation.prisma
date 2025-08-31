@@ -3,6 +3,10 @@ model ApplyInformation {
     applicationId String      @unique
     application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
 
+    // FILEs
+    biodata    Json?
+    photograph Json?
+
     // personalInfo
     title              String
     sex                Sex
@@ -34,10 +38,9 @@ model ApplyInformation {
     currentAddress Boolean
 
     // employment
-    occupation    Occupation
-    company       String
-    annualIncome  AnnualIncome
-    userIdApplied String
+    occupation   Occupation
+    company      String
+    annualIncome AnnualIncome
 
     @@index([id])
 }

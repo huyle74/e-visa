@@ -26,9 +26,13 @@ const eligibilityService = {
       if (!createEligibilty) throw new Error("Cannot create Eligibilty form");
 
       console.log(createEligibilty);
-
       return createEligibilty;
     }
+  },
+  async findOne(applicationId: string) {
+    const row = await eligibiltyRepo.findOne(applicationId);
+    if (!row) throw new Error("Cannot find this application form");
+    return row;
   },
 };
 

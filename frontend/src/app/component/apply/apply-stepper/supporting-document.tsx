@@ -4,6 +4,7 @@ import InputContainer from "../input-containter";
 import FormContainer from "../containerForm";
 import FileInput from "../fileInput";
 import { SupportingDocumentInputDto } from "@/app/libs/types";
+import ButtonSumbit from "../button-submit-group";
 
 type EventInput = (e: ChangeEvent<HTMLInputElement>) => void;
 type EventDrop = (e: DragEvent<HTMLInputElement>) => void;
@@ -23,6 +24,8 @@ interface SupportingDocumentProps {
   handleDropFileTravelBooking: EventDrop;
   handleDropFileAccomodationProof: EventDrop;
   handleDropFileFinancialEvidence: EventDrop;
+
+  onClickNext: () => void;
 }
 
 const SupportingDocument = ({
@@ -40,6 +43,7 @@ const SupportingDocument = ({
   handleDropFileTravelBooking,
   handleDropFileAccomodationProof,
   handleDropFileFinancialEvidence,
+  onClickNext,
 }: SupportingDocumentProps) => {
   return (
     <Box>
@@ -100,6 +104,7 @@ const SupportingDocument = ({
           />
         </InputContainer>
       </FormContainer>
+      <ButtonSumbit onClickNext={onClickNext} />
     </Box>
   );
 };

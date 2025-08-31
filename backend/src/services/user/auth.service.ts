@@ -5,18 +5,21 @@ import { generateToken } from "../../utils/jwt";
 
 const loginService = async ({ email, password }: loginDto) => {
   console.log(email);
-  const user = await userRepos.findOne(email);
-  if (!user) throw new Error("USer not found");
-
-  console.log(user.password.length, user.password);
+  const user = await userRepos.findByEmail(email);
+  if (!user) throw new Error("User not found! Please enter your registerd Email.");
 
   const isMatchPassword = await bcrypt.compare(password, user.password);
-  console.log("Match password:", isMatchPassword);
   if (!isMatchPassword) throw new Error("Wrong password");
 
-  const token = generateToken(user);
+  const accessToken = generateToken(user);
 
-  return { token, ...user };
+  return {
+    accessToken,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    id: user.id,
+  };
 };
 
 export default loginService;

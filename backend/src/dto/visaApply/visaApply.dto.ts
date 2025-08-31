@@ -54,6 +54,10 @@ export interface ApplicationInformationInputDto {
   occupation: Occupation;
   company: string;
 
+  // files
+  biodata: Object;
+  photograph: object;
+
   userIdApplied: string;
 }
 
