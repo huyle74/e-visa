@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, ChangeEvent, useEffect, DragEvent } from "react";
-import { Box, Button, SelectChangeEvent, SwitchProps } from "@mui/material";
+import { useState, ChangeEvent, useEffect, DragEvent, MouseEventHandler } from "react";
+import { useSearchParams } from "next/navigation";
+import { Box, SelectChangeEvent, SwitchProps } from "@mui/material";
 import type { Dayjs } from "dayjs";
 import axios from "axios";
 import AuthProvider from "@/app/component/authProvider";
@@ -23,7 +24,6 @@ import { transportationVehicle } from "@/app/libs/entries-input-visa";
 import { backend_url } from "@/app/server-side/envLoader";
 import { getUserInfo } from "@/app/libs/getLocalStorage";
 import { getCountriesData } from "@/app/server-side/static-data";
-import dayjs from "dayjs";
 
 const prefix = backend_url + "api" + "/visa-application";
 
@@ -40,15 +40,23 @@ const steps = [
   { activeStep: 4, title: "Payment" },
 ];
 
-const MAX_SIZE = 3 * 1024 * 1024;
+const MAX_SIZE = 5 * 1024 * 1024;
 
 const ApplyNewVisa = () => {
+  const user = getUserInfo();
+  const search = useSearchParams();
+  const applyId = search.get("applicationId");
+
+  const [accessToken, setAccessToken] = useState(user.accessToken);
+  const [id, setId] = useState(user.id);
+  const [applicationId, setApplicationId] = useState<string | null>(
+    "e5ca6d9c-ae58-4892-b7ef-31323f5a708b"
+  );
   const [allCountries, setAllCountries] = useState();
-  const [applicatioinId, setApplicationId] = useState<string>("");
   const [disabled, setDisable] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [stepStatus, setStepStatus] = useState<Stepper>(steps[1]);
+  const [currentStep, setCurrentStep] = useState<number>(3);
+  const [stepStatus, setStepStatus] = useState<Stepper>(steps[3]);
   const [modal, setModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState({ title: "", description: "" });
   const [eligibilityData, setEligibilityData] = useState<EligibilityInputDto>({
@@ -62,7 +70,6 @@ const ApplyNewVisa = () => {
     visitPurpose: "",
   });
   const [applyInfoData, setApplyInfoData] = useState<ApplicationInformationInputDto>({
-    applicationId: applicatioinId,
     title: "",
     sex: "",
     firstName: "",
@@ -96,40 +103,43 @@ const ApplyNewVisa = () => {
     annualIncome: "",
     occupation: "",
     company: "",
-  });
-  const [travelInfo, setTravelInfo] = useState<TravelInformationInputDto>({
-    travelInfo: {
-      arrivalDate: null,
-      departureDate: null,
-      country: "",
-      arrivalPort: "",
-      hadVisited: false,
-      didApply: false,
-      partOfTour: false,
-      transportMode: "",
-      transportationVehicle: "",
-    },
-    Accommodation: {
-      AccommodationInfo: [
-        {
-          type: "",
-          name: "",
-          street: "",
-          city: "",
-          contactNo: "",
-          duration: "",
-        },
-      ],
-      additionalAccommodation: false,
-    },
-  });
-  const [supportingDoc, setSupportingDoc] = useState<SupportingDocumentInputDto>({
+
+    // FILES
     biodata: null,
     photograph: null,
-    currentLocation: null,
-    bookingConfirmation: null,
-    proofOfAccommodation: null,
-    financialEvidence: null,
+  });
+
+  const [travelInfo, setTravelInfo] = useState<TravelInformationInputDto>({
+    arrivalDate: null,
+    departureDate: null,
+    country: "",
+    arrivalPort: "",
+    hadVisited: false,
+    didApply: false,
+    partOfTour: false,
+    transportMode: "",
+    shipName: "",
+    fightNo: "",
+    vehicleNumber: "",
+    accommodations: [
+      {
+        type: "",
+        name: "",
+        street: "",
+        city: "",
+        contactNo: "",
+        duration: "",
+      },
+    ],
+    additionalAccommodation: false,
+  });
+  const [supportingDoc, setSupportingDoc] = useState<SupportingDocumentInputDto>({
+    BIODATA: null,
+    PHOTOGRAPH: null,
+    CURRENT_LOCATION: null,
+    BOOKING_CONFIRMATION: null,
+    PROOF_OF_ACCOMMODATION: null,
+    FINANCIAL_EVIDENCE: null,
   });
   const [transVehicle, setTransVehicle] = useState<TransportationVehicleInputDto>({
     title: "Choose your transportation vehicle above",
@@ -137,14 +147,92 @@ const ApplyNewVisa = () => {
     placeholder: "Choose your transportation vehicle first",
   });
 
-  const { accessToken, id } = getUserInfo();
-
   useEffect(() => {
-    (async () => {
+    const countriesData = async () => {
       const countries = await getCountriesData();
       setAllCountries(countries);
-    })();
+    };
+    countriesData();
   }, []);
+
+  const getData = async (url: string, params: any = {}) => {
+    try {
+      const response = await axios.post(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: { ...params, userId: id },
+      });
+      if (response.data.success === "OK") {
+        return response.data.data;
+      }
+    } catch (error: any) {
+      const message = error.response.data.message;
+      console.log(message);
+      setLoading(false);
+      setDisable(false);
+    }
+  };
+
+  useEffect(() => {
+    if (applyId) {
+      if (currentStep === 0) {
+        const endpoint = prefix + "/find-eligibilty-form";
+        (async () => {
+          const eligibilty = await getData(endpoint, { applicationId });
+          if (eligibilty) setEligibilityData(eligibilty);
+        })();
+      }
+      if (currentStep === 1) {
+        const endpoint = prefix + "/find-application-information-form";
+        (async () => {
+          const applicationInformation = await getData(endpoint, { applicationId });
+          if (applicationInformation) setApplyInfoData(applicationInformation);
+        })();
+      }
+      if (currentStep === 3) {
+        const endpoint = prefix + "/get-file-supporting-document";
+        (async () => {
+          try {
+            const documents = [
+              "BIODATA",
+              "PHOTOGRAPH",
+              "CURRENT_LOCATION",
+              "BOOKING_CONFIRMATION",
+              "PROOF_OF_ACCOMMODATION",
+              "FINANCIAL_EVIDENCE",
+            ];
+            axios.all(
+              documents.map(async (docs) => {
+                const response = await axios.post(
+                  endpoint,
+                  {},
+                  {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                    params: {
+                      applicationId: applyId,
+                      type: docs,
+                    },
+                    responseType: "blob",
+                  }
+                );
+                const name = await response.headers["x-file-name"];
+                const type = await response.headers["content-type"];
+                const file = new File([response.data], name, { type });
+
+                setSupportingDoc((prev) => ({ ...prev, [docs]: file }));
+              })
+            );
+          } catch (error: any) {
+            const message = error.response;
+            console.log(message);
+            setLoading(false);
+            setDisable(false);
+          }
+        })();
+      }
+    }
+  }, [currentStep]);
 
   const handleOnchangeEligibility = (e: SelectChangeEvent, name: string) => {
     e.preventDefault();
@@ -164,7 +252,7 @@ const ApplyNewVisa = () => {
     setApplyInfoData((prev) => ({ ...prev, [name]: e.target.value }));
   };
 
-  const handlePickDate = (value: Dayjs | null, name: string) => {
+  const handlePickDateApplicationInformation = (value: Dayjs | null, name: string) => {
     const date = value?.toDate();
     setApplyInfoData((prev) => ({ ...prev, [name]: date }));
   };
@@ -191,28 +279,11 @@ const ApplyNewVisa = () => {
     }
   };
 
-  const handleOnChangeDepartPort = (e: ChangeEvent<HTMLInputElement>) => {
-    const vehicle = e.target.value;
-    setTravelInfo((prev) => ({
-      ...prev,
-      travelInfo: { ...prev["travelInfo"], transportationVehicle: vehicle },
-    }));
-    switch (vehicle) {
-      case "Sea":
-        setTransVehicle(transportationVehicle.sea);
-        break;
-      case "Flight":
-        setTransVehicle(transportationVehicle.flight);
-        break;
-      case "Land":
-        setTransVehicle(transportationVehicle.land);
-        break;
-    }
-  };
-
-  const handleOnChangeInputFile = (e: ChangeEvent<HTMLInputElement>, typeDoc: string) => {
-    if (e.target.files !== null) {
-      const file = e.target.files[0];
+  const handleOnChangeInputFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, files } = e.target;
+    console.log(name);
+    if (files !== null) {
+      const file = files[0];
       if (file.size > MAX_SIZE) {
         setModalContent({
           title: "Please choose file with size less than 3MB",
@@ -220,44 +291,8 @@ const ApplyNewVisa = () => {
         });
         setModal(true);
         return;
-      }
-      switch (typeDoc) {
-        case "biodata":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            biodata: file,
-          }));
-          break;
-        case "photo":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            photograph: file,
-          }));
-          break;
-        case "accomodationProof":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            proofOfAccommodation: file,
-          }));
-          break;
-        case "financialEvidence":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            financialEvidence: file,
-          }));
-          break;
-        case "travelBooking":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            bookingConfirmation: file,
-          }));
-          break;
-        case "location":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            currentLocation: file,
-          }));
-          break;
+      } else {
+        setSupportingDoc((prev) => ({ ...prev, [name]: file }));
       }
     }
   };
@@ -268,52 +303,78 @@ const ApplyNewVisa = () => {
     if (file) {
       if (file.size > MAX_SIZE) {
         setModalContent({
-          title: "Please choose file with size less than 3MB",
+          title: "Please choose file with size less than 5MB",
           description: "",
         });
         setModal(true);
         return;
       }
-      console.log(file);
-      switch (typeDoc) {
-        case "biodata":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            biodata: file,
-          }));
-          break;
-        case "photo":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            photograph: file,
-          }));
-          break;
-        case "accomodationProof":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            proofOfAccommodation: file,
-          }));
-          break;
-        case "financialEvidence":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            financialEvidence: file,
-          }));
-          break;
-        case "travelBooking":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            bookingConfirmation: file,
-          }));
-          break;
-        case "location":
-          setSupportingDoc((prev) => ({
-            ...prev,
-            currentLocation: file,
-          }));
-          break;
+      setSupportingDoc((prev) => ({ ...prev, [typeDoc]: file }));
+    }
+  };
+
+  const handleOnChangeTravelInformation = (
+    e: SelectChangeEvent | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    name: string
+  ) => {
+    setTravelInfo((prev) => ({ ...prev, [name]: e.target.value }));
+    if (name == "arrivalPort") {
+      const value = e.target.value as "Flight" | "Sea" | "Land";
+      setTransVehicle(transportationVehicle[value]);
+    }
+  };
+
+  const handelPickDateTravelInformation = (value: Dayjs | null, name: string) => {
+    const date = value?.toDate() || "";
+    setTravelInfo((prev) => ({ ...prev, [name]: new Date(date) }));
+  };
+
+  const handelSwitchTravelInformation = (
+    e: ChangeEvent<HTMLInputElement>,
+    name: string
+  ) => {
+    const checked = e.target.checked;
+    setTravelInfo((prev) => ({
+      ...prev,
+      [name]: checked,
+    }));
+    if (name === "additionalAccommodation") {
+      if (checked) {
+        setTravelInfo((prev) => ({
+          ...prev,
+          accommodations: [
+            ...prev.accommodations,
+            {
+              type: "",
+              name: "",
+              street: "",
+              city: "",
+              contactNo: "",
+              duration: "",
+            },
+          ],
+        }));
+      } else {
+        setTravelInfo((prev) => ({
+          ...prev,
+          accommodations: prev.accommodations.slice(0, -1),
+        }));
       }
     }
+  };
+
+  const handleOnChangeAccommodationTravelInformation = (
+    e: SelectChangeEvent | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index: number = 0
+  ) => {
+    const { name, value } = e.target;
+    console.log(name);
+    setTravelInfo((prev) => ({
+      ...prev,
+      accommodations: prev.accommodations.map((accommodation, i) =>
+        i === index ? { ...accommodation, [name]: value } : accommodation
+      ),
+    }));
   };
 
   const handleSumbitEligibility = async () => {
@@ -343,23 +404,152 @@ const ApplyNewVisa = () => {
     }
   };
 
-  const handleSubmitApplicationInformation = async () => {
+  const handleSubmitApplicationInformation: MouseEventHandler<HTMLButtonElement> = async (
+    e
+  ) => {
     try {
-      triggerNext();
-      console.log(applyInfoData);
+      e.preventDefault();
+      const form = formConvertApplicationInformation(applyInfoData);
+      setLoading(true);
+      setDisable(true);
+      const endpoint = prefix + "/2nd-applicationInformation";
+      const repsonse = await axios.post(endpoint, form, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: {
+          userId: id,
+          applicationId,
+          section: "application_information",
+        },
+      });
+      if (repsonse.data.success === "OK") {
+        console.log(repsonse.data);
+        setLoading(false);
+        setDisable(false);
+        // triggerNext();
+      }
     } catch (error: any) {
-      console.log(error.response.data.message);
+      const message = error.response.data.message;
+      console.log(message);
+      setLoading(false);
+      setDisable(false);
+      setModalContent({
+        title: "Please complete the required fields",
+        description:
+          message.map((msg: string) => {
+            return (
+              <p key={msg}>
+                {msg}
+                <br></br>
+              </p>
+            );
+          }) || "",
+      });
+      setModal(true);
+    }
+  };
+
+  const handleDropfileApplicationInformation = (
+    e: DragEvent<HTMLInputElement>,
+    name: string
+  ) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      if (file.size > MAX_SIZE) {
+        setModalContent({
+          title: "Please choose file with size less than 5MB",
+          description: "",
+        });
+        setModal(true);
+        return;
+      } else {
+        setApplyInfoData((prev) => ({ ...prev, [name]: file }));
+      }
+    }
+  };
+
+  const handleOnchangeFilesApplicationInformation = (
+    e: ChangeEvent<HTMLInputElement>,
+    name: string
+  ) => {
+    e.preventDefault();
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > MAX_SIZE) {
+        setModalContent({
+          title: "Please choose file with size less than 5MB",
+          description: "",
+        });
+        setModal(true);
+        return;
+      } else {
+        setApplyInfoData((prev) => ({ ...prev, [name]: file }));
+      }
+    }
+  };
+
+  const handleSumbitTravelInformation: MouseEventHandler<HTMLButtonElement> = async (
+    e
+  ) => {
+    e.preventDefault();
+    setLoading(true);
+    setDisable(true);
+    try {
+      const endpoint = prefix + "/3rd-travelInformation";
+      const response = await axios.post(
+        endpoint,
+        { applicationId, ...travelInfo },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          params: { userId: id },
+        }
+      );
+      if (response.data.success === "OK") {
+        console.log(response.data);
+        triggerNext();
+      }
+    } catch (error: any) {
+      const message = error.response.data.message;
+      console.log(message);
       setLoading(false);
       setDisable(false);
     }
   };
 
-  const handleSumbitTravelInformation = () => {
-    triggerNext();
-  };
+  const handleSubmitsupportingDocument: MouseEventHandler<HTMLButtonElement> = async (
+    e
+  ) => {
+    e.preventDefault();
+    setLoading(true);
+    setDisable(true);
+    try {
+      const endpoint = prefix + "/4th-supportingDocument";
 
-  const handleSubmitsupportingDocument = () => {
-    triggerNext();
+      if (!applicationId) return;
+      const form = formConvertTravelInformation(supportingDoc);
+
+      const response = await axios.post(endpoint, form, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: { userId: id, applicationId, section: "supporting_document" },
+      });
+      if (response.data.success === "OK") {
+        console.log(response.data);
+        // triggerNext();
+        setLoading(false);
+        setDisable(false);
+      }
+    } catch (error: any) {
+      setLoading(false);
+      setDisable(false);
+      const message = error.response.data.message;
+      console.log(message);
+    }
   };
 
   return (
@@ -375,113 +565,113 @@ const ApplyNewVisa = () => {
                 loading={loading}
                 onClickNext={handleSumbitEligibility}
                 valueProps={eligibilityData}
-                onChangeApplyAt={(e, name) => handleOnchangeEligibility(e, name)}
-                onChangeCurrentLocation={(e, name) => handleOnchangeEligibility(e, name)}
-                onChangeDocumentType={(e, name) => handleOnchangeEligibility(e, name)}
-                onChangeInpurtCountryPassport={(e, name) =>
-                  handleOnchangeEligibility(e, name)
-                }
-                onChangeNumberOfEntries={(e, name) => handleOnchangeEligibility(e, name)}
-                onChangeVisaType={(e, name) => handleOnchangeEligibility(e, name)}
-                onChangeVisitPurpose={(e, name) => handleOnchangeEligibility(e, name)}
+                onChangeApplyAt={handleOnchangeEligibility}
+                onChangeCurrentLocation={handleOnchangeEligibility}
+                onChangeDocumentType={handleOnchangeEligibility}
+                onChangeInpurtCountryPassport={handleOnchangeEligibility}
+                onChangeNumberOfEntries={handleOnchangeEligibility}
+                onChangeVisaType={handleOnchangeEligibility}
+                onChangeVisitPurpose={handleOnchangeEligibility}
               />
             )}
             {stepStatus.activeStep === 1 && (
               <ApplicationInformation
+                dataProps={applyInfoData}
+                // HANDLE FILES
+                onChangeBiodata={handleOnchangeFilesApplicationInformation}
+                onChangePhotograph={handleOnchangeFilesApplicationInformation}
+                onDragBiodata={(e) => handleDropfileApplicationInformation(e, "biodata")}
+                onDragPhotograph={(e) =>
+                  handleDropfileApplicationInformation(e, "photograph")
+                }
+                //
                 onclickNext={handleSubmitApplicationInformation}
                 onClickBack={handleBackButton}
                 countries={allCountries}
-                dataProps={applyInfoData}
-                onChangeBirthNation={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
-                onChangeDocumentType={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
-                onChangeMaritalStatus={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
-                onChangeFamilyName={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
-                onChangeFirstName={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
-                onChangeMiddletName={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
+                onChangeNationality={handleOnchangeApplicationInformation}
+                onChangeBirthNation={handleOnchangeApplicationInformation}
+                onChangeDocumentType={handleOnchangeApplicationInformation}
+                onChangeMaritalStatus={handleOnchangeApplicationInformation}
+                onChangeFamilyName={handleOnchangeApplicationInformation}
+                onChangeFirstName={handleOnchangeApplicationInformation}
+                onChangeMiddletName={handleOnchangeApplicationInformation}
                 onChangeOtherNationality={handleChangeOtherNationality}
-                onChangeSex={(e, name) => handleOnchangeApplicationInformation(e, name)}
-                onChangeTitle={(e, name) => handleOnchangeApplicationInformation(e, name)}
-                onChangeContactNo={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
+                onChangeSex={handleOnchangeApplicationInformation}
+                onChangeTitle={handleOnchangeApplicationInformation}
+                onChangeContactNo={handleOnchangeApplicationInformation}
+                onChangeAnotherNationality={handleOnchangeApplicationInformation}
+                onChangeAnnualIncome={handleOnchangeApplicationInformation}
+                onChangeCityAddress={handleOnchangeApplicationInformation}
+                onChangeStateAddress={handleOnchangeApplicationInformation}
+                onChangeIssuedPlace={handleOnchangeApplicationInformation}
+                onChangeExpiredDate={(value, name) =>
+                  handlePickDateApplicationInformation(value, name)
                 }
-                onChangeAnotherNationality={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
+                onChangeDocumentNo={handleOnchangeApplicationInformation}
+                onChangeIssuedDate={(value, name) =>
+                  handlePickDateApplicationInformation(value, name)
                 }
-                onChangeAnnualIncome={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
+                onChangeOccupation={handleOnchangeApplicationInformation}
+                onChangeBirthDate={(value, name) =>
+                  handlePickDateApplicationInformation(value, name)
                 }
-                onChangeCityAddress={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
-                onChangeStateAddress={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
-                onChangeIssuedPlace={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
-                onChangeExpiredDate={(value, name) => handlePickDate(value, name)}
-                onChangeDocumentNo={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
-                onChangeIssuedDate={(value, name) => handlePickDate(value, name)}
-                onChangeOccupation={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
-                onChangeBirthDate={(value, name) => handlePickDate(value, name)}
-                onChangeCountryAddress={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
-                onChangeCompanyPlace={(e, name) =>
-                  handleOnchangeApplicationInformation(e, name)
-                }
+                onChangeCountryAddress={handleOnchangeApplicationInformation}
+                onChangeCompanyPlace={handleOnchangeApplicationInformation}
               />
             )}
             {stepStatus.activeStep === 2 && (
               <TravelInformation
                 data={travelInfo}
-                onChangeDepartPort={handleOnChangeDepartPort}
-                vehicle={transVehicle}
                 onClickNext={handleSumbitTravelInformation}
+                onChangeArrivalPort={handleOnChangeTravelInformation}
+                vehicle={transVehicle}
+                onChangeAccommodationAddress={
+                  handleOnChangeAccommodationTravelInformation
+                }
+                onChangeAccommodationDurationDay={
+                  handleOnChangeAccommodationTravelInformation
+                }
+                onChangeAccommodationCity={handleOnChangeAccommodationTravelInformation}
+                onChangeAccommodationName={handleOnChangeAccommodationTravelInformation}
+                onChangeAccommodationPhone={handleOnChangeAccommodationTravelInformation}
+                onChangeAccommodationType={handleOnChangeAccommodationTravelInformation}
+                onChangeArrivalDate={handelPickDateTravelInformation}
+                onChangeDepartDate={handelPickDateTravelInformation}
+                onChangeHadVisit={handelSwitchTravelInformation}
+                onChangeDidApply={handelSwitchTravelInformation}
+                onChangePartOfTour={handelSwitchTravelInformation}
+                onChangeAdditionalAccomodation={handelSwitchTravelInformation}
+                onChangeSelectCountry={handleOnChangeTravelInformation}
+                onChangeTransportMode={handleOnChangeTravelInformation}
+                onChangeTransportVehicleCode={handleOnChangeTravelInformation}
               />
             )}
             {stepStatus.activeStep === 3 && (
               <SupportingDocument
                 onClickNext={handleSubmitsupportingDocument}
                 data={supportingDoc}
-                onChangeFileBiodata={(e) => handleOnChangeInputFile(e, "biodata")}
-                onChangeFileAccomodationProof={(e) =>
-                  handleOnChangeInputFile(e, "accomodationProof")
-                }
-                onChangeFileFinancialEvidence={(e) =>
-                  handleOnChangeInputFile(e, "financialEvidence")
-                }
-                onChangeFileLocation={(e) => handleOnChangeInputFile(e, "location")}
-                onChangeFilePhoto={(e) => handleOnChangeInputFile(e, "photo")}
-                onChangeFileTravelBooking={(e) =>
-                  handleOnChangeInputFile(e, "travelBooking")
-                }
-                handleDropFileBioData={(e) => handleDropFile(e, "biodata")}
+                // Click
+                onChangeFileBiodata={handleOnChangeInputFile}
+                onChangeFileAccomodationProof={handleOnChangeInputFile}
+                onChangeFileFinancialEvidence={handleOnChangeInputFile}
+                onChangeFileLocation={handleOnChangeInputFile}
+                onChangeFilePhoto={handleOnChangeInputFile}
+                onChangeFileTravelBooking={handleOnChangeInputFile}
+                // DRAG
+                handleDropFileBioData={(e) => handleDropFile(e, "BIODATA")}
                 handleDropFileAccomodationProof={(e) =>
-                  handleDropFile(e, "accomodationProof")
+                  handleDropFile(e, "PROOF_OF_ACCOMMODATION")
                 }
                 handleDropFileFinancialEvidence={(e) =>
-                  handleDropFile(e, "financialEvidence")
+                  handleDropFile(e, "FINANCIAL_EVIDENCE")
                 }
-                handleDropFileLocation={(e) => handleDropFile(e, "location")}
-                handleDropFilePhoto={(e) => handleDropFile(e, "photo")}
-                handleDropFileTravelBooking={(e) => handleDropFile(e, "travelBooking")}
+                handleDropFileLocation={(e) => handleDropFile(e, "CURRENT_LOCATION")}
+                handleDropFilePhoto={(e) => handleDropFile(e, "PHOTOGRAPH")}
+                handleDropFileTravelBooking={(e) =>
+                  handleDropFile(e, "BOOKING_CONFIRMATION")
+                }
+                disable={disabled}
+                loading={loading}
               />
             )}
           </Box>
@@ -497,3 +687,28 @@ const ApplyNewVisa = () => {
 };
 
 export default ApplyNewVisa;
+
+const formConvertApplicationInformation = (data: ApplicationInformationInputDto) => {
+  const form = new FormData();
+  const { biodata, photograph, ...rest } = data;
+
+  Object.entries(rest).forEach(([k, v]) => {
+    if (v === undefined || v === null) return;
+    form.append(k, String(v));
+  });
+  if (biodata) form.append("biodata", biodata);
+  if (photograph) form.append("photograph", photograph);
+
+  return form;
+};
+
+const formConvertTravelInformation = (data: SupportingDocumentInputDto) => {
+  const form = new FormData();
+
+  Object.entries(data).forEach(([k, v]) => {
+    if (v === undefined || v === null) return;
+    form.append(k, v);
+  });
+
+  return form;
+};

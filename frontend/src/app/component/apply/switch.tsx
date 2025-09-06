@@ -1,10 +1,10 @@
+import { ChangeEvent } from "react";
 import { Switch, Box } from "@mui/material";
-import { SwitchProps } from "@mui/material";
 
 interface SwitchYesNoProps {
   content: string;
   checked: boolean;
-  onChange: NonNullable<SwitchProps["onChange"]>;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const SwithYesNo = ({ content, checked, onChange }: SwitchYesNoProps) => {

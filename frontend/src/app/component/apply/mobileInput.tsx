@@ -9,7 +9,8 @@ import Flag from "@/app/component/common/nationFlag";
 interface MobileTextFieldProps {
   onChange: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    name: string
+    name: string,
+    index?: number
   ) => void;
   value: string;
   name: string;

@@ -11,7 +11,7 @@ model TravelInformation {
     hadVisited            Boolean
     didApply              Boolean
     partOfTour            Boolean
-    transportationVehicle String
+    transportationVehicle String?
     transportMode         String
     shipName              String
     fightNo               String

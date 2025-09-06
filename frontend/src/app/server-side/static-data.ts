@@ -17,10 +17,34 @@ export async function getCountriesData() {
   }
 }
 
-const getStatesData = async (country: string) => {
+export const getStatesData = async (country: string) => {
+  try {
+    const endpoint = prefix + "/static/states";
+    const response = await axios.post(
+      endpoint,
+      {},
+      {
+        params: { country },
+      }
+    );
+    if (response.data.success === "OK") {
+      return response.data.data;
+    } else return [];
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getCitiesData = async (state: string) => {
   try {
     const endpoint = prefix + "/static/cities";
-    const response = await axios.post(endpoint, { country });
+    const response = await axios.post(
+      endpoint,
+      {},
+      {
+        params: { state },
+      }
+    );
     if (response.data.success === "OK") {
       return response.data.data;
     } else return [];

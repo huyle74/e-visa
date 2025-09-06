@@ -1,11 +1,12 @@
-import { ChangeEvent } from "react";
-import { Box, SelectChangeEvent, SwitchProps } from "@mui/material";
+import { ChangeEvent, MouseEventHandler } from "react";
+import { Box, SelectChangeEvent } from "@mui/material";
 import { DatePickerProps } from "@mui/x-date-pickers";
 import AutoCompleteForm from "../autocompleteForm";
 import FormContainer from "../containerForm";
 import TextFieldApply from "../textField";
 import SelectDepartPort from "../select-ratio-vehicle";
 import { travelInformationEntries } from "@/app/libs/entries-input-visa";
+import { Dayjs } from "dayjs";
 import {
   TravelInformationInputDto,
   TransportationVehicleInputDto,
@@ -18,49 +19,59 @@ import DatePickerComponent from "../date-picker";
 import MobileTextField from "../mobileInput";
 import ButtonSumbit from "../button-submit-group";
 
-type EventTextField = (e: ChangeEvent<HTMLInputElement>) => void;
-type EventSelect = (e: SelectChangeEvent) => void;
-type EventSwitch = NonNullable<SwitchProps["onChange"]>;
+type EventTextField = (
+  e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  name: string
+) => void;
+type EventSelect = (e: SelectChangeEvent, name: string) => void;
+type EventSwitch = (e: ChangeEvent<HTMLInputElement>, name: string) => void;
+
+type AccommodationEvent = (
+  e: SelectChangeEvent | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  index: number
+) => void;
 
 interface TravelInformationProps {
   data: TravelInformationInputDto;
   vehicle: TransportationVehicleInputDto;
-  onChangeArrivalDate: NonNullable<DatePickerProps["onChange"]>;
-  onChangeDepartDate: NonNullable<DatePickerProps["onChange"]>;
+  onChangeArrivalDate: (e: Dayjs | null, name: string) => void;
+  onChangeDepartDate: (e: Dayjs | null, name: string) => void;
   onChangeSelectCountry: EventSelect;
-  onChangeDepartPort: EventTextField;
+  onChangeArrivalPort: EventTextField;
   onChangeHadVisit: EventSwitch;
   onChangeDidApply: EventSwitch;
   onChangePartOfTour: EventSwitch;
   onChangeTransportMode: EventSelect;
   onChangeTransportVehicleCode: EventTextField;
-  onChangeAccommodationType: EventTextField;
-  onChangeAccommodationName: EventTextField;
-  onChangeAccommodationAddress: EventTextField;
-  onChangeAccommodationCity: EventSelect;
-  onChangeAccommodationPhone: EventTextField;
-  onChangeAccommodationDurationDay: EventTextField;
-  onClickNext: () => void;
+  onChangeAccommodationType: AccommodationEvent;
+  onChangeAccommodationName: AccommodationEvent;
+  onChangeAccommodationAddress: AccommodationEvent;
+  onChangeAccommodationCity: AccommodationEvent;
+  onChangeAccommodationPhone: AccommodationEvent;
+  onChangeAccommodationDurationDay: AccommodationEvent;
+  onChangeAdditionalAccomodation: EventSwitch;
+  onClickNext: MouseEventHandler<HTMLButtonElement>;
 }
 
 const TravelInformation = ({
   data,
   vehicle,
   onChangeArrivalDate,
-  onChangeAccommodationPhone,
-  onChangeAccommodationDurationDay,
-  onChangeAccommodationCity,
   onChangeDepartDate,
   onChangeSelectCountry,
-  onChangeAccommodationAddress,
-  onChangeDepartPort,
+  onChangeArrivalPort,
   onChangeHadVisit,
   onChangeDidApply,
   onChangePartOfTour,
   onChangeTransportMode,
   onChangeTransportVehicleCode,
+  onChangeAccommodationAddress,
+  onChangeAccommodationPhone,
+  onChangeAccommodationDurationDay,
+  onChangeAccommodationCity,
   onChangeAccommodationType,
   onChangeAccommodationName,
+  onChangeAdditionalAccomodation,
   onClickNext,
 }: TravelInformationProps) => {
   return (
@@ -74,13 +85,15 @@ const TravelInformation = ({
         <InputContainer width={100}>
           <DatePickerComponent
             title="Intended date of arrival"
-            onChange={onChangeArrivalDate}
-            value={data.travelInfo.arrivalDate}
+            onChange={(e) => onChangeArrivalDate(e, "arrivalDate")}
+            value={data.arrivalDate}
+            name="arrivalDate"
           />
           <DatePickerComponent
             title="Intended date of departure "
             onChange={onChangeDepartDate}
-            value={data.travelInfo.departureDate}
+            value={data.departureDate}
+            name="departureDate"
           />
         </InputContainer>
         <InputContainer width={66.6}>
@@ -92,16 +105,18 @@ const TravelInformation = ({
             title="Country / Territory ( Last port of embarkation )"
             inputData={travelInformationEntries.travelInfo.country}
             placeHolder="Select your Country / Territory"
-            onChange={onChangeSelectCountry}
-            value={data.travelInfo.country}
+            onChange={(e) => onChangeSelectCountry(e, "country")}
+            value={data.country}
+            name="country"
           />
         </InputContainer>
 
         <InputContainer width={50}>
           <SelectDepartPort
             title="Port of arrival"
-            value={data.travelInfo.arrivalPort}
-            onChange={onChangeDepartPort}
+            value={data.arrivalPort}
+            onChange={(e) => onChangeArrivalPort(e, "arrivalPort")}
+            name="arrivalPort"
           />
         </InputContainer>
 
@@ -109,9 +124,10 @@ const TravelInformation = ({
           <AutoCompleteForm
             title="Mode of transport"
             inputData={vehicle.values}
-            value={data.travelInfo.transportMode}
+            value={data.transportMode}
             onChange={onChangeTransportMode}
             placeHolder="Select your transportation Mode"
+            name="transportMode"
           />
         </InputContainer>
 
@@ -121,58 +137,64 @@ const TravelInformation = ({
             onChange={onChangeTransportVehicleCode}
             placeholder={`Enter your ${vehicle.placeholder}`}
             requiredMasked={true}
+            name="vehicleNumber"
           />
         </InputContainer>
 
         <InputContainer width={50} direction="column">
           <SwithYesNo
-            content="Have you ever visited this Country ?"
-            onChange={onChangeHadVisit}
-            checked={data.travelInfo.hadVisited}
+            content="Have you ever visited this Country?"
+            onChange={(e) => onChangeHadVisit(e, "hadVisited")}
+            checked={data.hadVisited}
           />
           <SwithYesNo
-            onChange={onChangeDidApply}
-            checked={data.travelInfo.didApply}
+            onChange={(e) => onChangeDidApply(e, "didApply")}
+            checked={data.didApply}
             content="Have you ever applied for this Country visa?"
           />
           <SwithYesNo
-            checked={data.travelInfo.partOfTour}
-            onChange={onChangePartOfTour}
-            content="Are you travelling as part of a tour group ?"
+            checked={data.partOfTour}
+            onChange={(e) => onChangePartOfTour(e, "partOfTour")}
+            content="Are you travelling as part of a tour group?"
           />
         </InputContainer>
       </FormContainer>
 
-      <FormContainer title="Accommodation in Thailand">
-        <InputContainer width={100}>
-          <RadioComponent
-            labels={travelInformationEntries.Accommodation.accommodationType}
-            onChange={onChangeAccommodationType}
-            title="Accommodation Type"
-          />
-        </InputContainer>
-
+      {/* Accommodation */}
+      <FormContainer title="Accommodation in ">
         <AccommodationForm
+          index={0}
+          onChangeAccommodationType={onChangeAccommodationType}
           onChangeName={onChangeAccommodationName}
           onChangeAddress={onChangeAccommodationAddress}
           onChangeCity={onChangeAccommodationCity}
           onChangePhone={onChangeAccommodationPhone}
           onChangeDurationDay={onChangeAccommodationDurationDay}
-          data={data.Accommodation.AccommodationInfo[0]}
+          data={data.accommodations[0]}
         />
 
-        {data.Accommodation.additionalAccommodation == true && (
+        <InputContainer>
+          <SwithYesNo
+            onChange={(e) => onChangeAdditionalAccomodation(e, "additionalAccommodation")}
+            checked={data.additionalAccommodation}
+            content="Additional accommodation in?"
+          />
+        </InputContainer>
+
+        {data.additionalAccommodation === true && data.accommodations[1] && (
           <AccommodationForm
+            index={1}
+            onChangeAccommodationType={onChangeAccommodationType}
             onChangeName={onChangeAccommodationName}
             onChangeAddress={onChangeAccommodationAddress}
             onChangeCity={onChangeAccommodationCity}
             onChangePhone={onChangeAccommodationPhone}
             onChangeDurationDay={onChangeAccommodationDurationDay}
-            data={data.Accommodation.AccommodationInfo[1]}
+            data={data.accommodations[1]}
           />
         )}
       </FormContainer>
-      <ButtonSumbit onClickNext={onClickNext} />
+      <ButtonSumbit onclickNext={onClickNext} />
     </Box>
   );
 };
@@ -180,12 +202,14 @@ const TravelInformation = ({
 export default TravelInformation;
 
 interface AccommodationFormProps {
-  onChangeAddress: EventTextField;
-  onChangeName: EventTextField;
-  onChangeCity: EventSelect;
-  onChangePhone: EventTextField;
-  onChangeDurationDay: EventTextField;
+  onChangeAddress: AccommodationEvent;
+  onChangeName: AccommodationEvent;
+  onChangeCity: AccommodationEvent;
+  onChangePhone: AccommodationEvent;
+  onChangeDurationDay: AccommodationEvent;
+  onChangeAccommodationType: AccommodationEvent;
   data: AccommodationInputDto;
+  index: number;
 }
 
 const AccommodationForm = ({
@@ -194,16 +218,27 @@ const AccommodationForm = ({
   onChangeAddress,
   onChangePhone,
   onChangeDurationDay,
+  onChangeAccommodationType,
   data,
+  index,
 }: AccommodationFormProps) => {
   return (
     <Box sx={{ position: "relative" }}>
+      <InputContainer width={100}>
+        <RadioComponent
+          labels={travelInformationEntries.Accommodation.accommodationType}
+          onChange={(e) => onChangeAccommodationType(e, index)}
+          title="Accommodation Type"
+          name="type"
+        />
+      </InputContainer>
       <InputContainer>
         <TextFieldApply
           title="Accommodation Name"
           placeholder="Enter your Accommodation Name"
-          onChange={onChangeName}
+          onChange={(e) => onChangeName(e, index)}
           requiredMasked={true}
+          name="name"
         />
       </InputContainer>
 
@@ -211,28 +246,35 @@ const AccommodationForm = ({
         <TextFieldApply
           title="Street Address"
           placeholder="Enter your Street Address"
-          onChange={onChangeAddress}
+          onChange={(e) => onChangeAddress(e, index)}
           requiredMasked={true}
+          name="street"
         />
         <AutoCompleteForm
           title="City"
           inputData={["1", "2"]}
-          onChange={onChangeCity}
+          onChange={(e) => onChangeCity(e, index)}
           value={data.city}
           placeHolder="Select your city"
+          name="city"
         />
       </InputContainer>
       <InputContainer width={50}>
-        <MobileTextField value={data.contactNo} onChange={onChangePhone} />
+        <MobileTextField
+          value={data.contactNo}
+          onChange={(e) => onChangePhone(e, index)}
+          name="contactNo"
+        />
       </InputContainer>
 
       <InputContainer>
         <TextFieldApply
           title="Duration of stay (Days): "
           placeholder="Enter your Duration of stay"
-          onChange={onChangeDurationDay}
+          onChange={(e) => onChangeDurationDay(e, index)}
           requiredMasked={true}
           type="number"
+          name="duration"
         />
       </InputContainer>
     </Box>

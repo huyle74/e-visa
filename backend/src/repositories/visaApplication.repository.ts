@@ -5,6 +5,7 @@ import {
   ApplyInformation,
   TravelInformation,
   SupportingDocument,
+  Document,
 } from "@prisma/client";
 import {
   TravelInformationInputDto,
@@ -124,15 +125,36 @@ export const eligibiltyRepo = {
 
 // 2ND step applyInformation
 export const applyInformationRepo = {
-  async upsert(
-    data: ApplicationInformationInputDto
-  ): Promise<ApplyInformation | undefined> {
+  async upsert(data: ApplicationInformationInputDto): Promise<ApplyInformation> {
     try {
-      const { applicationId, ...rest } = data;
+      const {
+        applicationId,
+        otherNationality,
+        currentAddress,
+        birthDate,
+        expiryDate,
+        issuesDate,
+        ...rest
+      } = data;
       return prisma.applyInformation.upsert({
         where: { applicationId },
-        create: { ...rest, application: { connect: { correlationId: applicationId } } },
-        update: rest,
+        create: {
+          ...rest,
+          currentAddress: Boolean(currentAddress),
+          otherNationality: Boolean(otherNationality),
+          birthDate: new Date(birthDate),
+          expiryDate: new Date(expiryDate),
+          issuesDate: new Date(issuesDate),
+          application: { connect: { correlationId: applicationId } },
+        },
+        update: {
+          ...rest,
+          currentAddress: Boolean(currentAddress),
+          birthDate: new Date(birthDate),
+          expiryDate: new Date(expiryDate),
+          issuesDate: new Date(issuesDate),
+          otherNationality: Boolean(otherNationality),
+        },
       });
     } catch (error) {
       console.log(error);
@@ -267,6 +289,20 @@ export const supportingDocumentRepos = {
     } catch (error) {
       console.log(error);
       throw new Error("Failed to upsert suporting document");
+    }
+  },
+
+  async findOne(applicationId: string, type: Document) {
+    try {
+      const file = await prisma.supportingDocument.findUnique({
+        where: { applicationId_type: { applicationId, type } },
+        select: { originalName: true, mimeType: true, storageKey: true, sizeBytes: true },
+      });
+
+      return file;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to get suporting document file");
     }
   },
 };

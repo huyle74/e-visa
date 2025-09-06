@@ -1,5 +1,5 @@
-import { CorsOptions } from 'cors';
-import { appUrl, paypalApiUrl, googleCredentials } from './envLoader';
+import { CorsOptions } from "cors";
+import { appUrl, paypalApiUrl, googleCredentials } from "./envLoader";
 
 const allowList = [appUrl, paypalApiUrl, googleCredentials.googleAuthUri];
 const corsOption: CorsOptions = {
@@ -11,9 +11,10 @@ const corsOption: CorsOptions = {
     if (allowList.indexOf(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
+  exposedHeaders: ["X-File-Name", "Content-Type"],
 };
 
 export default corsOption;

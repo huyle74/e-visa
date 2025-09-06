@@ -3,7 +3,7 @@ model SupportingDocument {
     applicationId String
     application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
     type          Document
-    originalName  String      @unique
+    originalName  String
     mimeType      String
     sizeBytes     Int
     storageKey    String

@@ -3,7 +3,7 @@ import { validationResponse } from "@/utils/validateResponse.helper";
 import { responseError, responseFailed, responseSuccess } from "@/utils/response.helper";
 import eligibilityService from "@/services/visa-application/1stEligibilty.service";
 
-export const eligibilityController = {
+const eligibilityController = {
   async firstStepEligibilty(req: Request, res: Response) {
     try {
       const checkValid = validationResponse(req);
@@ -27,9 +27,8 @@ export const eligibilityController = {
   },
   async findOne(req: Request, res: Response) {
     try {
-      const { applicationId } = req.body;
-      console.log(applicationId);
-      const data = await eligibilityService.findOne(applicationId);
+      const { applicationId } = req.query;
+      const data = await eligibilityService.findOne(String(applicationId));
       if (!data) return responseFailed({ res });
 
       return responseSuccess({ res, data });
@@ -40,3 +39,5 @@ export const eligibilityController = {
     }
   },
 };
+
+export default eligibilityController;

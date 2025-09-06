@@ -7,7 +7,8 @@ interface TextFieldProps {
   placeholder: string;
   onChange: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    name: string
+    name: string,
+    index?: number
   ) => void;
   requiredMasked?: boolean;
   type?: React.HTMLInputTypeAttribute;
@@ -49,6 +50,7 @@ const TextFieldApply = ({
           onChange={(e) => onChange(e, name)}
           fullWidth
           type={type}
+          name={name}
         />
       </Box>
     </Box>

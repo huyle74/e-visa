@@ -1,22 +1,27 @@
 import { Box } from "@mui/material";
 import { teal } from "@mui/material/colors";
 import { ReactNode } from "react";
+import { primary } from "@/app/libs/color-config";
 
 interface FormContainerProps {
   children: ReactNode;
   title: string;
   note?: string;
+  width?: number;
 }
 
-const primary = teal[800];
-
-const FormContainer = ({ children, title, note = "" }: FormContainerProps) => {
+const FormContainer = ({
+  children,
+  title,
+  note = "",
+  width = 100,
+}: FormContainerProps) => {
   return (
     <Box
       sx={{
         mt: 3,
         backgroundColor: "white",
-        width: "100%",
+        width: `${width}%`,
         height: "100%",
         position: "relative",
       }}

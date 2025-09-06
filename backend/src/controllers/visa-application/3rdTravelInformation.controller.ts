@@ -9,9 +9,9 @@ export const travelInformationController = {
       const checkValid = validationResponse(req);
       if (checkValid) return responseFailed({ res, message: checkValid });
       const data = req.body;
-      const userId = req.query.userId;
+      const userId = String(req.query.userId);
 
-      const result = await travelInformationService.create(`${userId}`, data);
+      const result = await travelInformationService.create(userId, data);
       if (!result)
         return responseFailed({ res, message: "Failed to add travel information" });
       console.log(result);

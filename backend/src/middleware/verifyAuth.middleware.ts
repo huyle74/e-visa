@@ -15,7 +15,6 @@ export default function authenticationMiddleware() {
         });
 
       const decode = verify(token);
-      console.log(decode);
       (req as any).user = decode;
       next();
     } catch (error) {

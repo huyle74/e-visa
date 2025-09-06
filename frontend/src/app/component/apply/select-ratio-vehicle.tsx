@@ -16,11 +16,12 @@ const primary = teal[800];
 
 interface SelectPortProps {
   title: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>, name: string) => void;
   value: string;
+  name: string;
 }
 
-const SelectDepartPort = ({ title, onChange, value }: SelectPortProps) => {
+const SelectDepartPort = ({ title, onChange, value, name }: SelectPortProps) => {
   const labelConvert = [
     {
       value: "Land",
@@ -42,8 +43,8 @@ const SelectDepartPort = ({ title, onChange, value }: SelectPortProps) => {
         {title}
         <span style={{ fontWeight: 1000, color: "red", marginLeft: "2px" }}>*</span>
       </Box>
-      <Box sx={{ display: "flex" }}>
-        <RadioGroup row onChange={onChange} value={value}>
+      <Box sx={{ display: "flex", width: "100%" }}>
+        <RadioGroup row onChange={onChange} value={value} name={name}>
           {labelConvert.map((label) => {
             return (
               <FormControlLabel
@@ -73,6 +74,7 @@ const SelectDepartPort = ({ title, onChange, value }: SelectPortProps) => {
                   height: "130px",
                   width: "100px",
                   justifyContent: "flex-start",
+                  mt: 0.5,
                 }}
               />
             );

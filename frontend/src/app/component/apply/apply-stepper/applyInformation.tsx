@@ -1,4 +1,11 @@
-import { ReactNode, ChangeEvent, useEffect, useState } from "react";
+import {
+  ReactNode,
+  ChangeEvent,
+  useEffect,
+  useState,
+  DragEvent,
+  MouseEventHandler,
+} from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Box,
@@ -10,11 +17,10 @@ import {
   SwitchProps,
 } from "@mui/material";
 import Image from "next/image";
+import { getStatesData, getCitiesData } from "@/app/server-side/static-data";
 import { Dayjs } from "dayjs";
 import FormContainer from "../containerForm";
 import AutoCompleteForm from "../autocompleteForm";
-import FileInput from "../fileInput";
-import { applicationInformationEntries } from "@/app/libs/entries-input-visa";
 import { ApplicationInformationInputDto } from "@/app/libs/types";
 import TextFieldApply from "../textField";
 import MobileTextField from "../mobileInput";
@@ -29,6 +35,7 @@ type Text = (
   e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   name: string
 ) => void;
+type DropFile = (e: DragEvent<HTMLInputElement>) => void;
 
 interface ApplicationInforProps {
   dataProps: ApplicationInformationInputDto;
@@ -45,6 +52,7 @@ interface ApplicationInforProps {
   onChangeIssuedPlace: Text;
   onChangeMaritalStatus: (e: E, name: string) => void;
   onChangeDocumentType: (e: E, name: string) => void;
+  onChangeNationality: (e: E, name: string) => void;
 
   onChangeIssuedDate: PickDate;
   onChangeBirthDate: PickDate;
@@ -57,8 +65,14 @@ interface ApplicationInforProps {
   onChangeCompanyPlace: Text;
   onChangeAnnualIncome: (e: E, name: string) => void;
   countries: any;
-  onclickNext: () => void;
+  onclickNext: MouseEventHandler<HTMLButtonElement>;
   onClickBack: () => void;
+
+  // FILES
+  onChangeBiodata: (e: ChangeEvent<HTMLInputElement>, name: string) => void;
+  onChangePhotograph: (e: ChangeEvent<HTMLInputElement>, name: string) => void;
+  onDragBiodata: DropFile;
+  onDragPhotograph: DropFile;
 }
 
 const ApplicationInformation = ({
@@ -83,11 +97,18 @@ const ApplicationInformation = ({
   onChangeOccupation,
   onChangeCompanyPlace,
   onChangeAnnualIncome,
+  onChangeNationality,
   countries = [],
   onclickNext,
   onClickBack,
   onChangeMaritalStatus,
   onChangeDocumentType,
+
+  // FILES
+  onChangeBiodata,
+  onChangePhotograph,
+  onDragBiodata,
+  onDragPhotograph,
 }: ApplicationInforProps) => {
   const [entriesEnum, setEntriesEnum] = useState({
     annualIncome: [],
@@ -97,6 +118,68 @@ const ApplicationInformation = ({
     title: [],
     travelDocumentType: [],
   });
+  const [statesAddress, setStatesAddress] = useState<string[]>([]);
+  const [citiesAddress, setCitiesAddress] = useState<string[]>([]);
+  const [previewBiodata, setPreviewBiodata] = useState<string>("");
+  const [previewPhotograph, setPreviewPhotograph] = useState<string>("");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const statesResponse = await getStatesData(dataProps.addressCountry);
+        if (statesResponse) {
+          const states = statesResponse.map((state: any) => {
+            return state.state;
+          });
+          setStatesAddress(states);
+        }
+      } catch (error: any) {
+        console.log(error);
+      }
+    })();
+  }, [dataProps.addressCountry]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const citesResponse = await getCitiesData(dataProps.addressState);
+        if (citesResponse) {
+          const cities = citesResponse.map((city: any) => {
+            return city.city;
+          });
+          setCitiesAddress(cities);
+        }
+      } catch (error: any) {
+        console.log(error);
+      }
+    })();
+  }, [dataProps.addressState]);
+
+  useEffect(() => {
+    if (!dataProps.biodata) {
+      setPreviewBiodata("");
+      return;
+    } else {
+      const url = URL.createObjectURL(dataProps.biodata);
+      setPreviewBiodata(url);
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    }
+  }, [dataProps.biodata]);
+
+  useEffect(() => {
+    if (!dataProps.photograph) {
+      setPreviewPhotograph("");
+      return;
+    }
+    const url = URL.createObjectURL(dataProps.photograph);
+    console.log(url);
+    setPreviewPhotograph(url);
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [dataProps.photograph]);
 
   const countriesNameArr = countries.map((nation: any) => nation.engName);
 
@@ -106,6 +189,33 @@ const ApplicationInformation = ({
       setEntriesEnum(data);
     })();
   }, []);
+
+  const handleDragOVerBiodata = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+  const handleDragOVerPhotograph = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const PreviewDisplay = ({ file, preview }: { file: File; preview: string | null }) => {
+    return (
+      <div style={{ display: "flex", width: "100%", height: "100%" }}>
+        {file && file.type === "application/pdf" ? (
+          <iframe src={preview || ""} style={{ width: "100%", height: "400px" }} />
+        ) : (
+          <img
+            src={preview || ""}
+            alt={file.name}
+            style={{
+              objectFit: "cover",
+              width: "100%",
+              height: "100%",
+            }}
+          />
+        )}
+      </div>
+    );
+  };
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -119,52 +229,70 @@ const ApplicationInformation = ({
           height: "100%",
         }}
       >
-        <FormContainer title="Upload Biodata Page of Passport">
-          <PaperDiv>
-            Please upload the biodata page of your travel document. After the successful
-            completion of the upload, your biographic information will be populated in the
-            corresponding fields of the application. For accurate results, make sure the
-            MRZ is contained within the full width of the photograph and the photograph is
-            not blurry.
-          </PaperDiv>
-          <PaperDiv>
-            Applicant is required to submit his/her travel document that is valid for at
-            least six months from the date of visa application for single entry and one
-            year for multiple entry (18 months for OA Visa).
-          </PaperDiv>
-          <Box sx={{ m: 2, mb: 1 }}>
-            {/* UPLOAD BUTTON */}
-            <Button
-              fullWidth
-              variant="outlined"
-              tabIndex={-1}
-              startIcon={<CloudUploadIcon />}
-            >
-              Drag and drop file or browse from computer
-              <VisuallyHiddenInput
-                type="file"
-                onChange={(event) => console.log(event.target.files)}
-                multiple
-                accept=".png, .jpg, .jpeg, .pdf"
-                required
-              />
-            </Button>
-          </Box>
-          <Box sx={{ textAlign: "center", mb: 3 }}>(.JPG, .JPEG Limit Size is 3 MB)</Box>
+        <FormContainer title="Upload Biodata Page of Passport" width={60}>
+          <div draggable={true} onDrop={onDragBiodata} onDragOver={handleDragOVerBiodata}>
+            <PaperDiv>
+              Please upload the biodata page of your travel document. After the successful
+              completion of the upload, your biographic information will be populated in
+              the corresponding fields of the application. For accurate results, make sure
+              the MRZ is contained within the full width of the photograph and the
+              photograph is not blurry.
+            </PaperDiv>
+            <PaperDiv>
+              Applicant is required to submit his/her travel document that is valid for at
+              least six months from the date of visa application for single entry and one
+              year for multiple entry (18 months for OA Visa).
+            </PaperDiv>
+            <Box sx={{ m: 2, mb: 1 }}>
+              {/* UPLOAD BUTTON */}
+              <Button
+                component="label"
+                fullWidth
+                variant="outlined"
+                tabIndex={-1}
+                startIcon={<CloudUploadIcon />}
+                role={undefined}
+                size="small"
+              >
+                {dataProps.biodata
+                  ? "Upload new file"
+                  : "Drag and drop file or browse from computer"}
 
-          {/* PASSPORT PICTURE */}
-          <Box sx={{ display: "flex", mb: 3, justifyContent: "center" }}>
-            <Image
-              src="https://www.thaievisa.go.th/static/media/dummy_passport.f34bd0bb.jpg"
-              alt="passport Pic"
-              width={460}
-              height={270}
-            />
-          </Box>
+                <VisuallyHiddenInput
+                  type="file"
+                  onChange={(e) => onChangeBiodata(e, "biodata")}
+                  accept=".png, .jpg, .jpeg, .pdf"
+                  required
+                  name="biodata"
+                />
+              </Button>
+            </Box>
+            <Box sx={{ textAlign: "center", mb: 3 }}>
+              (.JPG, .JPEG Limit Size is 3 MB)
+            </Box>
+
+            {/* PASSPORT PICTURE */}
+            <Box sx={{ display: "flex", mb: 3, justifyContent: "center" }}>
+              {dataProps.biodata ? (
+                <PreviewDisplay file={dataProps.biodata} preview={previewBiodata} />
+              ) : (
+                <Image
+                  src="https://www.thaievisa.go.th/static/media/dummy_passport.f34bd0bb.jpg"
+                  alt="passport Pic"
+                  width={460}
+                  height={270}
+                />
+              )}
+            </Box>
+          </div>
         </FormContainer>
 
-        <Box sx={{ display: "flex", height: "100%", width: "100%" }}>
-          <FormContainer title="Upload a photograph">
+        <FormContainer title="Upload a photograph" width={40}>
+          <div
+            onDrop={onDragPhotograph}
+            onDragOver={handleDragOVerPhotograph}
+            draggable={true}
+          >
             <PaperDiv>
               Please upload an appropriate photograph taken within six months. Failure to
               do so may result in rejection of visa request.
@@ -179,30 +307,40 @@ const ApplicationInformation = ({
             <Box sx={{ m: 2, mb: 1 }}>
               {/* UPLOAD BUTTON */}
               <Button
-                sx={{ fontSize: "1rem" }}
+                component="label"
+                role={undefined}
                 fullWidth
                 variant="outlined"
                 tabIndex={-1}
                 startIcon={<CloudUploadIcon />}
+                size="small"
               >
-                Drag and drop file or browse from computer
-                <VisuallyHiddenInput
+                {dataProps.photograph
+                  ? "Upload new file"
+                  : "  Drag and drop file or browse from computer"}
+                <VisuallyHiddenInputPhotograph
                   type="file"
-                  onChange={(event) => console.log(event.target.files)}
+                  onChange={(e) => onChangePhotograph(e, "photograph")}
                   multiple
+                  accept=".png, .jpg, .jpeg, .pdf"
+                  required
                 />
               </Button>
             </Box>
             <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
-              <Image
-                src="https://cdn4.iconfinder.com/data/icons/flat-pro-business-set-1/32/people-customer-unknown-512.png"
-                width={250}
-                height={250}
-                alt="photo"
-              />
+              {dataProps.photograph ? (
+                <PreviewDisplay file={dataProps.photograph} preview={previewPhotograph} />
+              ) : (
+                <Image
+                  src="https://cdn4.iconfinder.com/data/icons/flat-pro-business-set-1/32/people-customer-unknown-512.png"
+                  alt="passport Pic"
+                  width={250}
+                  height={250}
+                />
+              )}
             </Box>
-          </FormContainer>
-        </Box>
+          </div>
+        </FormContainer>
       </Box>
 
       {/* PERSONAL INFORMATION */}
@@ -265,12 +403,12 @@ const ApplicationInformation = ({
 
         <InputContainer width={66.6}>
           <AutoCompleteForm
-            name="nationalityBirth"
-            value={dataProps.nationalityBirth}
-            inputData={applicationInformationEntries.personalInfo.nationalityBirth}
-            title="Nationality at birth"
-            placeHolder="Select your place of birth"
-            onChange={(e) => onChangeBirthNation(e, "nationalityBirth")}
+            inputData={countriesNameArr}
+            placeHolder="Enter your nationality"
+            title="Nationality"
+            name="nationality"
+            onChange={(e) => onChangeNationality(e, "nationality")}
+            value={dataProps.nationality}
           />
         </InputContainer>
 
@@ -287,6 +425,17 @@ const ApplicationInformation = ({
             Yes
           </span>
         </Box>
+
+        <InputContainer width={66.6}>
+          <AutoCompleteForm
+            name="nationalityBirth"
+            value={dataProps.nationalityBirth}
+            inputData={countriesNameArr}
+            title="Nationality at birth"
+            placeHolder="Select your place of birth"
+            onChange={(e) => onChangeBirthNation(e, "nationalityBirth")}
+          />
+        </InputContainer>
 
         {dataProps.otherNationality && (
           <InputContainer width={66.6}>
@@ -409,7 +558,7 @@ const ApplicationInformation = ({
             title="States / City"
             placeHolder="Select your States / City"
             value={dataProps.addressState}
-            inputData={countriesNameArr}
+            inputData={statesAddress}
             onChange={(e) => onChangeStateAddress(e, "addressState")}
           />
         </InputContainer>
@@ -420,7 +569,7 @@ const ApplicationInformation = ({
             title="City"
             placeHolder="Select your City"
             value={dataProps.addressCity}
-            inputData={countriesNameArr}
+            inputData={citiesAddress}
             onChange={(e) => onChangeCityAddress(e, "addressCity")}
           />
         </Box>
@@ -469,7 +618,7 @@ const ApplicationInformation = ({
       </FormContainer>
       <ButtonSumbit
         displayBackButton={true}
-        onClickNext={onclickNext}
+        onclickNext={onclickNext}
         onClickBack={onClickBack}
       />
     </Box>
@@ -477,6 +626,18 @@ const ApplicationInformation = ({
 };
 
 const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
+
+const VisuallyHiddenInputPhotograph = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
   height: 1,

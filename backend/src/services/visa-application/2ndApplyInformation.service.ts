@@ -8,11 +8,13 @@ const applicationInformationService = {
     if (!userExisted) throw new Error("User not found");
 
     const result = await applyInformationRepo.upsert(data);
+    console.log(result);
     return result;
   },
 
   async findOne(applicationId: string) {
     const row = await applyInformationRepo.findOne(applicationId);
+
     if (!row) throw new Error("Cannot find this application form");
     return row;
   },

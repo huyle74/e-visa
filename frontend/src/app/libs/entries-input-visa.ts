@@ -73,17 +73,17 @@ export const applicationInformationEntries = {
 };
 
 export const transportationVehicle = {
-  sea: {
+  Sea: {
     title: "Name",
     values: ["Cruise", "Commercial Vessel", "Ferry", "Private Craft"],
     placeholder: "Enter your Vessel Name",
   },
-  land: {
+  Land: {
     title: "Vehicle Number",
     values: ["Bus", "Car", "Lorry", "Motocycle", "Rail", "Van"],
     placeholder: "Enter your Vehicle Number",
   },
-  flight: {
+  Flight: {
     title: "Flight No.",
     values: ["Charter (Private)", "Schedule (Commercial)"],
     placeholder: "Enter your flight number",

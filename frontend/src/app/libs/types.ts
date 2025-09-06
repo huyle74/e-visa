@@ -14,8 +14,6 @@ export interface EligibilityInputDto {
 }
 
 export interface ApplicationInformationInputDto {
-  applicationId: string;
-
   title: string;
   sex: string;
   firstName: string;
@@ -49,6 +47,10 @@ export interface ApplicationInformationInputDto {
   annualIncome: string;
   occupation: string;
   company: string;
+
+  // FILES
+  biodata: File | null;
+  photograph: File | null;
 }
 
 export interface AccommodationInputDto {
@@ -61,24 +63,22 @@ export interface AccommodationInputDto {
 }
 
 export interface TravelInformationInputDto {
-  travelInfo: {
-    arrivalDate: DateType | null;
-    departureDate: DateType | null;
-    country: string;
-    arrivalPort: string;
-    hadVisited: boolean;
-    didApply: boolean;
-    partOfTour: boolean;
-    transportationVehicle: string;
-    transportMode: string;
-    shipName?: string;
-    fightNo?: string | null;
-    vehicleNumber?: string | null;
-  };
-  Accommodation: {
-    AccommodationInfo: AccommodationInputDto[];
-    additionalAccommodation: boolean;
-  };
+  // travel Information:
+  arrivalDate: DateType | null;
+  departureDate: DateType | null;
+  country: string;
+  arrivalPort: string;
+  hadVisited: boolean;
+  didApply: boolean;
+  partOfTour: boolean;
+  transportMode: string;
+  shipName?: string;
+  fightNo?: string | null;
+  vehicleNumber?: string | null;
+
+  // Accommodation
+  accommodations: AccommodationInputDto[];
+  additionalAccommodation: boolean;
 }
 
 export interface TransportationVehicleInputDto {
@@ -90,10 +90,10 @@ export interface TransportationVehicleInputDto {
 export type FileInputDto = File | null;
 
 export interface SupportingDocumentInputDto {
-  biodata: FileInputDto;
-  photograph: FileInputDto;
-  currentLocation: FileInputDto;
-  bookingConfirmation: FileInputDto;
-  proofOfAccommodation: FileInputDto;
-  financialEvidence: FileInputDto;
+  BIODATA: FileInputDto;
+  PHOTOGRAPH: FileInputDto;
+  CURRENT_LOCATION: FileInputDto;
+  BOOKING_CONFIRMATION: FileInputDto;
+  PROOF_OF_ACCOMMODATION: FileInputDto;
+  FINANCIAL_EVIDENCE: FileInputDto;
 }

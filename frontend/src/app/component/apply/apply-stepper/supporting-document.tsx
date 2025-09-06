@@ -1,4 +1,4 @@
-import { ChangeEvent, DragEvent } from "react";
+import { ChangeEvent, DragEvent, MouseEventHandler } from "react";
 import { Box } from "@mui/material";
 import InputContainer from "../input-containter";
 import FormContainer from "../containerForm";
@@ -25,7 +25,10 @@ interface SupportingDocumentProps {
   handleDropFileAccomodationProof: EventDrop;
   handleDropFileFinancialEvidence: EventDrop;
 
-  onClickNext: () => void;
+  loading: boolean;
+  disable: boolean;
+
+  onClickNext: MouseEventHandler<HTMLButtonElement>;
 }
 
 const SupportingDocument = ({
@@ -44,27 +47,33 @@ const SupportingDocument = ({
   handleDropFileAccomodationProof,
   handleDropFileFinancialEvidence,
   onClickNext,
+  loading,
+  disable,
 }: SupportingDocumentProps) => {
   return (
     <Box>
       <FormContainer
         title="Supporting documents."
-        note="(.JPG .JPEG .PDF file, Limit Size is 3 MB)"
+        note="(.JPG .JPEG .PDF file, Limit Size is 5 MB)"
       >
         <InputContainer>
           <FileInput
             title="1 . Biodata page of Passport or Travel Document"
             onChange={onChangeFileBiodata}
-            fileValue={data.biodata}
+            fileValue={data.BIODATA}
             handleDropFile={handleDropFileBioData}
+            name="BIODATA"
+            disabled={disable}
           />
         </InputContainer>
         <InputContainer>
           <FileInput
             title="2 . Photograph taken within the last six months"
             onChange={onChangeFilePhoto}
-            fileValue={data.photograph}
+            fileValue={data.PHOTOGRAPH}
             handleDropFile={handleDropFilePhoto}
+            name="PHOTOGRAPH"
+            disabled={disable}
           />
         </InputContainer>
 
@@ -72,8 +81,10 @@ const SupportingDocument = ({
           <FileInput
             title="3 . Document indicating current location"
             onChange={onChangeFileLocation}
-            fileValue={data.currentLocation}
+            fileValue={data.CURRENT_LOCATION}
             handleDropFile={handleDropFileLocation}
+            name="CURRENT_LOCATION"
+            disabled={disable}
           />
         </InputContainer>
 
@@ -81,8 +92,10 @@ const SupportingDocument = ({
           <FileInput
             title="4 . Travel booking confirmation"
             onChange={onChangeFileTravelBooking}
-            fileValue={data.bookingConfirmation}
+            fileValue={data.BOOKING_CONFIRMATION}
             handleDropFile={handleDropFileTravelBooking}
+            name="BOOKING_CONFIRMATION"
+            disabled={disable}
           />
         </InputContainer>
 
@@ -90,8 +103,10 @@ const SupportingDocument = ({
           <FileInput
             title="5. Proof of accommodation"
             onChange={onChangeFileAccomodationProof}
-            fileValue={data.proofOfAccommodation}
+            fileValue={data.PROOF_OF_ACCOMMODATION}
             handleDropFile={handleDropFileAccomodationProof}
+            name="PROOF_OF_ACCOMMODATION"
+            disabled={disable}
           />
         </InputContainer>
 
@@ -99,12 +114,14 @@ const SupportingDocument = ({
           <FileInput
             title="6 . Financial evidence (e.g., bank statements for the last three months, sponsorship letter)"
             onChange={onChangeFileFinancialEvidence}
-            fileValue={data.biodata}
+            fileValue={data.FINANCIAL_EVIDENCE}
             handleDropFile={handleDropFileFinancialEvidence}
+            name="FINANCIAL_EVIDENCE"
+            disabled={disable}
           />
         </InputContainer>
       </FormContainer>
-      <ButtonSumbit onClickNext={onClickNext} />
+      <ButtonSumbit onclickNext={onClickNext} loading={loading} />
     </Box>
   );
 };

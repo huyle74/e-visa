@@ -141,7 +141,7 @@ const EligibilityStep = ({
           placeHolder="Select your number of entries"
         />
       </FormContainer>
-      <ButtonSumbit onClickNext={onClickNext} loading={loading} />
+      <ButtonSumbit onclickNext={onClickNext} loading={loading} />
     </Box>
   );
 };

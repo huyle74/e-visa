@@ -1,14 +1,15 @@
+import { MouseEventHandler } from "react";
 import { Box, Button } from "@mui/material";
 
 interface ButtonSubmitProps {
-  onClickNext: () => void;
+  onclickNext: MouseEventHandler<HTMLButtonElement>;
   onClickBack?: () => void;
   displayBackButton?: boolean;
   loading?: boolean;
 }
 
 const ButtonSumbit = ({
-  onClickNext,
+  onclickNext,
   onClickBack,
   displayBackButton = false,
   loading = false,
@@ -23,7 +24,7 @@ const ButtonSumbit = ({
         <Box></Box>
       )}
       <Button
-        onClick={onClickNext}
+        onClick={onclickNext}
         variant="contained"
         size="large"
         loading={loading}

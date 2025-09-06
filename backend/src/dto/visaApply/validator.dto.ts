@@ -11,85 +11,75 @@ export const eligibiltyValidator = [
 ];
 
 export const applicationInformationValidator = [
-  body("applicationId").isUUID().withMessage("applicationId must be a valid UUID"),
+  body("applicationId").notEmpty().withMessage("applicationId is required"),
 
-  body("title")
-    .isIn(["MR", "MRS", "MS", "MISS"])
-    .withMessage("title must be one of MR, MRS, MS, MISS"),
+  body("title").notEmpty().withMessage("Title is required"),
 
-  body("sex")
-    .isIn(["MALE", "FEMALE", "OTHER"])
-    .withMessage("sex must be MALE, FEMALE or OTHER"),
+  body("sex").notEmpty().withMessage("SEX is required"),
 
-  body("firstName").isString().trim().notEmpty().withMessage("firstName is required"),
+  body("firstName").isString().trim().notEmpty().withMessage("First name is required"),
 
   body("middleName")
     .optional({ nullable: true })
     .isString()
     .withMessage("middleName must be a string"),
 
-  body("familyName").isString().trim().notEmpty().withMessage("familyName is required"),
+  body("familyName").isString().trim().notEmpty().withMessage("Family Name is required"),
 
   body("contactNo")
     .isString()
     .matches(/^\+?[0-9\- ]+$/)
-    .withMessage("contactNo must be a valid phone number"),
+    .withMessage("Phone number is required"),
 
-  body("email").isEmail().withMessage("email must be a valid email"),
+  body("email").isEmail().withMessage("Email must be a valid email"),
 
   // CHECK files
-  body("photograph").notEmpty().withMessage("photograph is required"),
-  body("biodata").notEmpty().withMessage("biodata is required"),
 
-  body("nationality").notEmpty().withMessage("nationality is required"),
+  body("nationality").notEmpty().withMessage("Nationality is required"),
 
   body("otherNationality")
     .isBoolean()
     .withMessage("otherNationality must be true or false"),
 
-  body("nationalityBirth").notEmpty().withMessage("nationalityBirth is required"),
+  body("nationalityBirth").notEmpty().withMessage("Birth Nationality is required"),
 
-  body("cityBirth").isString().notEmpty().withMessage("cityBirth is required"),
+  body("cityBirth").isString().notEmpty().withMessage("Birth City is required"),
 
-  body("birthDate")
-    .isISO8601()
-    .toDate()
-    .withMessage("birthDate must be a valid ISO date"),
+  body("birthDate").notEmpty().withMessage("Date of Birth is required"),
 
-  body("maritalStatus")
-    .isIn(["SINGLE", "MARRIED", "DIVORCED", "WIDOWED"])
-    .withMessage("maritalStatus must be one of SINGLE, MARRIED, DIVORCED, WIDOWED"),
+  body("maritalStatus").notEmpty().withMessage("Marital Status must be filled"),
 
   body("anotherNationality")
     .optional({ nullable: true })
     .isString()
     .withMessage("anotherNationality must be a string"),
 
-  body("documentType")
-    .isIn(["PASSPORT", "ID_CARD", "TRAVEL_DOCUMENT"])
-    .withMessage("documentType must be PASSPORT, ID_CARD or TRAVEL_DOCUMENT"),
+  body("documentType").notEmpty().withMessage("Document type is required"),
 
-  body("documentNumber").isString().notEmpty().withMessage("documentNumber is required"),
+  body("documentNumber")
+    .isString()
+    .notEmpty()
+    .withMessage("Number of documentNumber is required"),
 
-  body("issuesPlace").isString().notEmpty().withMessage("issuesPlace is required"),
+  body("issuesPlace").isString().notEmpty().withMessage("Place issues is required"),
 
-  body("issuesDate").isISO8601().toDate().withMessage("issuesDate must be a valid date"),
+  body("issuesDate").notEmpty().withMessage("Issues Date is required"),
 
-  body("expiryDate").isISO8601().toDate().withMessage("expiryDate must be a valid date"),
+  body("expiryDate").notEmpty().withMessage("Expiry Date is required"),
 
-  body("homeAddress").isString().notEmpty().withMessage("homeAddress is required"),
+  body("homeAddress").isString().notEmpty().withMessage("Home Address is required"),
 
-  body("addressCountry").notEmpty().withMessage("addressCountry is required"),
+  body("addressCountry").notEmpty().withMessage("Address Country is required"),
 
-  body("addressState").isString().notEmpty().withMessage("addressState is required"),
+  body("addressState").isString().notEmpty().withMessage("Address State is required"),
 
-  body("addressCity").isString().notEmpty().withMessage("addressCity is required"),
+  body("addressCity").isString().notEmpty().withMessage("Address City is required"),
 
-  body("currentAddress").isBoolean().withMessage("currentAddress must be true or false"),
+  body("currentAddress").isBoolean().withMessage("Current Address must be true or false"),
 
-  body("occupation").isString().notEmpty().withMessage("occupation is required"),
+  body("occupation").isString().notEmpty().withMessage("Occupation is required"),
 
-  body("company").isString().notEmpty().withMessage("company is required"),
+  body("company").isString().notEmpty().withMessage("Company is required"),
 
   body("annualIncome")
     .isIn([
@@ -141,13 +131,6 @@ export const travelInformationValidator = [
 
   body("partOfTour").isBoolean().withMessage("partOfTour must be a boolean"),
 
-  body("transportationVehicle")
-    .notEmpty()
-    .withMessage("transportationVehicle is required")
-    .isString()
-    .withMessage("transportationVehicle must be a string"),
-
-  ,
   body("transportMode")
     .notEmpty()
     .withMessage("transportMode is required")
@@ -211,31 +194,27 @@ export const travelInformationValidator = [
 export const supportingDocumentValidator = [
   body("BIODATA").custom((_, { req }) => checkExceedSize("BIODATA", req)),
   body("PHOTOGRAPH").custom((_, { req }) => checkExceedSize("PHOTOGRAPH", req)),
-  ,
   body("CURRENT_LOCATION").custom((_, { req }) =>
     checkExceedSize("CURRENT_LOCATION", req)
   ),
-  ,
   body("BOOKING_CONFIRMATION").custom((_, { req }) =>
     checkExceedSize("BOOKING_CONFIRMATION", req)
   ),
-  ,
   body("PROOF_OF_ACCOMMODATION").custom((_, { req }) =>
     checkExceedSize("PROOF_OF_ACCOMMODATION", req)
   ),
-  ,
   body("FINANCIAL_EVIDENCE").custom((_, { req }) =>
     checkExceedSize("FINANCIAL_EVIDENCE", req)
   ),
-  ,
 ];
-const MAX_MB = 1024 * 1024 * 3;
+const MAX_MB = 1024 * 1024 * 5;
 const ALLOWED = ["image/jpeg", "image/png", "application/pdf"];
 function checkExceedSize(field: string, req: any) {
+  console.log(field, req.body);
   const file = req.files[field]?.[0];
 
   if (!file) throw new Error(`${field} is required!`);
-  if (file.size > MAX_MB) throw new Error(`${field} size exceeds 3MB`);
+  if (file.size > MAX_MB) throw new Error(`${field} size exceeds 5MB`);
   if (!ALLOWED.includes(file.mimeType) === false)
     throw new Error(`${field} has invalid type: ${file.mimetype}`);
 

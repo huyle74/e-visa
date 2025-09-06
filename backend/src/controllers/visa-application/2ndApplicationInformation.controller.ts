@@ -10,11 +10,20 @@ export const applicationInformationController = {
       if (checkValid) return responseFailed({ res, message: checkValid });
 
       const data = req.body;
-      const userId = req.query.userId;
+      const files = req.files as Express.Multer.File[] | any;
+      const applicationId = String(req.query.applicationId);
 
-      console.log(data);
+      const userId = String(req.query.userId);
+      const input = {
+        ...data,
+        applicationId,
+        biodata: files["biodata"]?.[0] ?? null,
+        photograph: files["photograph"]?.[0] ?? null,
+      };
 
-      const result = await applicationInformationService.create(data, `${userId}`);
+      console.log(files["biodata"]?.[0]);
+
+      const result = await applicationInformationService.create(input, userId);
       if (!result)
         return responseFailed({ res, message: "Failed to add application information" });
 

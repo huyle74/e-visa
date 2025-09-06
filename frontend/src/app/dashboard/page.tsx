@@ -26,14 +26,11 @@ const Dashboard = () => {
     (async () => {
       const user = getUserInfo();
       setUserName(user.lastName);
-      const endpoint =
-        backend_url +
-        "api" +
-        `/visa-application/list-visa-application` +
-        `/?userId=${user.id}`;
+      const endpoint = backend_url + "api" + `/visa-application/list-visa-application`;
       try {
         const response = await axios.get(endpoint, {
           headers: { Authorization: `Bearer ${user.accessToken}` },
+          params: { userId: user.id },
         });
         const data = response.data;
         if (data.success === "OK") {
@@ -48,8 +45,7 @@ const Dashboard = () => {
   }, []);
 
   const handleRowClick: GridEventListener<"rowClick"> = (param) => {
-    console.log(param.id);
-    router.push(`/apply?applicationId=${param.id}`);
+    router.push(`/dashboard/apply?applicationId=${param.id}`);
   };
 
   return (

@@ -1,8 +1,9 @@
 import multer from "multer";
+import { Request } from "express";
 import path from "path";
 import fs from "fs";
 
-const MAX_MB = 1024 * 1024 * 3;
+const MAX_MB = 1024 * 1024 * 5;
 const ALLOWED = ["image/jpeg", "image/png", "application/pdf"];
 const document = [
   "BIODATA",
@@ -13,18 +14,58 @@ const document = [
   "FINANCIAL_EVIDENCE",
 ];
 
-const uploadDir = path.join(__dirname, "../uploads");
+const uploadDir = path.resolve(process.cwd(), "uploads");
+
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+const checkExistedFile = async (dir: string, prefix: string) => {
+  try {
+    const names = await fs.promises.readdir(dir, { withFileTypes: true });
+
+    const result = names
+      .filter(({ name }, i) => {
+        return name.startsWith(prefix);
+      })
+      .map(({ name }) => {
+        return path.join(uploadDir, name);
+      });
+    await Promise.all(
+      result.map((file) => {
+        return fs.promises.unlink(file);
+      })
+    );
+    return result;
+  } catch (err: any) {
+    if (err.code === "ENOENT") return [];
+    throw err;
+  }
+};
+
 const diskStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (req: Request, file, cb) => {
     cb(null, uploadDir);
   },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + "-" + file.originalname);
+  filename: async (req: Request, file, cb) => {
+    try {
+      const { applicationId, section = "none" } = req.query;
+      const fieldName = file.fieldname;
+      const filename = fieldName + "-" + section + "-" + applicationId;
+
+      fs.promises
+        .mkdir(uploadDir, { recursive: true })
+        .then(() =>
+          checkExistedFile(
+            uploadDir,
+            `${fieldName + "-" + section + "-" + applicationId}`
+          )
+        )
+        .then(() => cb(null, filename + "-" + file.originalname))
+        .catch((err) => cb(err, ""));
+    } catch (error) {
+      cb(error as Error, "");
+    }
   },
 });
 
@@ -38,9 +79,13 @@ const fileFilter: multer.Options["fileFilter"] = (req, file, cb) => {
 
 const memoryStorage = multer.memoryStorage();
 
-export const uploadDisk = multer({
+export const receiveFiles = multer({
   storage: diskStorage,
   fileFilter,
   limits: { fileSize: MAX_MB },
 });
 export const uploadMemory = multer({ storage: memoryStorage, fileFilter });
+
+export const uploadDisk = multer({
+  storage: diskStorage,
+});

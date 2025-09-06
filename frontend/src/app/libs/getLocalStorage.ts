@@ -1,4 +1,6 @@
 export const getUserInfo = () => {
-  const storage = localStorage?.getItem("app:user") || "";
-  return JSON.parse(storage);
+  if (typeof window !== "undefined") {
+    const storage = localStorage?.getItem("app:user") || "";
+    return JSON.parse(storage);
+  }
 };

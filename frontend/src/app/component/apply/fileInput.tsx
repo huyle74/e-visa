@@ -1,4 +1,4 @@
-import { useRef, forwardRef, useEffect, ChangeEvent, useState, DragEvent } from "react";
+import { forwardRef, useEffect, ChangeEvent, useState, DragEvent } from "react";
 import { Button, Box, styled, IconButton, Tooltip, Modal } from "@mui/material";
 import EditNoteRoundedIcon from "@mui/icons-material/EditNoteRounded";
 import PreviewIcon from "@mui/icons-material/Preview";
@@ -10,6 +10,8 @@ interface FileInputProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   fileValue: FileInputDto;
   handleDropFile: (e: DragEvent<HTMLInputElement>) => void;
+  name: string;
+  disabled: boolean;
 }
 
 const VisuallyHiddenInput = styled("input")({
@@ -42,7 +44,7 @@ const style = {
 };
 
 const FileInput = forwardRef<HTMLInputElement, FileInputProps>(function FileInput(
-  { onChange, title, fileValue, handleDropFile },
+  { onChange, title, fileValue, handleDropFile, name, disabled },
   ref
 ) {
   const [open, setOpen] = useState<boolean>(false);
@@ -61,7 +63,6 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(function FileInpu
 
   const handleDragOVer = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    console.log("dragged");
   };
 
   return (
@@ -99,6 +100,8 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(function FileInpu
                   ref={ref}
                   accept=".png, .jpg, .jpeg, .pdf"
                   required
+                  name={name}
+                  disabled={disabled}
                 />
               </Button>
             </Box>
@@ -130,6 +133,7 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(function FileInpu
                     ref={ref}
                     accept=".png, .jpg, .jpeg, .pdf"
                     required
+                    name={name}
                   />
                   <EditNoteRoundedIcon color="primary" fontSize="large" />
                 </IconButton>
@@ -150,7 +154,7 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(function FileInpu
                       style={{
                         objectFit: "cover",
                         width: "100%",
-                        height: "100%",
+                        height: "40%",
                       }}
                     />
                   ) : (

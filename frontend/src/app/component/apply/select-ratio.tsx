@@ -3,18 +3,19 @@ import { ChangeEvent } from "react";
 
 interface RadioComponProps {
   labels: string[];
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>, name: string, index?: number) => void;
   title: string;
+  name: string;
 }
 
-const RadioComponent = ({ labels, onChange, title }: RadioComponProps) => {
+const RadioComponent = ({ labels, onChange, title, name }: RadioComponProps) => {
   return (
     <Box sx={{ p: 1.5 }}>
       <Box sx={{ fontWeight: 900, mb: 1 }}>
         {title}
         <span style={{ fontWeight: 1000, color: "red", marginLeft: "2px" }}>*</span>
       </Box>
-      <RadioGroup row onChange={onChange}>
+      <RadioGroup row onChange={onChange} name={name}>
         {labels.map((label) => {
           return (
             <FormControlLabel
