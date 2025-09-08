@@ -1,7 +1,5 @@
 import { TravelInformationInputDto } from "@/dto/visaApply/visaApply.dto";
-import {
-  travelInfoRepos,
-} from "@/repositories/visaApplication.repository";
+import { travelInfoRepos } from "@/repositories/visaApplication.repository";
 import userRepos from "@/repositories/user.repository";
 
 const travelInformationService = {
@@ -13,9 +11,14 @@ const travelInformationService = {
     return updateData;
   },
   async findOne(applicationId: string) {
-    const row = await travelInfoRepos.findOne(applicationId);
-    if (!row) throw new Error("Cannot find this application form");
-    return row;
+    const rows = await travelInfoRepos.findOne(applicationId);
+
+    console.log(applicationId);
+
+    if (!rows) throw new Error("Cannot find this application form");
+    const { id, ...rest } = rows;
+
+    return rest;
   },
 };
 

@@ -1,15 +1,23 @@
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Box, TextField, Button, Divider } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { white, secondary } from "@/app/libs/color-config";
-import { ReactNode } from "react";
 
 interface actionForm {
   submit: (e: React.FormEvent<HTMLFormElement>) => void;
   loading: boolean;
   errorMessage: string;
+  googleApi: string;
 }
 
-export default function SigninForm({ submit, loading, errorMessage }: actionForm) {
+export default function SigninForm({
+  submit,
+  loading,
+  errorMessage,
+  googleApi,
+}: actionForm) {
+  const router = useRouter();
   const textFieldStyles = {
     mt: 2,
   };
@@ -104,13 +112,16 @@ export default function SigninForm({ submit, loading, errorMessage }: actionForm
         </Box>
 
         <Box sx={{ display: "flex", mt: 1, mb: 1 }}>
-          <Button
-            variant="contained"
-            sx={{ m: "auto", width: "40%" }}
-            startIcon={<GoogleIcon />}
-          >
-            Google
-          </Button>
+          <Link href={googleApi} style={{ margin: "auto", width: "40%" }}>
+            <Button
+              variant="contained"
+              startIcon={<GoogleIcon />}
+              sx={{ m: "auto", width: "100%" }}
+              color="secondary"
+            >
+              Google
+            </Button>
+          </Link>
         </Box>
 
         <Box sx={{ margin: "1rem 3rem 1rem 3rem" }}>
@@ -118,7 +129,13 @@ export default function SigninForm({ submit, loading, errorMessage }: actionForm
         </Box>
 
         <Box sx={{ margin: "1rem 3rem 2rem 3rem" }}>
-          <Button variant="outlined" fullWidth sx={{ fontWeight: 900 }} color="secondary">
+          <Button
+            variant="outlined"
+            fullWidth
+            sx={{ fontWeight: 900 }}
+            color="secondary"
+            onClick={() => router.push("/signup")}
+          >
             Create Account
           </Button>
         </Box>

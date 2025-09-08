@@ -82,7 +82,7 @@ applicationRouter.post(
     }
     next(req);
   },
-  // supportingDocumentValidator,
+  supportingDocumentValidator,
   supportingDocumentController.fourthStepSupportingDocument
 );
 applicationRouter.post(

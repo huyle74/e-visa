@@ -247,6 +247,19 @@ export const travelInfoRepos = {
     try {
       const find = await prisma.travelInformation.findUnique({
         where: { applicationId },
+        include: {
+          accommodations: {
+            select: {
+              id: false,
+              type: true,
+              name: true,
+              street: true,
+              city: true,
+              contactNo: true,
+              duration: true,
+            },
+          },
+        },
       });
       return find;
     } catch (error) {

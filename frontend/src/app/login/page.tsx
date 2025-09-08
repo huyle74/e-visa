@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import axios from "axios";
@@ -16,6 +16,20 @@ export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [errMessage, setErrMessage] = useState<string>("");
+  const [googleApi, setGoogleApi] = useState<string>("");
+
+  useEffect(() => {
+    const endpoint = backend_url + "api/login-google/login-url";
+    (async () => {
+      try {
+        const response = await axios.get(endpoint);
+        console.log(response.data.data);
+        if (response.data) setGoogleApi(response.data.data);
+      } catch (error: any) {
+        console.log(error.response);
+      }
+    })();
+  }, []);
 
   const handleSumbitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,10 +45,7 @@ export default function LoginPage() {
       if (response.data.success == "OK") {
         console.log(response.data);
         const data = response.data.data;
-        localStorage.setItem(
-          KEY,
-          JSON.stringify({ ...data, lastUpdatedAt: Date.now() })
-        );
+        localStorage.setItem(KEY, JSON.stringify({ ...data, lastUpdatedAt: Date.now() }));
 
         setLoading(false);
         router.push("/dashboard");
@@ -49,8 +60,13 @@ export default function LoginPage() {
 
   return (
     <Box>
-      <HeaderMenu loginDisable={true} createAccDisable={false} />
-      <SigninForm submit={handleSumbitForm} loading={loading} errorMessage={errMessage} />
+      <HeaderMenu loginDisable={true} createAccDisable={false} logged={false} />
+      <SigninForm
+        submit={handleSumbitForm}
+        loading={loading}
+        errorMessage={errMessage}
+        googleApi={googleApi}
+      />
       <Footer />
     </Box>
   );

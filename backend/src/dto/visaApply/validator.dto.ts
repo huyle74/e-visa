@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 
 export const eligibiltyValidator = [
   body("applyAt").notEmpty().withMessage("Apply place is required"),
@@ -11,8 +11,7 @@ export const eligibiltyValidator = [
 ];
 
 export const applicationInformationValidator = [
-  body("applicationId").notEmpty().withMessage("applicationId is required"),
-
+  query("applicationId").notEmpty().withMessage("Application ID is required"),
   body("title").notEmpty().withMessage("Title is required"),
 
   body("sex").notEmpty().withMessage("SEX is required"),
@@ -210,7 +209,6 @@ export const supportingDocumentValidator = [
 const MAX_MB = 1024 * 1024 * 5;
 const ALLOWED = ["image/jpeg", "image/png", "application/pdf"];
 function checkExceedSize(field: string, req: any) {
-  console.log(field, req.body);
   const file = req.files[field]?.[0];
 
   if (!file) throw new Error(`${field} is required!`);

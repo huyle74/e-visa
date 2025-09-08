@@ -1,6 +1,9 @@
-import { Button, Box, IconButton, Tooltip } from "@mui/material";
+import { useState } from "react";
+import { Button, Box, IconButton, Tooltip, Modal, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
+import { deleteUserInfo } from "@/app/libs/getLocalStorage";
 
 interface ButtonProps {
   disabledDashboard?: boolean;
@@ -13,6 +16,17 @@ const ButtonMenuDashboard = ({
   disableAccountButton = false,
   userName,
 }: ButtonProps) => {
+  const router = useRouter();
+  const [open, setOpen] = useState<boolean>(false);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleLogout = () => {
+    deleteUserInfo();
+    router.push("/");
+  };
+
   return (
     <Box sx={{ display: "flex", alignItems: "center", marginLeft: "auto", pr: 2 }}>
       <Button
@@ -20,6 +34,7 @@ const ButtonMenuDashboard = ({
         color="secondary"
         disabled={disabledDashboard}
         sx={{ mr: 1, fontWeight: 1000 }}
+        onClick={() => router.push("/dashboard")}
       >
         DASHBOARD
       </Button>
@@ -29,12 +44,45 @@ const ButtonMenuDashboard = ({
         </Button>
       </Tooltip>
       <Tooltip title="Logout">
-        <IconButton disabled={disableAccountButton}>
+        <IconButton disabled={disableAccountButton} onClick={handleOpen}>
           <ExitToAppRoundedIcon />
         </IconButton>
       </Tooltip>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Are you sure to log out?
+          </Typography>
+          <Box sx={{ pt: 3, ml: "auto" }}>
+            <Button variant="contained" sx={{ mr: 1 }} onClick={handleLogout}>
+              Yes
+            </Button>
+            <Button variant="contained" color="secondary" onClick={handleClose}>
+              No
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
 };
 
 export default ButtonMenuDashboard;
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  display: "flex",
+  flexDirection: "column",
+};

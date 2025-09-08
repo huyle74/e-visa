@@ -1,26 +1,51 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import axios from "axios";
+import { useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 import { Box } from "@mui/material";
+import { backend_url } from "./server-side/envLoader";
 import HeaderMenu from "./component/menu/header-menu";
 import Footer from "./component/footer/footer";
 import { logoWhite, backgroundImage } from "./libs/image-config";
 import { primary, white } from "./libs/color-config";
+import { getUserInfo } from "./libs/getLocalStorage";
+
+const KEY = "app:user";
 
 export default function Home() {
-  const steps = [
-    "Create an account",
-    "Fill in an application form",
-    "Upload supporting documents",
-    "Pay visa fee",
-    "Wait for the visa \nto be processed",
-    "e-Visa confirmation\n document sent by email",
-  ];
+  const [user, setUser] = useState<any>(null);
+  const param = useSearchParams();
+
+  useEffect(() => {
+    const userId = param.get("user");
+    if (userId) {
+      (async () => {
+        const endpoint = backend_url + "api" + "/login-google/login-callback";
+        const { data } = await axios.post(
+          endpoint,
+          {},
+          {
+            params: { userId },
+            withCredentials: true,
+          }
+        );
+        console.log(data);
+        const user = data.data;
+        localStorage.setItem(KEY, JSON.stringify({ ...user, lastUpdatedAt: Date.now() }));
+        setUser(user);
+      })();
+    } else {
+      const userInfor = getUserInfo();
+      if (userInfor) setUser(userInfor);
+    }
+  }, []);
 
   return (
     <Box>
-      <HeaderMenu />
+      <HeaderMenu logged={user !== null} userName={user?.lastName || ""} />
       <Box>
         <Box sx={{ position: "relative" }}>
           <img className={styles.backgroundImage} src={backgroundImage} alt="backdrop" />
@@ -64,3 +89,12 @@ export default function Home() {
     </Box>
   );
 }
+
+const steps = [
+  "Create an account",
+  "Fill in an application form",
+  "Upload supporting documents",
+  "Pay visa fee",
+  "Wait for the visa \nto be processed",
+  "e-Visa confirmation\n document sent by email",
+];

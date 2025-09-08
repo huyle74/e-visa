@@ -2,9 +2,7 @@ import { Response, Request } from "express";
 import { validationResponse } from "@/utils/validateResponse.helper";
 import { responseError, responseFailed, responseSuccess } from "@/utils/response.helper";
 import supportingDocumentService from "@/services/visa-application/4thSupportingDocument.service";
-import path from "path";
 import fs from "fs";
-import mime from "mime";
 
 const supportingDocumentController = {
   async fourthStepSupportingDocument(req: Request, res: Response) {
@@ -38,6 +36,8 @@ const supportingDocumentController = {
       const { applicationId, type } = req.query;
 
       const file = await supportingDocumentService.getFile(String(applicationId), type);
+      if (!file) return responseFailed({ res, data: [] });
+
       const absPath = file.storageKey;
       const contentType = file.mimeType;
 

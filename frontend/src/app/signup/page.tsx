@@ -32,7 +32,7 @@ export default function Signup() {
 
   return (
     <Box>
-      <HeaderMenu createAccDisable={true} loginDisable={false} />
+      <HeaderMenu createAccDisable={true} loginDisable={false} logged={false} />
       <CreateAccoutForm countries={allCountries} />
       <Footer />
     </Box>

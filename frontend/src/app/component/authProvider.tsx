@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { backend_url } from "../server-side/envLoader";
+import { deleteUserInfo } from "../libs/getLocalStorage";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -23,13 +24,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         }
         const results = JSON.parse(storage);
         const accessToken = results?.accessToken;
-        const response = await axios.post(endpoint, { accessToken });
-
-        if (response.data.success === "Error") {
-          router.push("/login");
-        }
+        await axios.post(endpoint, { accessToken });
       } catch (error: any) {
         console.log(error);
+        deleteUserInfo();
         router.push("/login");
       }
     })();

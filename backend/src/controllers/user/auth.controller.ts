@@ -14,11 +14,7 @@ const loginController = async (req: Request, res: Response) => {
 
     if (!loginResponse) return responseFailed({ res, message: "Invalid credentials" });
 
-    return res.json({
-      message: "Login Successfully!",
-      data: loginResponse,
-      success: "OK",
-    });
+    return responseSuccess({ res, message: "Login Successfully!", data: loginResponse });
   } catch (error: any) {
     console.error(error);
     const message = error?.message;

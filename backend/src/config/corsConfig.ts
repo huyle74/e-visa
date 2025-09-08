@@ -15,6 +15,7 @@ const corsOption: CorsOptions = {
     }
   },
   exposedHeaders: ["X-File-Name", "Content-Type"],
+  credentials: true,
 };
 
 export default corsOption;

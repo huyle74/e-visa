@@ -25,8 +25,7 @@ export const travelInformationController = {
   },
   async findOne(req: Request, res: Response) {
     try {
-      const { applicationId } = req.body;
-      console.log(applicationId);
+      const applicationId = String(req.query.applicationId);
       const data = await travelInformationService.findOne(applicationId);
       if (!data) return responseFailed({ res });
 

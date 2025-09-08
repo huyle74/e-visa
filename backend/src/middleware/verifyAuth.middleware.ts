@@ -13,8 +13,8 @@ export default function authenticationMiddleware() {
           res,
           message: '"Missing or invalid Authorization header"',
         });
-
       const decode = verify(token);
+
       (req as any).user = decode;
       next();
     } catch (error) {

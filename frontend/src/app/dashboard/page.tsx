@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Box, Button, IconButton } from "@mui/material";
+import { Box } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { DataGrid, GridColDef, GridEventListener } from "@mui/x-data-grid";
+import { useDemoData } from "@mui/x-data-grid-generator";
+
 import MenuDashboard from "../component/menu/header-menu-dashboard";
 import StateBar from "../component/apply/state-bar";
 import Footer from "../component/footer/footer";
@@ -21,6 +23,7 @@ const Dashboard = () => {
   });
   const [rows, setRows] = useState<Row[]>([]);
   const [userName, setUserName] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
@@ -38,8 +41,10 @@ const Dashboard = () => {
           setApplyInfo((prev) => ({ ...prev, totalApplied: data.data.length }));
           setRows(data.data);
         }
+        setLoading(false);
       } catch (error: any) {
         console.log(error.response);
+        setLoading(false);
       }
     })();
   }, []);
@@ -71,6 +76,13 @@ const Dashboard = () => {
           pageSizeOptions={[10]}
           checkboxSelection
           disableRowSelectionOnClick
+          loading={loading}
+          slotProps={{
+            loadingOverlay: {
+              variant: "linear-progress",
+              noRowsVariant: "skeleton",
+            },
+          }}
         />
       </Box>
       <Footer />

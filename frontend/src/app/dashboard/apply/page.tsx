@@ -24,6 +24,7 @@ import { transportationVehicle } from "@/app/libs/entries-input-visa";
 import { backend_url } from "@/app/server-side/envLoader";
 import { getUserInfo } from "@/app/libs/getLocalStorage";
 import { getCountriesData } from "@/app/server-side/static-data";
+import Footer from "@/app/component/footer/footer";
 
 const prefix = backend_url + "api" + "/visa-application";
 
@@ -47,16 +48,14 @@ const ApplyNewVisa = () => {
   const search = useSearchParams();
   const applyId = search.get("applicationId");
 
-  const [accessToken, setAccessToken] = useState(user.accessToken);
-  const [id, setId] = useState(user.id);
-  const [applicationId, setApplicationId] = useState<string | null>(
-    "e5ca6d9c-ae58-4892-b7ef-31323f5a708b"
-  );
+  const [accessToken, setAccessToken] = useState(user?.accessToken);
+  const [id, setId] = useState(user?.id);
+  const [applicationId, setApplicationId] = useState<string | null>(applyId);
   const [allCountries, setAllCountries] = useState();
   const [disabled, setDisable] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [currentStep, setCurrentStep] = useState<number>(3);
-  const [stepStatus, setStepStatus] = useState<Stepper>(steps[3]);
+  const [currentStep, setCurrentStep] = useState<number>(0);
+  const [stepStatus, setStepStatus] = useState<Stepper>(steps[0]);
   const [modal, setModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState({ title: "", description: "" });
   const [eligibilityData, setEligibilityData] = useState<EligibilityInputDto>({
@@ -157,12 +156,14 @@ const ApplyNewVisa = () => {
 
   const getData = async (url: string, params: any = {}) => {
     try {
-      const response = await axios.post(url, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        params: { ...params, userId: id },
-      });
+      const response = await axios.post(
+        url,
+        {},
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          params: { ...params, userId: id },
+        }
+      );
       if (response.data.success === "OK") {
         return response.data.data;
       }
@@ -187,9 +188,51 @@ const ApplyNewVisa = () => {
         const endpoint = prefix + "/find-application-information-form";
         (async () => {
           const applicationInformation = await getData(endpoint, { applicationId });
-          if (applicationInformation) setApplyInfoData(applicationInformation);
+          console.log(applicationInformation);
+          if (applicationInformation) {
+            const { biodata, photograph, ...rest } = applicationInformation;
+
+            if (biodata.data || photograph.data) {
+              const biodataBlob = new File(
+                [Uint8Array.from(atob(biodata.data), (c) => c.charCodeAt(0))],
+                biodata.name,
+                {
+                  type: biodata.type,
+                }
+              );
+              const photographBlob = new File(
+                [Uint8Array.from(atob(photograph.data), (c) => c.charCodeAt(0))],
+                photograph.name,
+                {
+                  type: photograph.type,
+                }
+              );
+              setApplyInfoData((prev) => ({
+                ...prev,
+                ...rest,
+                biodata: biodataBlob,
+                photograph: photographBlob,
+              }));
+            } else {
+              setApplyInfoData((prev) => ({
+                ...prev,
+                ...rest,
+                biodata: null,
+                photograph: null,
+              }));
+            }
+          }
         })();
       }
+
+      if (currentStep === 2) {
+        (async () => {
+          const endpoint = prefix + "/find-travel-information-form";
+          const travelInformation = await getData(endpoint, { applicationId });
+          if (travelInformation) setTravelInfo(travelInformation);
+        })();
+      }
+
       if (currentStep === 3) {
         const endpoint = prefix + "/get-file-supporting-document";
         (async () => {
@@ -223,9 +266,11 @@ const ApplyNewVisa = () => {
                 setSupportingDoc((prev) => ({ ...prev, [docs]: file }));
               })
             );
+            setLoading(false);
+            setDisable(false);
           } catch (error: any) {
             const message = error.response;
-            console.log(message);
+            console.error(message);
             setLoading(false);
             setDisable(false);
           }
@@ -409,6 +454,7 @@ const ApplyNewVisa = () => {
   ) => {
     try {
       e.preventDefault();
+      console.log(applyInfoData);
       const form = formConvertApplicationInformation(applyInfoData);
       setLoading(true);
       setDisable(true);
@@ -427,7 +473,7 @@ const ApplyNewVisa = () => {
         console.log(repsonse.data);
         setLoading(false);
         setDisable(false);
-        // triggerNext();
+        triggerNext();
       }
     } catch (error: any) {
       const message = error.response.data.message;
@@ -511,6 +557,8 @@ const ApplyNewVisa = () => {
       if (response.data.success === "OK") {
         console.log(response.data);
         triggerNext();
+        setLoading(false);
+        setDisable(false);
       }
     } catch (error: any) {
       const message = error.response.data.message;
@@ -540,7 +588,7 @@ const ApplyNewVisa = () => {
       });
       if (response.data.success === "OK") {
         console.log(response.data);
-        // triggerNext();
+        triggerNext();
         setLoading(false);
         setDisable(false);
       }
@@ -588,6 +636,9 @@ const ApplyNewVisa = () => {
                 onclickNext={handleSubmitApplicationInformation}
                 onClickBack={handleBackButton}
                 countries={allCountries}
+                onChangeCityBirth={handleOnchangeApplicationInformation}
+                onChangeEmail={handleOnchangeApplicationInformation}
+                onChangeHomeAddress={handleOnchangeApplicationInformation}
                 onChangeNationality={handleOnchangeApplicationInformation}
                 onChangeBirthNation={handleOnchangeApplicationInformation}
                 onChangeDocumentType={handleOnchangeApplicationInformation}
@@ -682,6 +733,7 @@ const ApplyNewVisa = () => {
           onClose={handleOnCloseModal}
         />
       </Box>
+      <Footer />
     </AuthProvider>
   );
 };

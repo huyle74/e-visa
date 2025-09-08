@@ -21,8 +21,6 @@ export const applicationInformationController = {
         photograph: files["photograph"]?.[0] ?? null,
       };
 
-      console.log(files["biodata"]?.[0]);
-
       const result = await applicationInformationService.create(input, userId);
       if (!result)
         return responseFailed({ res, message: "Failed to add application information" });
@@ -37,8 +35,7 @@ export const applicationInformationController = {
 
   async findOne(req: Request, res: Response) {
     try {
-      const { applicationId } = req.body;
-      console.log(applicationId);
+      const applicationId = String(req.query.applicationId);
       const data = await applicationInformationService.findOne(applicationId);
       if (!data) return responseFailed({ res });
 

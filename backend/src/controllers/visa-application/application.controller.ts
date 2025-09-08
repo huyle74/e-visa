@@ -12,10 +12,10 @@ export const visaApplicationController = {
       console.log("trigger");
       const user = (req as any).user;
 
-      const userId = req.query.userId;
+      const userId = String(req.query.userId);
       if (!userId) return responseError({ res, message: "User ID is missing" });
 
-      const result = await visaApplicationService(`${userId}`, user);
+      const result = await visaApplicationService(userId, user);
       if (!result)
         return responseFailed({ res, message: "Failed to create new application" });
 

@@ -138,6 +138,7 @@ const TravelInformation = ({
             placeholder={`Enter your ${vehicle.placeholder}`}
             requiredMasked={true}
             name="vehicleNumber"
+            value={data.vehicleNumber || ""}
           />
         </InputContainer>
 
@@ -230,6 +231,7 @@ const AccommodationForm = ({
           onChange={(e) => onChangeAccommodationType(e, index)}
           title="Accommodation Type"
           name="type"
+          value={data.type}
         />
       </InputContainer>
       <InputContainer>
@@ -239,6 +241,7 @@ const AccommodationForm = ({
           onChange={(e) => onChangeName(e, index)}
           requiredMasked={true}
           name="name"
+          value={data.name}
         />
       </InputContainer>
 
@@ -249,6 +252,7 @@ const AccommodationForm = ({
           onChange={(e) => onChangeAddress(e, index)}
           requiredMasked={true}
           name="street"
+          value={data.street}
         />
         <AutoCompleteForm
           title="City"
@@ -275,6 +279,7 @@ const AccommodationForm = ({
           requiredMasked={true}
           type="number"
           name="duration"
+          value={data.duration}
         />
       </InputContainer>
     </Box>

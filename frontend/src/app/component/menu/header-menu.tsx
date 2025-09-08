@@ -9,13 +9,16 @@ interface HeaderMenuProps {
   createAccDisable?: boolean;
   displayDashboard?: boolean;
   dashboardDisable?: boolean;
+  logged: boolean;
+  userName?: string;
 }
 
 export default function HeaderMenu({
   loginDisable = false,
   createAccDisable = false,
   displayDashboard = false,
-  dashboardDisable = true,
+  logged,
+  userName,
 }: HeaderMenuProps) {
   return (
     <Box
@@ -31,7 +34,8 @@ export default function HeaderMenu({
       <ButtonMenuHomePage
         disabledCreateAccount={createAccDisable}
         disabledSignIn={loginDisable}
-        loggedIn={displayDashboard}
+        loggedIn={logged}
+        userName={userName}
       />
     </Box>
   );

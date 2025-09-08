@@ -10,9 +10,19 @@ const findOne = async (id: string): Promise<User | null> => {
   }
 };
 
-const findByEmail = async (email: string): Promise<User | null> => {
+const findByEmail = async (email: string) => {
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        password: false,
+        firstName: true,
+        lastName: true,
+        email: true,
+        verifyToken: true,
+      },
+    });
     return user;
   } catch (error) {
     throw new Error("Cannot find user by email");

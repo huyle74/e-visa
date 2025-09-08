@@ -13,6 +13,7 @@ interface TextFieldProps {
   requiredMasked?: boolean;
   type?: React.HTMLInputTypeAttribute;
   name: string;
+  value?: string;
 }
 
 const TextFieldApply = ({
@@ -22,6 +23,7 @@ const TextFieldApply = ({
   requiredMasked = false,
   type,
   name,
+  value,
 }: TextFieldProps) => {
   return (
     <Box sx={{ width: "100%", p: 1.5 }}>
@@ -51,6 +53,7 @@ const TextFieldApply = ({
           fullWidth
           type={type}
           name={name}
+          value={value}
         />
       </Box>
     </Box>

@@ -54,6 +54,10 @@ interface ApplicationInforProps {
   onChangeDocumentType: (e: E, name: string) => void;
   onChangeNationality: (e: E, name: string) => void;
 
+  onChangeEmail: Text;
+  onChangeCityBirth: Text;
+  onChangeHomeAddress: Text;
+
   onChangeIssuedDate: PickDate;
   onChangeBirthDate: PickDate;
   onChangeExpiredDate: PickDate;
@@ -64,9 +68,10 @@ interface ApplicationInforProps {
   onChangeOccupation: (e: E, name: string) => void;
   onChangeCompanyPlace: Text;
   onChangeAnnualIncome: (e: E, name: string) => void;
-  countries: any;
+
   onclickNext: MouseEventHandler<HTMLButtonElement>;
   onClickBack: () => void;
+  countries: any;
 
   // FILES
   onChangeBiodata: (e: ChangeEvent<HTMLInputElement>, name: string) => void;
@@ -103,6 +108,9 @@ const ApplicationInformation = ({
   onClickBack,
   onChangeMaritalStatus,
   onChangeDocumentType,
+  onChangeEmail,
+  onChangeCityBirth,
+  onChangeHomeAddress,
 
   // FILES
   onChangeBiodata,
@@ -120,8 +128,8 @@ const ApplicationInformation = ({
   });
   const [statesAddress, setStatesAddress] = useState<string[]>([]);
   const [citiesAddress, setCitiesAddress] = useState<string[]>([]);
-  const [previewBiodata, setPreviewBiodata] = useState<string>("");
-  const [previewPhotograph, setPreviewPhotograph] = useState<string>("");
+  const [previewBiodata, setPreviewBiodata] = useState<string | undefined>("");
+  const [previewPhotograph, setPreviewPhotograph] = useState<string | undefined>("");
 
   useEffect(() => {
     (async () => {
@@ -157,7 +165,7 @@ const ApplicationInformation = ({
 
   useEffect(() => {
     if (!dataProps.biodata) {
-      setPreviewBiodata("");
+      setPreviewBiodata(undefined);
       return;
     } else {
       const url = URL.createObjectURL(dataProps.biodata);
@@ -170,11 +178,10 @@ const ApplicationInformation = ({
 
   useEffect(() => {
     if (!dataProps.photograph) {
-      setPreviewPhotograph("");
+      setPreviewPhotograph(undefined);
       return;
     }
     const url = URL.createObjectURL(dataProps.photograph);
-    console.log(url);
     setPreviewPhotograph(url);
     return () => {
       URL.revokeObjectURL(url);
@@ -197,14 +204,20 @@ const ApplicationInformation = ({
     e.preventDefault();
   };
 
-  const PreviewDisplay = ({ file, preview }: { file: File; preview: string | null }) => {
+  const PreviewDisplay = ({
+    file,
+    preview = undefined,
+  }: {
+    file: File;
+    preview: string | undefined;
+  }) => {
     return (
       <div style={{ display: "flex", width: "100%", height: "100%" }}>
         {file && file.type === "application/pdf" ? (
-          <iframe src={preview || ""} style={{ width: "100%", height: "400px" }} />
+          <iframe src={preview} style={{ width: "100%", height: "400px" }} />
         ) : (
           <img
-            src={preview || ""}
+            src={preview}
             alt={file.name}
             style={{
               objectFit: "cover",
@@ -371,12 +384,14 @@ const ApplicationInformation = ({
             title="First name"
             placeholder="Enter your first name"
             onChange={(e) => onChangeFirstName(e, "firstName")}
+            value={dataProps.firstName}
           />
           <TextFieldApply
             name="middleName"
             title="Middle name (If applicable)"
             placeholder="Enter your middle name"
             onChange={(e) => onChangeMiddletName(e, "middleName")}
+            value={dataProps.middleName}
           />
           <TextFieldApply
             name="familyName"
@@ -384,6 +399,7 @@ const ApplicationInformation = ({
             requiredMasked={true}
             placeholder="Enter your family name"
             onChange={(e) => onChangeFamilyName(e, "familyName")}
+            value={dataProps.familyName}
           />
         </InputContainer>
 
@@ -397,7 +413,8 @@ const ApplicationInformation = ({
             name="email"
             title="Email"
             placeholder="Enter your Email"
-            onChange={(e) => onChangeFamilyName(e, "email")}
+            onChange={(e) => onChangeEmail(e, "email")}
+            value={dataProps.email}
           />
         </InputContainer>
 
@@ -462,8 +479,9 @@ const ApplicationInformation = ({
             name="cityBirth"
             title="City of birth"
             placeholder="Enter your City of birth"
-            onChange={(e) => onChangeFamilyName(e, "cityBirth")}
+            onChange={(e) => onChangeCityBirth(e, "cityBirth")}
             requiredMasked={true}
+            value={dataProps.cityBirth}
           />
         </InputContainer>
 
@@ -504,6 +522,7 @@ const ApplicationInformation = ({
             placeholder="Enter your Travel Document No."
             requiredMasked={true}
             onChange={(e) => onChangeDocumentNo(e, "documentNumber")}
+            value={dataProps.documentNumber}
           />
         </InputContainer>
         <InputContainer width={66.6}>
@@ -513,6 +532,7 @@ const ApplicationInformation = ({
             placeholder="Enter your Place of issue"
             requiredMasked={true}
             onChange={(e) => onChangeIssuedPlace(e, "issuesPlace")}
+            value={dataProps.issuesPlace}
           />
         </InputContainer>
 
@@ -539,8 +559,9 @@ const ApplicationInformation = ({
             name="homeAddress"
             title="Home address"
             placeholder="Enter your Home address"
-            onChange={(e) => onChangeFamilyName(e, "homeAddress")}
+            onChange={(e) => onChangeHomeAddress(e, "homeAddress")}
             requiredMasked={true}
+            value={dataProps.homeAddress}
           />
         </InputContainer>
 
@@ -605,6 +626,7 @@ const ApplicationInformation = ({
             requiredMasked={true}
             placeholder="Enter your Company/Institute"
             onChange={(e) => onChangeCompanyPlace(e, "company")}
+            value={dataProps.company}
           />
           <AutoCompleteForm
             title="Annual income"
