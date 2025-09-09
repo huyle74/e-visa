@@ -106,7 +106,10 @@ export default function SigninForm({
           </Button>
         </form>
         <Box sx={{ display: "flex" }}>
-          <Button sx={{ m: "auto", fontWeight: 900, fontSize: "0.7rem" }}>
+          <Button
+            sx={{ m: "auto", fontWeight: 900, fontSize: "0.7rem" }}
+            onClick={() => router.push("/forgot-password")}
+          >
             Forgot password?
           </Button>
         </Box>

@@ -3,6 +3,7 @@
 import { useState, ChangeEvent, useEffect, DragEvent, MouseEventHandler } from "react";
 import { useSearchParams } from "next/navigation";
 import { Box, SelectChangeEvent, SwitchProps } from "@mui/material";
+import { useRouter } from "next/navigation";
 import type { Dayjs } from "dayjs";
 import axios from "axios";
 import AuthProvider from "@/app/component/authProvider";
@@ -25,6 +26,7 @@ import { backend_url } from "@/app/server-side/envLoader";
 import { getUserInfo } from "@/app/libs/getLocalStorage";
 import { getCountriesData } from "@/app/server-side/static-data";
 import Footer from "@/app/component/footer/footer";
+import { reverseLableToValue, convertToLabel } from "@/app/libs/convertLabel";
 
 const prefix = backend_url + "api" + "/visa-application";
 
@@ -47,6 +49,8 @@ const ApplyNewVisa = () => {
   const user = getUserInfo();
   const search = useSearchParams();
   const applyId = search.get("applicationId");
+
+  const router = useRouter();
 
   const [accessToken, setAccessToken] = useState(user?.accessToken);
   const [id, setId] = useState(user?.id);
@@ -169,7 +173,7 @@ const ApplyNewVisa = () => {
       }
     } catch (error: any) {
       const message = error.response.data.message;
-      console.log(message);
+      // console.log(message);
       setLoading(false);
       setDisable(false);
     }
@@ -270,7 +274,7 @@ const ApplyNewVisa = () => {
             setDisable(false);
           } catch (error: any) {
             const message = error.response;
-            console.error(message);
+            // console.error(message);
             setLoading(false);
             setDisable(false);
           }
@@ -321,6 +325,8 @@ const ApplyNewVisa = () => {
   const handleBackButton = () => {
     if (stepStatus.activeStep !== 0) {
       setStepStatus((pre) => steps[pre.activeStep - 1]);
+    } else {
+      router.push("/dashboard");
     }
   };
 
@@ -427,7 +433,19 @@ const ApplyNewVisa = () => {
       setLoading(true);
       setDisable(true);
       const endpoint = prefix + "/1st-eligibilty";
-      const response = await axios.post(endpoint, eligibilityData, {
+
+      const { visaType, visitPurpose, documentType, ...rest } = eligibilityData;
+
+      const data = {
+        ...rest,
+        visaType: reverseLableToValue(visaType),
+        visitPurpose: reverseLableToValue(visitPurpose),
+        documentType: reverseLableToValue(documentType),
+      };
+
+      console.log(eligibilityData);
+
+      const response = await axios.post(endpoint, data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

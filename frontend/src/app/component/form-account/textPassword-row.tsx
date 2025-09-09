@@ -1,28 +1,50 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   FormControl,
   IconButton,
   Box,
   OutlinedInput,
   InputAdornment,
+  FormHelperText,
 } from "@mui/material";
+import { useFormControl } from "@mui/material/FormControl";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import styles from "./form.module.css";
-import { success, white } from "@/app/libs/color-config";
+import { white } from "@/app/libs/color-config";
 
 interface FormRow {
   label: string;
   placeholder: string;
   [key: string]: any;
+  checkEmpty: boolean;
 }
 
-export default function PasswordFormRow({ label, placeholder, ...props }: FormRow) {
+export default function PasswordFormRow({
+  label,
+  placeholder,
+  checkEmpty,
+  ...props
+}: FormRow) {
   const [hiddenPassword, setHiddenpassword] = useState<boolean>(false);
 
   const handleRevealPassword = () => {
     setHiddenpassword(!hiddenPassword);
   };
+
+  function ErroMessage() {
+    const { filled } = useFormControl() || {};
+    const helperText = useMemo(() => {
+      if (checkEmpty === true) {
+        if (filled === false) {
+          return `Please fill your ${label}`;
+        }
+        return "";
+      }
+    }, [checkEmpty]);
+
+    return <FormHelperText error>{helperText}</FormHelperText>;
+  }
 
   return (
     <Box
@@ -47,10 +69,11 @@ export default function PasswordFormRow({ label, placeholder, ...props }: FormRo
             </InputAdornment>
           }
           type={`${!hiddenPassword ? "password" : "text"}`}
-          // required
+          required
           fullWidth
           placeholder={`${placeholder}`}
         />
+        <ErroMessage />
       </FormControl>
     </Box>
   );

@@ -1,4 +1,5 @@
 import { Box, FormControl, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { convertToLabel } from "@/app/libs/convertLabel";
 
 interface AutoCompleteFormProps {
   title: string;
@@ -34,9 +35,9 @@ const AutoCompleteForm = ({
           displayEmpty
           required
           onChange={(e) => onChange(e, name)}
-          value={value}
+          value={convertToLabel(value)}
           renderValue={(selected) => {
-            if (selected === null || selected === "") {
+            if (selected === null || selected === "" || selected === undefined) {
               return <em>{placeHolder}</em>;
             }
             return selected;
@@ -44,8 +45,8 @@ const AutoCompleteForm = ({
         >
           {inputData.map((label) => {
             return (
-              <MenuItem value={label} key={label}>
-                {displayLabel(label)}
+              <MenuItem value={convertToLabel(label)} key={label}>
+                {convertToLabel(label)}
               </MenuItem>
             );
           })}
@@ -55,11 +56,3 @@ const AutoCompleteForm = ({
   );
 };
 export default AutoCompleteForm;
-
-const displayLabel = (label: string) => {
-  const splited = label.toLowerCase().split("_");
-
-  const result =
-    splited[0][0].toUpperCase() + splited[0].slice(1) + " " + splited.slice(1);
-  return result;
-};

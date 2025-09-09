@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import userRepos from "../../repositories/user.repository";
 import { generateToken } from "../../utils/jwt";
-import sendEmail from "../../utils/sendEmail";
+import sendEmail from "@/utils/sendEmail";
 import { url } from "../../config/envLoader";
 
 interface ChangePassword {
@@ -12,10 +12,10 @@ interface ChangePassword {
 
 const forgotPasswordService = async (data: ChangePassword) => {
   const { email, password, re_password } = data;
-  if (password !== re_password) throw new Error("Two Passwords do not match");
+  if (password !== re_password) throw new Error("2 Passwords do not match");
 
-  const user = await userRepos.findOne({ email });
-  if (!user) throw new Error("User do not exist");
+  const user = await userRepos.findByEmail(email);
+  if (!user) throw new Error("User do not found");
 
   const verifyToken = generateToken({ email });
   const link = url + "/verify-email?token=" + verifyToken;

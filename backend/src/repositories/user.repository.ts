@@ -16,7 +16,7 @@ const findByEmail = async (email: string) => {
       where: { email },
       select: {
         id: true,
-        password: false,
+        password: true,
         firstName: true,
         lastName: true,
         email: true,

@@ -1,6 +1,11 @@
-import React, { useState, useRef, useEffect, ChangeEvent } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  ChangeEvent,
+  MouseEventHandler,
+} from "react";
 import { useRouter } from "next/navigation";
-
 import {
   Box,
   Button,
@@ -10,9 +15,10 @@ import {
   FormControl,
   InputBase,
   Divider,
+  Typography,
+  Modal,
 } from "@mui/material";
 import axios from "axios";
-import { isAxiosError } from "axios";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import TextFormRow from "./textForm-row";
 import PhoneFormRow from "./phoneForm-row";
@@ -37,6 +43,7 @@ interface Account {
   phoneNumber: string;
   password: string;
   nation: string;
+  confirmPassword: string;
 }
 
 interface CreateAccountFormProps {
@@ -61,12 +68,20 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
     phoneNumber: "",
     password: "",
     nation: "",
+    confirmPassword: "",
   });
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [checkEmpty, setCheckEmpty] = useState<boolean>(false);
+  const [open, setOpen] = React.useState(false);
+  const [modalMessage, setModalMessage] = useState<string>("");
+
   const ref = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleChange = (e: SelectChangeEvent) => {
     setNation(e.target.value);
@@ -132,24 +147,58 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
     setAccount((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const checkConfirmPassword = () => {
+    const { confirmPassword, password } = account;
+    if (confirmPassword === password) {
+      return true;
+    } else {
+      setModalMessage("2 Passwords do not match");
+      handleOpen();
+      return false;
+    }
+  };
+
+  const checkValidPassword = () => {
+    const check = /^(?=.*[0-9]).{8,}$/.test(account.password);
+    if (!check) {
+      setModalMessage(
+        "Your password need minimum of 8 characters \nand Include at least one number (0-9)"
+      );
+      handleOpen();
+    }
+    return check;
+  };
+
+  const handleSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
+    setCheckEmpty(true);
     e.preventDefault();
     try {
+      const checkPassword = checkConfirmPassword();
+      if (!checkPassword) return;
+
+      const validPassword = checkValidPassword();
+      if (!validPassword) return;
+
       setLoading(true);
       const endpoint = backend_url + "api" + "/create-account";
-      const response = await axios.post(endpoint, account, {
+      const { phoneNumber, ...rest } = account;
+      const finalAccount = {
+        ...rest,
+        phoneNumber:
+          phoneNumber.length !== 0
+            ? nationData.code + " " + phoneNumber.replace("-", "")
+            : "",
+      };
+      const response = await axios.post(endpoint, finalAccount, {
         headers: { "Content-Type": "application/json" },
       });
-      const { success, data } = response.data;
+      const { success } = response.data;
       if (success == "OK") {
         router.push("/login");
       }
-
-      console.log(response.data);
     } catch (err: any) {
       setLoading(false);
       const errorMessage = err.response.data.message;
-      // console.log(errorMessage);
       if (Array.isArray(errorMessage)) {
         setErrorMessage(errorMessage);
       } else {
@@ -200,18 +249,22 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
             ></Box>
           </Divider>
         </Box>
-        <form onSubmit={handleSubmit}>
+        <form>
           <TextFormRow
             label={"First name"}
             placeholder={"Enter Your first name"}
             name="firstName"
             onChange={handleInputChange}
+            value={account.firstName}
+            checkEmpty={checkEmpty}
           />
           <TextFormRow
             label={"Familiy Name"}
             placeholder={"Enter Your Family Name"}
             name="lastName"
             onChange={handleInputChange}
+            value={account.lastName}
+            checkEmpty={checkEmpty}
           />
 
           <FormControl sx={formControlStyle}>
@@ -250,16 +303,22 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
             placeholder={"Enter Your E-mail"}
             onChange={handleInputChange}
             name="email"
+            value={account.email}
+            checkEmpty={checkEmpty}
           />
           <PasswordFormRow
             label={"Password"}
             placeholder={"Enter Your Password"}
             name="password"
             onChange={handleInputChange}
+            checkEmpty={checkEmpty}
           />
           <PasswordFormRow
             label={"Confirm Password"}
             placeholder={"Enter Your Password again"}
+            checkEmpty={checkEmpty}
+            name="confirmPassword"
+            onChange={handleInputChange}
           />
 
           <div className={styles.notePassword}>
@@ -274,6 +333,7 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
             variant="contained"
             type="submit"
             sx={{ ...formContentStyles, mb: 1 }}
+            onClick={handleSubmit}
           >
             Create an Account
           </Button>
@@ -295,10 +355,23 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
           variant="outlined"
           type="submit"
           sx={{ ...formContentStyles, mb: 4, border: "1px black solid", color: "black" }}
+          onClick={() => router.push("/login")}
         >
           SIGN IN
         </Button>
       </div>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="body1" component="h2">
+            {modalMessage}
+          </Typography>
+        </Box>
+      </Modal>
     </Box>
   );
 }
@@ -331,4 +404,15 @@ const formContentStyles = {
   m: "auto",
   mt: 3,
   fontWeight: 800,
+};
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "rgba(255, 255, 255, 0.9)",
+  boxShadow: 24,
+  p: 4,
 };

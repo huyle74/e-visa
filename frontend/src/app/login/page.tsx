@@ -43,7 +43,6 @@ export default function LoginPage() {
       const response = await axios.post(endpoint, { email, password });
 
       if (response.data.success == "OK") {
-        console.log(response.data);
         const data = response.data.data;
         localStorage.setItem(KEY, JSON.stringify({ ...data, lastUpdatedAt: Date.now() }));
 

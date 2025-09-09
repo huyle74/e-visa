@@ -70,8 +70,8 @@ const PhoneFormRow = forwardRef<HTMLDivElement, PhoneFormRowType>(function phone
       <Box sx={{ display: "flex", height: "2.6rem" }}>
         <Button
           endIcon={<ArrowDropDownIcon />}
-          variant="contained"
-          sx={{ mr: 1 }}
+          variant="outlined"
+          sx={{ mr: 1, border: "1px solid gray" }}
           color="primary"
           onClick={onClickDropdown}
         >
@@ -133,6 +133,7 @@ const PhoneFormRow = forwardRef<HTMLDivElement, PhoneFormRowType>(function phone
               height: "40vh",
               width: "100%",
               pb: 2,
+              mt: 2,
             }}
           >
             {countries.map((nation, key) => {

@@ -2,7 +2,7 @@ import prisma from "../prisma/prisma";
 
 const findAllCountry = async () => {
   try {
-    const results = await prisma.country.findMany();
+    const results = await prisma.country.findMany({ where: { id: { not: 251 } } });
     return results;
   } catch (error) {
     console.error(error);

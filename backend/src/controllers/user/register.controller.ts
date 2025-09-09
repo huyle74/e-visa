@@ -13,7 +13,9 @@ const createAccountController = async (req: Request, res: Response) => {
     console.log(checkErrors);
     if (checkErrors) return responseFailed({ res, message: checkErrors });
 
-    const createUser = await createAccountService(req.body);
+    const { confirmPassword, ...account } = req.body;
+
+    const createUser = await createAccountService(account);
     if (!createUser) return responseFailed({ res, message: "Cannot create account" });
 
     const { verifyToken, password, ...data } = createUser;

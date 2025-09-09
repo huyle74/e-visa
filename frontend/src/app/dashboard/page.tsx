@@ -5,7 +5,6 @@ import axios from "axios";
 import { Box } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { DataGrid, GridColDef, GridEventListener } from "@mui/x-data-grid";
-import { useDemoData } from "@mui/x-data-grid-generator";
 
 import MenuDashboard from "../component/menu/header-menu-dashboard";
 import StateBar from "../component/apply/state-bar";
@@ -37,7 +36,6 @@ const Dashboard = () => {
         });
         const data = response.data;
         if (data.success === "OK") {
-          console.log(data.data);
           setApplyInfo((prev) => ({ ...prev, totalApplied: data.data.length }));
           setRows(data.data);
         }

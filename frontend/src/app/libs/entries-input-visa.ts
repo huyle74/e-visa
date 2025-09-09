@@ -14,7 +14,7 @@ export const eligibilityEntries = {
     "Public Affair",
   ],
   inputCountryPassport: ["Vietnam", "Cambodia", "Isarel", "UAE"],
-  numberOfEntries: ["2", "3"],
+  numberOfEntries: ["1", "2", "3", "Multiple"],
   visaType: [
     "Tourist Visa",
     "Transit Visa",

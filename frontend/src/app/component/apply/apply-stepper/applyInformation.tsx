@@ -135,6 +135,7 @@ const ApplicationInformation = ({
     (async () => {
       try {
         const statesResponse = await getStatesData(dataProps.addressCountry);
+        console.log(statesResponse);
         if (statesResponse) {
           const states = statesResponse.map((state: any) => {
             return state.state;
@@ -151,6 +152,7 @@ const ApplicationInformation = ({
     (async () => {
       try {
         const citesResponse = await getCitiesData(dataProps.addressState);
+        console.log(citesResponse);
         if (citesResponse) {
           const cities = citesResponse.map((city: any) => {
             return city.city;
