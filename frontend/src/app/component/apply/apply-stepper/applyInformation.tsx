@@ -19,6 +19,7 @@ import {
 import Image from "next/image";
 import { getStatesData, getCitiesData } from "@/app/server-side/static-data";
 import { Dayjs } from "dayjs";
+import { useCountries } from "@/app/contexts/countriesContext";
 import FormContainer from "../containerForm";
 import AutoCompleteForm from "../autocompleteForm";
 import { ApplicationInformationInputDto } from "@/app/libs/types";
@@ -71,7 +72,6 @@ interface ApplicationInforProps {
 
   onclickNext: MouseEventHandler<HTMLButtonElement>;
   onClickBack: () => void;
-  countries: any;
 
   // FILES
   onChangeBiodata: (e: ChangeEvent<HTMLInputElement>, name: string) => void;
@@ -103,7 +103,6 @@ const ApplicationInformation = ({
   onChangeCompanyPlace,
   onChangeAnnualIncome,
   onChangeNationality,
-  countries = [],
   onclickNext,
   onClickBack,
   onChangeMaritalStatus,
@@ -118,6 +117,9 @@ const ApplicationInformation = ({
   onDragBiodata,
   onDragPhotograph,
 }: ApplicationInforProps) => {
+  const { countries } = useCountries();
+  const countriesNameArr = countries.map((nation: any) => nation.engName);
+
   const [entriesEnum, setEntriesEnum] = useState({
     annualIncome: [],
     maritalStatus: [],
@@ -129,7 +131,9 @@ const ApplicationInformation = ({
   const [statesAddress, setStatesAddress] = useState<string[]>([]);
   const [citiesAddress, setCitiesAddress] = useState<string[]>([]);
   const [previewBiodata, setPreviewBiodata] = useState<string | undefined>("");
-  const [previewPhotograph, setPreviewPhotograph] = useState<string | undefined>("");
+  const [previewPhotograph, setPreviewPhotograph] = useState<
+    string | undefined
+  >("");
 
   useEffect(() => {
     (async () => {
@@ -190,8 +194,6 @@ const ApplicationInformation = ({
     };
   }, [dataProps.photograph]);
 
-  const countriesNameArr = countries.map((nation: any) => nation.engName);
-
   useEffect(() => {
     (async () => {
       const data = await getApplicationInfoEnum();
@@ -245,18 +247,23 @@ const ApplicationInformation = ({
         }}
       >
         <FormContainer title="Upload Biodata Page of Passport" width={60}>
-          <div draggable={true} onDrop={onDragBiodata} onDragOver={handleDragOVerBiodata}>
+          <div
+            draggable={true}
+            onDrop={onDragBiodata}
+            onDragOver={handleDragOVerBiodata}
+          >
             <PaperDiv>
-              Please upload the biodata page of your travel document. After the successful
-              completion of the upload, your biographic information will be populated in
-              the corresponding fields of the application. For accurate results, make sure
-              the MRZ is contained within the full width of the photograph and the
-              photograph is not blurry.
+              Please upload the biodata page of your travel document. After the
+              successful completion of the upload, your biographic information
+              will be populated in the corresponding fields of the application.
+              For accurate results, make sure the MRZ is contained within the
+              full width of the photograph and the photograph is not blurry.
             </PaperDiv>
             <PaperDiv>
-              Applicant is required to submit his/her travel document that is valid for at
-              least six months from the date of visa application for single entry and one
-              year for multiple entry (18 months for OA Visa).
+              Applicant is required to submit his/her travel document that is
+              valid for at least six months from the date of visa application
+              for single entry and one year for multiple entry (18 months for OA
+              Visa).
             </PaperDiv>
             <Box sx={{ m: 2, mb: 1 }}>
               {/* UPLOAD BUTTON */}
@@ -283,13 +290,16 @@ const ApplicationInformation = ({
               </Button>
             </Box>
             <Box sx={{ textAlign: "center", mb: 3 }}>
-              (.JPG, .JPEG Limit Size is 3 MB)
+              (.JPG, .JPEG Limit Size is 5 MB)
             </Box>
 
             {/* PASSPORT PICTURE */}
             <Box sx={{ display: "flex", mb: 3, justifyContent: "center" }}>
               {dataProps.biodata ? (
-                <PreviewDisplay file={dataProps.biodata} preview={previewBiodata} />
+                <PreviewDisplay
+                  file={dataProps.biodata}
+                  preview={previewBiodata}
+                />
               ) : (
                 <Image
                   src="https://www.thaievisa.go.th/static/media/dummy_passport.f34bd0bb.jpg"
@@ -309,8 +319,8 @@ const ApplicationInformation = ({
             draggable={true}
           >
             <PaperDiv>
-              Please upload an appropriate photograph taken within six months. Failure to
-              do so may result in rejection of visa request.
+              Please upload an appropriate photograph taken within six months.
+              Failure to do so may result in rejection of visa request.
             </PaperDiv>
 
             <Box sx={{ m: 2 }}>
@@ -344,7 +354,10 @@ const ApplicationInformation = ({
             </Box>
             <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
               {dataProps.photograph ? (
-                <PreviewDisplay file={dataProps.photograph} preview={previewPhotograph} />
+                <PreviewDisplay
+                  file={dataProps.photograph}
+                  preview={previewPhotograph}
+                />
               ) : (
                 <Image
                   src="https://cdn4.iconfinder.com/data/icons/flat-pro-business-set-1/32/people-customer-unknown-512.png"
@@ -433,7 +446,10 @@ const ApplicationInformation = ({
 
         <Box sx={{ pr: 2, mt: 1, pl: 2 }}>
           Do you hold any other nationality than the one indicated?
-          <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}> *</span>
+          <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}>
+            {" "}
+            *
+          </span>
           <span style={{ marginLeft: "10px" }}>
             No
             <Switch
@@ -464,7 +480,9 @@ const ApplicationInformation = ({
               inputData={countriesNameArr}
               value={dataProps.anotherNationality}
               placeHolder="Select your other country/territory of nationality"
-              onChange={(e) => onChangeAnotherNationality(e, "anotherNationality")}
+              onChange={(e) =>
+                onChangeAnotherNationality(e, "anotherNationality")
+              }
             />
           </InputContainer>
         )}
@@ -598,7 +616,9 @@ const ApplicationInformation = ({
         </Box>
         <Box sx={{ pr: 2, mt: 1, pl: 2, mb: 1 }}>
           Is your permanent address same as your current address?
-          <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}> *</span>
+          <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}>
+            *
+          </span>
           <span style={{ marginLeft: "10px" }}>
             No
             <Switch

@@ -1,38 +1,50 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { DataGrid, GridColDef, GridEventListener } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridEventListener,
+  GridRowSelectionModel,
+} from "@mui/x-data-grid";
 
 import MenuDashboard from "../component/menu/header-menu-dashboard";
 import StateBar from "../component/apply/state-bar";
 import Footer from "../component/footer/footer";
-import AuthProvider from "../component/authProvider";
+import { AuthProvider } from "../contexts/authProvider";
 import { backend_url } from "../server-side/envLoader";
-import { getUserInfo } from "../libs/getLocalStorage";
 import { dateConvert } from "../libs/dateConvert";
+import ModalWithButton from "../component/common/modalWithButton";
+import { getUserInfo } from "../libs/getLocalStorage";
 
 const Dashboard = () => {
   const router = useRouter();
+  const [user, setUser] = useState<any>();
   const [applyInfo, setApplyInfo] = useState({
     incompleteApplied: 0,
     totalApplied: 0,
   });
   const [rows, setRows] = useState<Row[]>([]);
-  const [userName, setUserName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [selected, setSelected] = useState<GridRowSelectionModel>({
+    type: "include",
+    ids: new Set(),
+  });
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   useEffect(() => {
+    const userInfo = getUserInfo();
+    setUser(userInfo);
     (async () => {
-      const user = getUserInfo();
-      setUserName(user.lastName);
-      const endpoint = backend_url + "api" + `/visa-application/list-visa-application`;
+      const endpoint =
+        backend_url + "api" + `/visa-application/list-visa-application`;
       try {
         const response = await axios.get(endpoint, {
-          headers: { Authorization: `Bearer ${user.accessToken}` },
-          params: { userId: user.id },
+          headers: { Authorization: `Bearer ${userInfo.accessToken}` },
+          params: { userId: userInfo.id },
         });
         const data = response.data;
         if (data.success === "OK") {
@@ -41,24 +53,72 @@ const Dashboard = () => {
         }
         setLoading(false);
       } catch (error: any) {
-        console.log(error.response);
         setLoading(false);
       }
     })();
-  }, []);
+  }, [loading]);
 
   const handleRowClick: GridEventListener<"rowClick"> = (param) => {
     router.push(`/dashboard/apply?applicationId=${param.id}`);
   };
 
+  const handleOpen = useCallback(() => setOpenModal(true), []);
+  const handleClose = useCallback(() => setOpenModal(false), []);
+
+  const handleDeleteForm = async () => {
+    setLoading(true);
+    const applicationIds = Array.from(selected.ids);
+    const endpoint =
+      backend_url + "api" + `/visa-application/delete-application-by-ids`;
+    try {
+      const response = await axios.post(
+        endpoint,
+        { applicationIds },
+        {
+          headers: { Authorization: `Bearer ${user.accessToken}` },
+          params: { userId: user.id },
+        }
+      );
+      if (response.data.success === "OK") {
+        handleClose();
+        setLoading(false);
+      }
+    } catch (error: any) {
+      setLoading(false);
+      console.log(error.response.data);
+      handleClose();
+    }
+  };
+
   return (
     <AuthProvider>
-      <MenuDashboard userName={userName} />
+      <MenuDashboard />
       <StateBar
         incompleteApplied={applyInfo.incompleteApplied}
         totalApplied={applyInfo.totalApplied}
       />
-      <Box sx={{ width: "80vw", m: "auto", mb: 3, mt: 4 }}>
+      <Box
+        sx={{
+          width: "80vw",
+          m: "auto",
+          mb: 3,
+          mt: 4,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {Array.from(selected.ids).length !== 0 && (
+          <Box sx={{ ml: "auto", mb: 1 }}>
+            <Button
+              size="small"
+              variant="contained"
+              color="secondary"
+              onClick={handleOpen}
+            >
+              Delete
+            </Button>
+          </Box>
+        )}
         <DataGrid
           sx={{ cursor: "pointer" }}
           rows={rows}
@@ -72,7 +132,9 @@ const Dashboard = () => {
             },
           }}
           pageSizeOptions={[10]}
+          onRowSelectionModelChange={setSelected}
           checkboxSelection
+          rowSelection
           disableRowSelectionOnClick
           loading={loading}
           slotProps={{
@@ -84,6 +146,13 @@ const Dashboard = () => {
         />
       </Box>
       <Footer />
+      <ModalWithButton
+        loading={loading}
+        onClose={handleClose}
+        open={openModal}
+        title={"Are you sure to delete these applications?"}
+        onClick={handleDeleteForm}
+      />
     </AuthProvider>
   );
 };

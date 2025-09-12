@@ -2,9 +2,13 @@ import { body, query } from "express-validator";
 
 export const eligibiltyValidator = [
   body("applyAt").notEmpty().withMessage("Apply place is required"),
-  body("currentLocation").notEmpty().withMessage("Current location is required"),
+  body("currentLocation")
+    .notEmpty()
+    .withMessage("Current location is required"),
   body("documentType").notEmpty().withMessage("Document type is required"),
-  body("inputCountryPassport").notEmpty().withMessage("inputCountryPassport is required"),
+  body("inputCountryPassport")
+    .notEmpty()
+    .withMessage("inputCountryPassport is required"),
   body("numberOfEntries").notEmpty().withMessage("Entries number is required"),
   body("visaType").notEmpty().withMessage("Visa type is required"),
   body("visitPurpose").notEmpty().withMessage("Visit Purpose is required"),
@@ -16,14 +20,22 @@ export const applicationInformationValidator = [
 
   body("sex").notEmpty().withMessage("SEX is required"),
 
-  body("firstName").isString().trim().notEmpty().withMessage("First name is required"),
+  body("firstName")
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage("First name is required"),
 
   body("middleName")
     .optional({ nullable: true })
     .isString()
     .withMessage("middleName must be a string"),
 
-  body("familyName").isString().trim().notEmpty().withMessage("Family Name is required"),
+  body("familyName")
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage("Family Name is required"),
 
   body("contactNo")
     .isString()
@@ -40,7 +52,9 @@ export const applicationInformationValidator = [
     .isBoolean()
     .withMessage("otherNationality must be true or false"),
 
-  body("nationalityBirth").notEmpty().withMessage("Birth Nationality is required"),
+  body("nationalityBirth")
+    .notEmpty()
+    .withMessage("Birth Nationality is required"),
 
   body("cityBirth").isString().notEmpty().withMessage("Birth City is required"),
 
@@ -60,35 +74,47 @@ export const applicationInformationValidator = [
     .notEmpty()
     .withMessage("Number of documentNumber is required"),
 
-  body("issuesPlace").isString().notEmpty().withMessage("Place issues is required"),
+  body("issuesPlace")
+    .isString()
+    .notEmpty()
+    .withMessage("Place issues is required"),
 
   body("issuesDate").notEmpty().withMessage("Issues Date is required"),
 
   body("expiryDate").notEmpty().withMessage("Expiry Date is required"),
 
-  body("homeAddress").isString().notEmpty().withMessage("Home Address is required"),
+  body("homeAddress")
+    .isString()
+    .notEmpty()
+    .withMessage("Home Address is required"),
 
   body("addressCountry").notEmpty().withMessage("Address Country is required"),
 
-  body("addressState").isString().notEmpty().withMessage("Address State is required"),
+  body("addressState")
+    .isString()
+    .notEmpty()
+    .withMessage("Address State is required"),
 
-  body("addressCity").isString().notEmpty().withMessage("Address City is required"),
+  body("addressCity")
+    .isString()
+    .notEmpty()
+    .withMessage("Address City is required"),
 
-  body("currentAddress").isBoolean().withMessage("Current Address must be true or false"),
+  body("currentAddress")
+    .isBoolean()
+    .withMessage("Current Address must be true or false"),
 
-  body("occupation").isString().notEmpty().withMessage("Occupation is required"),
+  body("occupation")
+    .isString()
+    .notEmpty()
+    .withMessage("Occupation is required"),
 
   body("company").isString().notEmpty().withMessage("Company is required"),
 
   body("annualIncome")
-    .isIn([
-      "BELOW_20000_USD",
-      "BETWEEN_20001_40000_USD",
-      "BETWEEN_40001_60000_USD",
-      "BETWEEN_60001_80000_USD",
-      "ABOVE_80001_USD",
-    ])
-    .withMessage("annualIncome must be a valid range"),
+    .isString()
+    .notEmpty()
+    .withMessage("Annual Income must be a valid range"),
 ];
 
 export const travelInformationValidator = [
@@ -136,7 +162,10 @@ export const travelInformationValidator = [
     .isString()
     .withMessage("transportMode must be a string"),
 
-  body("shipName").optional().isString().withMessage("shipName must be a string"),
+  body("shipName")
+    .optional()
+    .isString()
+    .withMessage("shipName must be a string"),
 
   body("fightNo").optional().isString().withMessage("fightNo must be a string"),
 

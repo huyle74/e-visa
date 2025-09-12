@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, ChangeEvent, useEffect, DragEvent, MouseEventHandler } from "react";
+import {
+  useState,
+  ChangeEvent,
+  useEffect,
+  DragEvent,
+  MouseEventHandler,
+} from "react";
 import { useSearchParams } from "next/navigation";
 import { Box, SelectChangeEvent, SwitchProps } from "@mui/material";
 import { useRouter } from "next/navigation";
 import type { Dayjs } from "dayjs";
 import axios from "axios";
-import AuthProvider from "@/app/component/authProvider";
+import { AuthProvider } from "@/app/contexts/authProvider";
 import ApplicationInformation from "@/app/component/apply/apply-stepper/applyInformation";
 import TravelInformation from "@/app/component/apply/apply-stepper/travel-information";
 import EligibilityStep from "@/app/component/apply/apply-stepper/eligibility";
@@ -20,6 +26,7 @@ import {
   TransportationVehicleInputDto,
   SupportingDocumentInputDto,
 } from "@/app/libs/types";
+import { CountriesProvider } from "@/app/contexts/countriesContext";
 import ModalComponent from "@/app/component/common/modal";
 import { transportationVehicle } from "@/app/libs/entries-input-visa";
 import { backend_url } from "@/app/server-side/envLoader";
@@ -55,13 +62,15 @@ const ApplyNewVisa = () => {
   const [accessToken, setAccessToken] = useState(user?.accessToken);
   const [id, setId] = useState(user?.id);
   const [applicationId, setApplicationId] = useState<string | null>(applyId);
-  const [allCountries, setAllCountries] = useState();
   const [disabled, setDisable] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [stepStatus, setStepStatus] = useState<Stepper>(steps[0]);
   const [modal, setModal] = useState<boolean>(false);
-  const [modalContent, setModalContent] = useState({ title: "", description: "" });
+  const [modalContent, setModalContent] = useState({
+    title: "",
+    description: "",
+  });
   const [eligibilityData, setEligibilityData] = useState<EligibilityInputDto>({
     applicationId: "",
     applyAt: "",
@@ -72,45 +81,46 @@ const ApplyNewVisa = () => {
     visaType: "",
     visitPurpose: "",
   });
-  const [applyInfoData, setApplyInfoData] = useState<ApplicationInformationInputDto>({
-    title: "",
-    sex: "",
-    firstName: "",
-    middleName: "",
-    familyName: "",
-    contactNo: "",
-    email: "",
-    nationality: "",
-    otherNationality: false,
-    nationalityBirth: "",
-    cityBirth: "",
-    birthDate: null,
-    maritalStatus: "",
-    anotherNationality: "",
+  const [applyInfoData, setApplyInfoData] =
+    useState<ApplicationInformationInputDto>({
+      title: "",
+      sex: "",
+      firstName: "",
+      middleName: "",
+      familyName: "",
+      contactNo: "",
+      email: "",
+      nationality: "",
+      otherNationality: false,
+      nationalityBirth: "",
+      cityBirth: "",
+      birthDate: null,
+      maritalStatus: "",
+      anotherNationality: "",
 
-    // travelDocument
-    documentType: "",
-    documentNumber: "",
-    issuesPlace: "",
-    issuesDate: null,
-    expiryDate: null,
+      // travelDocument
+      documentType: "",
+      documentNumber: "",
+      issuesPlace: "",
+      issuesDate: null,
+      expiryDate: null,
 
-    // address
-    homeAddress: "",
-    addressCountry: "",
-    addressState: "",
-    addressCity: "",
-    currentAddress: false,
+      // address
+      homeAddress: "",
+      addressCountry: "",
+      addressState: "",
+      addressCity: "",
+      currentAddress: false,
 
-    // Employment
-    annualIncome: "",
-    occupation: "",
-    company: "",
+      // Employment
+      annualIncome: "",
+      occupation: "",
+      company: "",
 
-    // FILES
-    biodata: null,
-    photograph: null,
-  });
+      // FILES
+      biodata: null,
+      photograph: null,
+    });
 
   const [travelInfo, setTravelInfo] = useState<TravelInformationInputDto>({
     arrivalDate: null,
@@ -136,27 +146,21 @@ const ApplyNewVisa = () => {
     ],
     additionalAccommodation: false,
   });
-  const [supportingDoc, setSupportingDoc] = useState<SupportingDocumentInputDto>({
-    BIODATA: null,
-    PHOTOGRAPH: null,
-    CURRENT_LOCATION: null,
-    BOOKING_CONFIRMATION: null,
-    PROOF_OF_ACCOMMODATION: null,
-    FINANCIAL_EVIDENCE: null,
-  });
-  const [transVehicle, setTransVehicle] = useState<TransportationVehicleInputDto>({
-    title: "Choose your transportation vehicle above",
-    values: [],
-    placeholder: "Choose your transportation vehicle first",
-  });
-
-  useEffect(() => {
-    const countriesData = async () => {
-      const countries = await getCountriesData();
-      setAllCountries(countries);
-    };
-    countriesData();
-  }, []);
+  const [supportingDoc, setSupportingDoc] =
+    useState<SupportingDocumentInputDto>({
+      BIODATA: null,
+      PHOTOGRAPH: null,
+      CURRENT_LOCATION: null,
+      BOOKING_CONFIRMATION: null,
+      PROOF_OF_ACCOMMODATION: null,
+      FINANCIAL_EVIDENCE: null,
+    });
+  const [transVehicle, setTransVehicle] =
+    useState<TransportationVehicleInputDto>({
+      title: "Choose your transportation vehicle above",
+      values: [],
+      placeholder: "Choose your transportation vehicle first",
+    });
 
   const getData = async (url: string, params: any = {}) => {
     try {
@@ -170,10 +174,8 @@ const ApplyNewVisa = () => {
       );
       if (response.data.success === "OK") {
         return response.data.data;
-      }
+      } else return {};
     } catch (error: any) {
-      const message = error.response.data.message;
-      // console.log(message);
       setLoading(false);
       setDisable(false);
     }
@@ -184,15 +186,18 @@ const ApplyNewVisa = () => {
       if (currentStep === 0) {
         const endpoint = prefix + "/find-eligibilty-form";
         (async () => {
-          const eligibilty = await getData(endpoint, { applicationId });
+          const eligibilty = await getData(endpoint, {
+            applicationId: applyId,
+          });
           if (eligibilty) setEligibilityData(eligibilty);
         })();
       }
       if (currentStep === 1) {
         const endpoint = prefix + "/find-application-information-form";
         (async () => {
-          const applicationInformation = await getData(endpoint, { applicationId });
-          console.log(applicationInformation);
+          const applicationInformation = await getData(endpoint, {
+            applicationId: applyId,
+          });
           if (applicationInformation) {
             const { biodata, photograph, ...rest } = applicationInformation;
 
@@ -205,7 +210,11 @@ const ApplyNewVisa = () => {
                 }
               );
               const photographBlob = new File(
-                [Uint8Array.from(atob(photograph.data), (c) => c.charCodeAt(0))],
+                [
+                  Uint8Array.from(atob(photograph.data), (c) =>
+                    c.charCodeAt(0)
+                  ),
+                ],
                 photograph.name,
                 {
                   type: photograph.type,
@@ -232,7 +241,9 @@ const ApplyNewVisa = () => {
       if (currentStep === 2) {
         (async () => {
           const endpoint = prefix + "/find-travel-information-form";
-          const travelInformation = await getData(endpoint, { applicationId });
+          const travelInformation = await getData(endpoint, {
+            applicationId: applyId,
+          });
           if (travelInformation) setTravelInfo(travelInformation);
         })();
       }
@@ -301,7 +312,10 @@ const ApplyNewVisa = () => {
     setApplyInfoData((prev) => ({ ...prev, [name]: e.target.value }));
   };
 
-  const handlePickDateApplicationInformation = (value: Dayjs | null, name: string) => {
+  const handlePickDateApplicationInformation = (
+    value: Dayjs | null,
+    name: string
+  ) => {
     const date = value?.toDate();
     setApplyInfoData((prev) => ({ ...prev, [name]: date }));
   };
@@ -375,7 +389,10 @@ const ApplyNewVisa = () => {
     }
   };
 
-  const handelPickDateTravelInformation = (value: Dayjs | null, name: string) => {
+  const handelPickDateTravelInformation = (
+    value: Dayjs | null,
+    name: string
+  ) => {
     const date = value?.toDate() || "";
     setTravelInfo((prev) => ({ ...prev, [name]: new Date(date) }));
   };
@@ -443,8 +460,6 @@ const ApplyNewVisa = () => {
         documentType: reverseLableToValue(documentType),
       };
 
-      console.log(eligibilityData);
-
       const response = await axios.post(endpoint, data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -458,6 +473,9 @@ const ApplyNewVisa = () => {
         setEligibilityData(response.data.data);
         setLoading(false);
         setDisable(false);
+        router.push(`?applicationId=${response.data.data.applicationId}`, {
+          scroll: false,
+        });
         triggerNext();
       }
     } catch (error: any) {
@@ -467,13 +485,30 @@ const ApplyNewVisa = () => {
     }
   };
 
-  const handleSubmitApplicationInformation: MouseEventHandler<HTMLButtonElement> = async (
-    e
-  ) => {
+  const handleSubmitApplicationInformation: MouseEventHandler<
+    HTMLButtonElement
+  > = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
       console.log(applyInfoData);
-      const form = formConvertApplicationInformation(applyInfoData);
+      const {
+        sex,
+        maritalStatus,
+        documentType,
+        annualIncome,
+        occupation,
+        ...rest
+      } = applyInfoData;
+      const convert = {
+        ...rest,
+        sex: reverseLableToValue(sex),
+        maritalStatus: reverseLableToValue(maritalStatus),
+        documentType: reverseLableToValue(documentType),
+        annualIncome: reverseLableToValue(annualIncome),
+        occupation: reverseLableToValue(occupation),
+      };
+      console.log(convert);
+      const form = formConvertApplicationInformation(convert);
       setLoading(true);
       setDisable(true);
       const endpoint = prefix + "/2nd-applicationInformation";
@@ -554,9 +589,9 @@ const ApplyNewVisa = () => {
     }
   };
 
-  const handleSumbitTravelInformation: MouseEventHandler<HTMLButtonElement> = async (
-    e
-  ) => {
+  const handleSumbitTravelInformation: MouseEventHandler<
+    HTMLButtonElement
+  > = async (e) => {
     e.preventDefault();
     setLoading(true);
     setDisable(true);
@@ -586,9 +621,9 @@ const ApplyNewVisa = () => {
     }
   };
 
-  const handleSubmitsupportingDocument: MouseEventHandler<HTMLButtonElement> = async (
-    e
-  ) => {
+  const handleSubmitsupportingDocument: MouseEventHandler<
+    HTMLButtonElement
+  > = async (e) => {
     e.preventDefault();
     setLoading(true);
     setDisable(true);
@@ -622,129 +657,147 @@ const ApplyNewVisa = () => {
     <AuthProvider>
       <Box sx={{ backgroundColor: "#F2FCFC", height: "100%", pb: 6 }}>
         <MenuDashboard />
-        <form>
-          <Box sx={{ width: "70%", m: "auto", mt: 4, mb: 6, height: "100%" }}>
-            <HeaderTitleApplyStepper data={stepStatus} onClick={handleBackButton} />
-            {stepStatus.activeStep === 0 && (
-              <EligibilityStep
-                disabled={disabled}
-                loading={loading}
-                onClickNext={handleSumbitEligibility}
-                valueProps={eligibilityData}
-                onChangeApplyAt={handleOnchangeEligibility}
-                onChangeCurrentLocation={handleOnchangeEligibility}
-                onChangeDocumentType={handleOnchangeEligibility}
-                onChangeInpurtCountryPassport={handleOnchangeEligibility}
-                onChangeNumberOfEntries={handleOnchangeEligibility}
-                onChangeVisaType={handleOnchangeEligibility}
-                onChangeVisitPurpose={handleOnchangeEligibility}
+        <CountriesProvider>
+          <form>
+            <Box sx={{ width: "70%", m: "auto", mt: 4, mb: 6, height: "100%" }}>
+              <HeaderTitleApplyStepper
+                data={stepStatus}
+                onClick={handleBackButton}
               />
-            )}
-            {stepStatus.activeStep === 1 && (
-              <ApplicationInformation
-                dataProps={applyInfoData}
-                // HANDLE FILES
-                onChangeBiodata={handleOnchangeFilesApplicationInformation}
-                onChangePhotograph={handleOnchangeFilesApplicationInformation}
-                onDragBiodata={(e) => handleDropfileApplicationInformation(e, "biodata")}
-                onDragPhotograph={(e) =>
-                  handleDropfileApplicationInformation(e, "photograph")
-                }
-                //
-                onclickNext={handleSubmitApplicationInformation}
-                onClickBack={handleBackButton}
-                countries={allCountries}
-                onChangeCityBirth={handleOnchangeApplicationInformation}
-                onChangeEmail={handleOnchangeApplicationInformation}
-                onChangeHomeAddress={handleOnchangeApplicationInformation}
-                onChangeNationality={handleOnchangeApplicationInformation}
-                onChangeBirthNation={handleOnchangeApplicationInformation}
-                onChangeDocumentType={handleOnchangeApplicationInformation}
-                onChangeMaritalStatus={handleOnchangeApplicationInformation}
-                onChangeFamilyName={handleOnchangeApplicationInformation}
-                onChangeFirstName={handleOnchangeApplicationInformation}
-                onChangeMiddletName={handleOnchangeApplicationInformation}
-                onChangeOtherNationality={handleChangeOtherNationality}
-                onChangeSex={handleOnchangeApplicationInformation}
-                onChangeTitle={handleOnchangeApplicationInformation}
-                onChangeContactNo={handleOnchangeApplicationInformation}
-                onChangeAnotherNationality={handleOnchangeApplicationInformation}
-                onChangeAnnualIncome={handleOnchangeApplicationInformation}
-                onChangeCityAddress={handleOnchangeApplicationInformation}
-                onChangeStateAddress={handleOnchangeApplicationInformation}
-                onChangeIssuedPlace={handleOnchangeApplicationInformation}
-                onChangeExpiredDate={(value, name) =>
-                  handlePickDateApplicationInformation(value, name)
-                }
-                onChangeDocumentNo={handleOnchangeApplicationInformation}
-                onChangeIssuedDate={(value, name) =>
-                  handlePickDateApplicationInformation(value, name)
-                }
-                onChangeOccupation={handleOnchangeApplicationInformation}
-                onChangeBirthDate={(value, name) =>
-                  handlePickDateApplicationInformation(value, name)
-                }
-                onChangeCountryAddress={handleOnchangeApplicationInformation}
-                onChangeCompanyPlace={handleOnchangeApplicationInformation}
-              />
-            )}
-            {stepStatus.activeStep === 2 && (
-              <TravelInformation
-                data={travelInfo}
-                onClickNext={handleSumbitTravelInformation}
-                onChangeArrivalPort={handleOnChangeTravelInformation}
-                vehicle={transVehicle}
-                onChangeAccommodationAddress={
-                  handleOnChangeAccommodationTravelInformation
-                }
-                onChangeAccommodationDurationDay={
-                  handleOnChangeAccommodationTravelInformation
-                }
-                onChangeAccommodationCity={handleOnChangeAccommodationTravelInformation}
-                onChangeAccommodationName={handleOnChangeAccommodationTravelInformation}
-                onChangeAccommodationPhone={handleOnChangeAccommodationTravelInformation}
-                onChangeAccommodationType={handleOnChangeAccommodationTravelInformation}
-                onChangeArrivalDate={handelPickDateTravelInformation}
-                onChangeDepartDate={handelPickDateTravelInformation}
-                onChangeHadVisit={handelSwitchTravelInformation}
-                onChangeDidApply={handelSwitchTravelInformation}
-                onChangePartOfTour={handelSwitchTravelInformation}
-                onChangeAdditionalAccomodation={handelSwitchTravelInformation}
-                onChangeSelectCountry={handleOnChangeTravelInformation}
-                onChangeTransportMode={handleOnChangeTravelInformation}
-                onChangeTransportVehicleCode={handleOnChangeTravelInformation}
-              />
-            )}
-            {stepStatus.activeStep === 3 && (
-              <SupportingDocument
-                onClickNext={handleSubmitsupportingDocument}
-                data={supportingDoc}
-                // Click
-                onChangeFileBiodata={handleOnChangeInputFile}
-                onChangeFileAccomodationProof={handleOnChangeInputFile}
-                onChangeFileFinancialEvidence={handleOnChangeInputFile}
-                onChangeFileLocation={handleOnChangeInputFile}
-                onChangeFilePhoto={handleOnChangeInputFile}
-                onChangeFileTravelBooking={handleOnChangeInputFile}
-                // DRAG
-                handleDropFileBioData={(e) => handleDropFile(e, "BIODATA")}
-                handleDropFileAccomodationProof={(e) =>
-                  handleDropFile(e, "PROOF_OF_ACCOMMODATION")
-                }
-                handleDropFileFinancialEvidence={(e) =>
-                  handleDropFile(e, "FINANCIAL_EVIDENCE")
-                }
-                handleDropFileLocation={(e) => handleDropFile(e, "CURRENT_LOCATION")}
-                handleDropFilePhoto={(e) => handleDropFile(e, "PHOTOGRAPH")}
-                handleDropFileTravelBooking={(e) =>
-                  handleDropFile(e, "BOOKING_CONFIRMATION")
-                }
-                disable={disabled}
-                loading={loading}
-              />
-            )}
-          </Box>
-        </form>
+              {stepStatus.activeStep === 0 && (
+                <EligibilityStep
+                  disabled={disabled}
+                  loading={loading}
+                  onClickNext={handleSumbitEligibility}
+                  valueProps={eligibilityData}
+                  onChangeApplyAt={handleOnchangeEligibility}
+                  onChangeCurrentLocation={handleOnchangeEligibility}
+                  onChangeDocumentType={handleOnchangeEligibility}
+                  onChangeInpurtCountryPassport={handleOnchangeEligibility}
+                  onChangeNumberOfEntries={handleOnchangeEligibility}
+                  onChangeVisaType={handleOnchangeEligibility}
+                  onChangeVisitPurpose={handleOnchangeEligibility}
+                />
+              )}
+              {stepStatus.activeStep === 1 && (
+                <ApplicationInformation
+                  dataProps={applyInfoData}
+                  // HANDLE FILES
+                  onChangeBiodata={handleOnchangeFilesApplicationInformation}
+                  onChangePhotograph={handleOnchangeFilesApplicationInformation}
+                  onDragBiodata={(e) =>
+                    handleDropfileApplicationInformation(e, "biodata")
+                  }
+                  onDragPhotograph={(e) =>
+                    handleDropfileApplicationInformation(e, "photograph")
+                  }
+                  //
+                  onclickNext={handleSubmitApplicationInformation}
+                  onClickBack={handleBackButton}
+                  onChangeCityBirth={handleOnchangeApplicationInformation}
+                  onChangeEmail={handleOnchangeApplicationInformation}
+                  onChangeHomeAddress={handleOnchangeApplicationInformation}
+                  onChangeNationality={handleOnchangeApplicationInformation}
+                  onChangeBirthNation={handleOnchangeApplicationInformation}
+                  onChangeDocumentType={handleOnchangeApplicationInformation}
+                  onChangeMaritalStatus={handleOnchangeApplicationInformation}
+                  onChangeFamilyName={handleOnchangeApplicationInformation}
+                  onChangeFirstName={handleOnchangeApplicationInformation}
+                  onChangeMiddletName={handleOnchangeApplicationInformation}
+                  onChangeOtherNationality={handleChangeOtherNationality}
+                  onChangeSex={handleOnchangeApplicationInformation}
+                  onChangeTitle={handleOnchangeApplicationInformation}
+                  onChangeContactNo={handleOnchangeApplicationInformation}
+                  onChangeAnotherNationality={
+                    handleOnchangeApplicationInformation
+                  }
+                  onChangeAnnualIncome={handleOnchangeApplicationInformation}
+                  onChangeCityAddress={handleOnchangeApplicationInformation}
+                  onChangeStateAddress={handleOnchangeApplicationInformation}
+                  onChangeIssuedPlace={handleOnchangeApplicationInformation}
+                  onChangeExpiredDate={(value, name) =>
+                    handlePickDateApplicationInformation(value, name)
+                  }
+                  onChangeDocumentNo={handleOnchangeApplicationInformation}
+                  onChangeIssuedDate={(value, name) =>
+                    handlePickDateApplicationInformation(value, name)
+                  }
+                  onChangeOccupation={handleOnchangeApplicationInformation}
+                  onChangeBirthDate={(value, name) =>
+                    handlePickDateApplicationInformation(value, name)
+                  }
+                  onChangeCountryAddress={handleOnchangeApplicationInformation}
+                  onChangeCompanyPlace={handleOnchangeApplicationInformation}
+                />
+              )}
+              {stepStatus.activeStep === 2 && (
+                <TravelInformation
+                  data={travelInfo}
+                  onClickNext={handleSumbitTravelInformation}
+                  onChangeArrivalPort={handleOnChangeTravelInformation}
+                  vehicle={transVehicle}
+                  onChangeAccommodationAddress={
+                    handleOnChangeAccommodationTravelInformation
+                  }
+                  onChangeAccommodationDurationDay={
+                    handleOnChangeAccommodationTravelInformation
+                  }
+                  onChangeAccommodationCity={
+                    handleOnChangeAccommodationTravelInformation
+                  }
+                  onChangeAccommodationName={
+                    handleOnChangeAccommodationTravelInformation
+                  }
+                  onChangeAccommodationPhone={
+                    handleOnChangeAccommodationTravelInformation
+                  }
+                  onChangeAccommodationType={
+                    handleOnChangeAccommodationTravelInformation
+                  }
+                  onChangeArrivalDate={handelPickDateTravelInformation}
+                  onChangeDepartDate={handelPickDateTravelInformation}
+                  onChangeHadVisit={handelSwitchTravelInformation}
+                  onChangeDidApply={handelSwitchTravelInformation}
+                  onChangePartOfTour={handelSwitchTravelInformation}
+                  onChangeAdditionalAccomodation={handelSwitchTravelInformation}
+                  onChangeSelectCountry={handleOnChangeTravelInformation}
+                  onChangeTransportMode={handleOnChangeTravelInformation}
+                  onChangeTransportVehicleCode={handleOnChangeTravelInformation}
+                />
+              )}
+              {stepStatus.activeStep === 3 && (
+                <SupportingDocument
+                  onClickNext={handleSubmitsupportingDocument}
+                  data={supportingDoc}
+                  // Click
+                  onChangeFileBiodata={handleOnChangeInputFile}
+                  onChangeFileAccomodationProof={handleOnChangeInputFile}
+                  onChangeFileFinancialEvidence={handleOnChangeInputFile}
+                  onChangeFileLocation={handleOnChangeInputFile}
+                  onChangeFilePhoto={handleOnChangeInputFile}
+                  onChangeFileTravelBooking={handleOnChangeInputFile}
+                  // DRAG
+                  handleDropFileBioData={(e) => handleDropFile(e, "BIODATA")}
+                  handleDropFileAccomodationProof={(e) =>
+                    handleDropFile(e, "PROOF_OF_ACCOMMODATION")
+                  }
+                  handleDropFileFinancialEvidence={(e) =>
+                    handleDropFile(e, "FINANCIAL_EVIDENCE")
+                  }
+                  handleDropFileLocation={(e) =>
+                    handleDropFile(e, "CURRENT_LOCATION")
+                  }
+                  handleDropFilePhoto={(e) => handleDropFile(e, "PHOTOGRAPH")}
+                  handleDropFileTravelBooking={(e) =>
+                    handleDropFile(e, "BOOKING_CONFIRMATION")
+                  }
+                  disable={disabled}
+                  loading={loading}
+                />
+              )}
+            </Box>
+          </form>
+        </CountriesProvider>
         <ModalComponent
           open={modal}
           content={modalContent}
@@ -758,7 +811,9 @@ const ApplyNewVisa = () => {
 
 export default ApplyNewVisa;
 
-const formConvertApplicationInformation = (data: ApplicationInformationInputDto) => {
+const formConvertApplicationInformation = (
+  data: ApplicationInformationInputDto
+) => {
   const form = new FormData();
   const { biodata, photograph, ...rest } = data;
 

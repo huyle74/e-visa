@@ -1,34 +1,44 @@
 import { useState } from "react";
-import { Button, Box, IconButton, Tooltip, Modal, Typography } from "@mui/material";
+import {
+  Button,
+  Box,
+  IconButton,
+  Tooltip,
+  Modal,
+  Typography,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
-import { deleteUserInfo } from "@/app/libs/getLocalStorage";
+import { useAuth } from "../../contexts/authProvider";
 
 interface ButtonProps {
   disabledDashboard?: boolean;
   disableAccountButton?: boolean;
-  userName?: string;
 }
 
 const ButtonMenuDashboard = ({
   disabledDashboard = false,
   disableAccountButton = false,
-  userName,
 }: ButtonProps) => {
+  const { user, logout } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleLogout = () => {
-    deleteUserInfo();
+    setLoading(true);
+    logout();
     router.push("/");
   };
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", marginLeft: "auto", pr: 2 }}>
+    <Box
+      sx={{ display: "flex", alignItems: "center", marginLeft: "auto", pr: 2 }}
+    >
       <Button
         variant="contained"
         color="secondary"
@@ -40,7 +50,7 @@ const ButtonMenuDashboard = ({
       </Button>
       <Tooltip title="Account">
         <Button startIcon={<ManageAccountsRoundedIcon />} variant="outlined">
-          {userName}
+          {user?.lastName}
         </Button>
       </Tooltip>
       <Tooltip title="Logout">
@@ -59,7 +69,12 @@ const ButtonMenuDashboard = ({
             Are you sure to log out?
           </Typography>
           <Box sx={{ pt: 3, ml: "auto" }}>
-            <Button variant="contained" sx={{ mr: 1 }} onClick={handleLogout}>
+            <Button
+              variant="contained"
+              sx={{ mr: 1 }}
+              onClick={handleLogout}
+              loading={loading}
+            >
               Yes
             </Button>
             <Button variant="contained" color="secondary" onClick={handleClose}>

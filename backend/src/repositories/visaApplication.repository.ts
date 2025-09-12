@@ -28,7 +28,9 @@ export const visaApplicationRepo = {
 
   async findOne(id: string) {
     try {
-      const find = await prisma.application.findUnique({ where: { correlationId: id } });
+      const find = await prisma.application.findUnique({
+        where: { correlationId: id },
+      });
       return find;
     } catch (error) {
       console.log(error);
@@ -46,6 +48,18 @@ export const visaApplicationRepo = {
     } catch (error) {
       console.log(error);
       throw new Error("Failed to delete application");
+    }
+  },
+  async deleteMany(applicationIds: string[]) {
+    try {
+      return await prisma.application.deleteMany({
+        where: {
+          correlationId: { in: applicationIds },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to delete applications");
     }
   },
 
@@ -125,7 +139,9 @@ export const eligibiltyRepo = {
 
 // 2ND step applyInformation
 export const applyInformationRepo = {
-  async upsert(data: ApplicationInformationInputDto): Promise<ApplyInformation> {
+  async upsert(
+    data: ApplicationInformationInputDto
+  ): Promise<ApplyInformation> {
     try {
       const {
         applicationId,
@@ -201,7 +217,9 @@ export const applyInformationRepo = {
 };
 
 export const travelInfoRepos = {
-  async upsert(data: TravelInformationInputDto): Promise<TravelInformation | undefined> {
+  async upsert(
+    data: TravelInformationInputDto
+  ): Promise<TravelInformation | undefined> {
     try {
       const { accommodations = [], applicationId, ...rest } = data;
 
@@ -219,7 +237,9 @@ export const travelInfoRepos = {
         create: {
           ...rest,
           application: { connect: { correlationId: applicationId } },
-          accommodations: accommodations.length ? { create: accommodations } : undefined,
+          accommodations: accommodations.length
+            ? { create: accommodations }
+            : undefined,
         },
       });
 
@@ -295,7 +315,10 @@ export const supportingDocumentRepos = {
           },
         },
         update: rest,
-        create: { ...rest, application: { connect: { correlationId: applicationId } } },
+        create: {
+          ...rest,
+          application: { connect: { correlationId: applicationId } },
+        },
       });
 
       return rows;
@@ -309,7 +332,12 @@ export const supportingDocumentRepos = {
     try {
       const file = await prisma.supportingDocument.findUnique({
         where: { applicationId_type: { applicationId, type } },
-        select: { originalName: true, mimeType: true, storageKey: true, sizeBytes: true },
+        select: {
+          originalName: true,
+          mimeType: true,
+          storageKey: true,
+          sizeBytes: true,
+        },
       });
 
       return file;

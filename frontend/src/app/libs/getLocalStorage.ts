@@ -1,4 +1,3 @@
-const KEY = "app:myEVisaApp";
 
 export const getUserInfo = () => {
   if (typeof window !== "undefined") {

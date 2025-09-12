@@ -1,4 +1,11 @@
-import { Box, FormControl, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  CircularProgress,
+} from "@mui/material";
 import { convertToLabel } from "@/app/libs/convertLabel";
 
 interface AutoCompleteFormProps {
@@ -25,7 +32,9 @@ const AutoCompleteForm = ({
       <FormControl fullWidth>
         <Box sx={{ fontWeight: 900, mb: 1 }}>
           {title}
-          <span style={{ fontWeight: 1000, color: "red", marginLeft: "2px" }}>*</span>
+          <span style={{ fontWeight: 1000, color: "red", marginLeft: "2px" }}>
+            *
+          </span>
         </Box>
         <Select
           name={name}
@@ -37,19 +46,38 @@ const AutoCompleteForm = ({
           onChange={(e) => onChange(e, name)}
           value={convertToLabel(value)}
           renderValue={(selected) => {
-            if (selected === null || selected === "" || selected === undefined) {
+            if (
+              selected === null ||
+              selected === "" ||
+              selected === undefined
+            ) {
               return <em>{placeHolder}</em>;
             }
             return selected;
           }}
         >
-          {inputData.map((label) => {
-            return (
-              <MenuItem value={convertToLabel(label)} key={label}>
-                {convertToLabel(label)}
-              </MenuItem>
-            );
-          })}
+          {inputData.length !== 0 ? (
+            inputData.map((label) => {
+              return (
+                <MenuItem value={convertToLabel(label)} key={label}>
+                  {convertToLabel(label)}
+                </MenuItem>
+              );
+            })
+          ) : (
+            <Box
+              sx={{
+                m: "auto",
+                p: 2,
+                display: "flex",
+                justifyContent: "center",
+                height: "30vh",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress color="secondary" />
+            </Box>
+          )}
         </Select>
       </FormControl>
     </Box>

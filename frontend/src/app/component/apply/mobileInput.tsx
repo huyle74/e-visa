@@ -2,7 +2,7 @@ import { ChangeEvent, useState, useRef, useEffect } from "react";
 import { TextField, Box, Button, styled } from "@mui/material";
 import { primary } from "@/app/libs/color-config";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { countries } from "@/app/static/countries";
+import { useCountries } from "@/app/contexts/countriesContext";
 
 import Flag from "@/app/component/common/nationFlag";
 
@@ -23,6 +23,7 @@ interface Nation {
 }
 
 const MobileTextField = ({ onChange, value, name }: MobileTextFieldProps) => {
+  const { countries } = useCountries();
   const ref = useRef<HTMLDivElement | null>(null);
   const [selectNation, setSelectNation] = useState<Nation>({
     iso2: "US",
@@ -35,7 +36,11 @@ const MobileTextField = ({ onChange, value, name }: MobileTextFieldProps) => {
   const handleSelectNation = (iso2: string) => {
     const [nation] = countries.filter((nation) => nation.iso2 == iso2);
     if (!nation.iso2) return;
-    setSelectNation({ iso2: nation?.iso2, engName: nation?.engName, code: nation?.code });
+    setSelectNation({
+      iso2: nation?.iso2,
+      engName: nation?.engName,
+      code: nation?.code,
+    });
     setDropdown(false);
     setAllCountry(countries);
   };
@@ -54,7 +59,8 @@ const MobileTextField = ({ onChange, value, name }: MobileTextFieldProps) => {
       }
     };
     document.addEventListener("mousedown", handleCloseDropdownOutside);
-    return () => document.removeEventListener("mousedown", handleCloseDropdownOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleCloseDropdownOutside);
   }, [dropdown]);
 
   const nationDropDown = allCountry.map((nation, i) => {
@@ -103,7 +109,9 @@ const MobileTextField = ({ onChange, value, name }: MobileTextFieldProps) => {
     >
       <Box sx={{ mb: 1, fontWeight: 900 }}>
         Contact No.
-        <span style={{ fontWeight: 1000, color: "red", marginLeft: "2px" }}>*</span>
+        <span style={{ fontWeight: 1000, color: "red", marginLeft: "2px" }}>
+          *
+        </span>
       </Box>
       <Box sx={{ display: "flex", width: "100%", height: "40px" }}>
         <Box>
@@ -143,7 +151,13 @@ const MobileTextField = ({ onChange, value, name }: MobileTextFieldProps) => {
                   onChange={handleSearch}
                   // size="small"
                 />
-                <Box sx={{ height: "40vh", overflowY: "scroll", overflowX: "hidden" }}>
+                <Box
+                  sx={{
+                    height: "40vh",
+                    overflowY: "scroll",
+                    overflowX: "hidden",
+                  }}
+                >
                   {nationDropDown}
                 </Box>
               </Box>

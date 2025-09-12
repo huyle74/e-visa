@@ -4,8 +4,9 @@ import { eligibilityEntries } from "@/app/libs/entries-input-visa";
 import { EligibilityInputDto } from "@/app/libs/types";
 import { Box, SelectChangeEvent } from "@mui/material";
 import AutoCompleteForm from "../autocompleteForm";
+import { useCountries } from "@/app/contexts/countriesContext";
 import FormContainer from "../containerForm";
-import { getEligibilltyEnum, getCountriesData } from "@/app/server-side/static-data";
+import { getEligibilltyEnum } from "@/app/server-side/static-data";
 import ButtonSumbit from "../button-submit-group";
 
 type Select = (e: SelectChangeEvent, name: string) => void;
@@ -52,21 +53,20 @@ const EligibilityStep = ({
     visitPurpose,
   } = valueProps;
 
+  const { countries } = useCountries();
+  const countriesName = countries.map((country: any) => {
+    return country.engName;
+  });
+
   const [eligibilityEntry, setEligibilityEntry] = useState<EligibilityEntries>({
     visaTypes: [],
     documentType: [],
     visitPurpose: [],
   });
-  const [countriesName, setCountriesName] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
-      const countries = await getCountriesData();
-      const countriesName = countries.map((country: any) => {
-        return country.engName;
-      });
       const result = await getEligibilltyEnum();
-      setCountriesName(countriesName);
       setEligibilityEntry(result);
     })();
   }, []);
@@ -76,7 +76,9 @@ const EligibilityStep = ({
       <FormContainer title="Check your eligibility">
         <AutoCompleteForm
           name="inputCountryPassport"
-          onChange={(e) => onChangeInpurtCountryPassport(e, "inputCountryPassport")}
+          onChange={(e) =>
+            onChangeInpurtCountryPassport(e, "inputCountryPassport")
+          }
           value={inputCountryPassport}
           title="Country/Territory of Passport/TD"
           inputData={countriesName}

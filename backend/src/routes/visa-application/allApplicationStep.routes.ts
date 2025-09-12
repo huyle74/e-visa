@@ -20,6 +20,10 @@ applicationRouter.get(
   "/list-visa-application",
   visaApplicationController.listVisaApplicationByUserId
 );
+applicationRouter.post(
+  "/delete-application-by-ids",
+  visaApplicationController.deleteVisaApplicationByIds
+);
 
 // 1ST
 applicationRouter.post(
@@ -39,7 +43,10 @@ applicationRouter.post(
   (err: any, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof multer.MulterError) {
       if (err.code === "LIMIT_FILE_SIZE") {
-        return responseFailed({ res, message: `${err.field} Files Exceed 5MB` });
+        return responseFailed({
+          res,
+          message: `${err.field} Files Exceed 5MB`,
+        });
       }
     }
     next(req);
@@ -77,7 +84,10 @@ applicationRouter.post(
   (err: any, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof multer.MulterError) {
       if (err.code === "LIMIT_FILE_SIZE") {
-        return responseFailed({ res, message: `${err.field} Files Exceed 5MB` });
+        return responseFailed({
+          res,
+          message: `${err.field} Files Exceed 5MB`,
+        });
       }
     }
     next(req);

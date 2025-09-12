@@ -1,7 +1,8 @@
 import React, { forwardRef } from "react";
-import { Box, TextField, Button, Input } from "@mui/material";
+import { Box, TextField, Button, Input, CircularProgress } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import styles from "./form.module.css";
+import { useCountries } from "@/app/contexts/countriesContext";
 import { white } from "@/app/libs/color-config";
 
 interface Nation {
@@ -12,7 +13,6 @@ interface Nation {
 }
 
 interface PhoneFormRowType {
-  countries: Nation[];
   nationData: Nation;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClick: (e: React.MouseEvent<HTMLElement>) => void;
@@ -22,136 +22,150 @@ interface PhoneFormRowType {
   phoneNumb: string;
 }
 
-const PhoneFormRow = forwardRef<HTMLDivElement, PhoneFormRowType>(function phoneRow(
-  props,
-  ref
-) {
-  const {
-    countries,
-    nationData,
-    onChange,
-    onClick,
-    dropdown,
-    onClickDropdown,
-    onChangeSearch,
-    phoneNumb,
-  } = props;
+const PhoneFormRow = forwardRef<HTMLDivElement, PhoneFormRowType>(
+  function PhoneRow(props, ref) {
+    const { countries } = useCountries();
 
-  const FlageNation = ({ iso2 = "US" }: any) => {
+    const {
+      nationData,
+      onChange,
+      onClick,
+      dropdown,
+      onClickDropdown,
+      onChangeSearch,
+      phoneNumb,
+    } = props;
+
+    const FlageNation = ({ iso2 = "US" }: any) => {
+      return (
+        <img
+          loading="lazy"
+          width="23"
+          height="18"
+          srcSet={`https://flagcdn.com/w40/${iso2.toLowerCase()}.png 2x`}
+          src={`https://flagcdn.com/w20/${iso2.toLowerCase()}.png`}
+          alt=""
+        />
+      );
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      const allowedKeys = [
+        "Backspace",
+        "Delete",
+        "ArrowLeft",
+        "ArrowRight",
+        "Tab",
+      ].includes(e.key);
+
+      const isLetter = e.key.length === 1 && /[a-zA-Z]/.test(e.key);
+      if (isLetter || (phoneNumb.length >= 11 && !allowedKeys)) {
+        e.preventDefault();
+      }
+    };
+
     return (
-      <img
-        loading="lazy"
-        width="23"
-        height="18"
-        srcSet={`https://flagcdn.com/w40/${iso2.toLowerCase()}.png 2x`}
-        src={`https://flagcdn.com/w20/${iso2.toLowerCase()}.png`}
-        alt=""
-      />
-    );
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const allowedKeys = [
-      "Backspace",
-      "Delete",
-      "ArrowLeft",
-      "ArrowRight",
-      "Tab",
-    ].includes(e.key);
-
-    const isLetter = e.key.length === 1 && /[a-zA-Z]/.test(e.key);
-    if (isLetter || (phoneNumb.length >= 11 && !allowedKeys)) {
-      e.preventDefault();
-    }
-  };
-
-  return (
-    <div className={styles.phoneCodeNation}>
-      <Box sx={{ display: "flex", height: "2.6rem" }}>
-        <Button
-          endIcon={<ArrowDropDownIcon />}
-          variant="outlined"
-          sx={{ mr: 1, border: "1px solid gray" }}
-          color="primary"
-          onClick={onClickDropdown}
-        >
-          <FlageNation iso2={nationData?.iso2} />
-        </Button>
-        <Box
-          sx={{
-            display: "flex",
-            color: "black",
-            alignItems: "center",
-            width: "100%",
-            backgroundColor: white,
-            border: "1px solid gray",
-            borderRadius: "4px",
-          }}
-        >
-          <Box sx={{ ml: 1.5, mr: 1 }}>{nationData.code}</Box>
-          <Input
-            name="phone"
-            onKeyDown={handleKeyDown}
-            sx={{ height: "100%" }}
-            value={phoneNumb}
-            fullWidth={true}
-            onChange={onChange}
-            color="secondary"
-            required
-            disableUnderline={true}
-          />
-        </Box>
-      </Box>
-      {dropdown && (
-        <Box
-          ref={ref}
-          sx={{
-            position: "absolute",
-            zIndex: 1000,
-            backgroundColor: "white",
-            width: "100%",
-            mt: 1,
-          }}
-        >
-          <TextField
-            label="Search"
-            onChange={onChangeSearch}
-            size="small"
+      <div className={styles.phoneCodeNation}>
+        <Box sx={{ display: "flex", height: "2.6rem" }}>
+          <Button
+            endIcon={<ArrowDropDownIcon />}
+            variant="outlined"
+            sx={{ mr: 1, border: "1px solid gray" }}
             color="primary"
-            variant="filled"
-            fullWidth={true}
-            type="search"
-            itemType="number"
-          />
-
+            onClick={onClickDropdown}
+          >
+            <FlageNation iso2={nationData?.iso2} />
+          </Button>
           <Box
             sx={{
               display: "flex",
-              flexDirection: "column",
-              overflowY: "scroll",
-              overflowX: "hidden",
-              height: "40vh",
+              color: "black",
+              alignItems: "center",
               width: "100%",
-              pb: 2,
-              mt: 2,
+              backgroundColor: white,
+              border: "1px solid gray",
+              borderRadius: "4px",
             }}
           >
-            {countries.map((nation, key) => {
-              return (
-                <div key={key} className={styles.listContainer}>
-                  <li onClick={onClick}>
-                    <FlageNation iso2={nation.iso2} />
-                    <p>{nation.engName}</p>
-                    <p>{nation.code}</p>
-                  </li>
-                </div>
-              );
-            })}
+            <Box sx={{ ml: 1.5, mr: 1 }}>{nationData.code}</Box>
+            <Input
+              name="phone"
+              onKeyDown={handleKeyDown}
+              sx={{ height: "100%" }}
+              value={phoneNumb}
+              fullWidth={true}
+              onChange={onChange}
+              color="secondary"
+              required
+              disableUnderline={true}
+            />
           </Box>
         </Box>
-      )}
-    </div>
-  );
-});
+        {dropdown && (
+          <Box
+            ref={ref}
+            sx={{
+              position: "absolute",
+              zIndex: 1000,
+              backgroundColor: "white",
+              width: "100%",
+              mt: 1,
+            }}
+          >
+            <TextField
+              label="Search"
+              onChange={onChangeSearch}
+              size="small"
+              color="primary"
+              variant="filled"
+              fullWidth={true}
+              type="search"
+              itemType="number"
+            />
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                overflowY: "scroll",
+                overflowX: "hidden",
+                height: "40vh",
+                width: "100%",
+                pb: 2,
+                mt: 2,
+              }}
+            >
+              {countries.length !== 0 ? (
+                countries.map((nation, key) => {
+                  return (
+                    <div key={key} className={styles.listContainer}>
+                      <li onClick={onClick}>
+                        <FlageNation iso2={nation.iso2} />
+                        <p>{nation.engName}</p>
+                        <p>{nation.code}</p>
+                      </li>
+                    </div>
+                  );
+                })
+              ) : (
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CircularProgress color="secondary" />
+                </Box>
+              )}
+            </Box>
+          </Box>
+        )}
+      </div>
+    );
+  }
+);
 
 export default PhoneFormRow;

@@ -26,10 +26,11 @@ import PasswordFormRow from "./textPassword-row";
 import styles from "./form.module.css";
 import { primary, secondary, white } from "@/app/libs/color-config";
 import { backend_url } from "@/app/server-side/envLoader";
+import { useCountries } from "@/app/contexts/countriesContext";
 
 const formControlStyle = { width: "80%", m: "auto", mt: 3 };
 
-interface country {
+interface Country {
   code: string;
   countryCode: string;
   iso2: string;
@@ -46,20 +47,17 @@ interface Account {
   confirmPassword: string;
 }
 
-interface CreateAccountFormProps {
-  countries: country[];
-}
-
-export default function CreateAccoutForm({ countries }: CreateAccountFormProps) {
+export default function CreateAccoutForm() {
+  const { countries } = useCountries();
   const [nation, setNation] = useState("");
-  const [nationData, setNationData] = useState<country>({
+  const [nationData, setNationData] = useState<Country>({
     code: "+1",
     iso2: "US",
     countryCode: "",
     engName: "",
   });
   const [dropdown, setDropdown] = useState<boolean>(false);
-  const [countriesList, setCountriesList] = useState<country[]>(countries);
+  const [countriesList, setCountriesList] = useState<Country[]>(countries);
   const [formatPhoneNumb, setFormatPhoneNumb] = useState<string>("");
   const [account, setAccount] = useState<Account>({
     firstName: "",
@@ -86,7 +84,8 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
   const handleChange = (e: SelectChangeEvent) => {
     setNation(e.target.value);
     const nationData =
-      countries.find((nation) => nation.engName == e.target.value) || countries[2];
+      countries.find((nation) => nation.engName == e.target.value) ||
+      countries[2];
     setNationData(nationData);
     setAccount((prev) => ({ ...prev, nation: nationData.iso2 }));
   };
@@ -96,7 +95,8 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
     if (child instanceof Element) {
       const nationName = child.innerHTML;
       const selectNation =
-        countries.find((nation) => nation.engName == nationName) || countries[2];
+        countries.find((nation) => nation.engName == nationName) ||
+        countries[2];
       setNationData(selectNation);
       setDropdown(false);
       setCountriesList(countries);
@@ -131,7 +131,7 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
   }, [dropdown]);
 
   const handleClickDropdown = () => {
-    setDropdown((prev) => (prev ? false : true));
+    setDropdown((prev) => !prev);
   };
 
   const handleOnChangePhone = (e: ChangeEvent<HTMLInputElement>) => {
@@ -211,7 +211,11 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
     <Box sx={{ padding: "3rem 0 3rem 0", backgroundColor: secondary }}>
       <div
         className={styles.form}
-        style={{ color: white, border: `1px solid ${primary}`, backgroundColor: white }}
+        style={{
+          color: white,
+          border: `1px solid ${primary}`,
+          backgroundColor: white,
+        }}
       >
         <div className={styles.formHeader} style={{ backgroundColor: primary }}>
           My E-Visa Account
@@ -288,7 +292,6 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
 
           <PhoneFormRow
             ref={ref}
-            countries={countriesList}
             nationData={nationData}
             onClick={handleSelectNationNumb}
             dropdown={dropdown}
@@ -341,7 +344,10 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
         <Box sx={{ p: 1, width: "100%" }}>
           {errorMessage.map((message) => {
             return (
-              <Box sx={{ color: "red", fontSize: "0.8rem", p: 0.3 }} key={message}>
+              <Box
+                sx={{ color: "red", fontSize: "0.8rem", p: 0.3 }}
+                key={message}
+              >
                 - {message}
               </Box>
             );
@@ -354,7 +360,12 @@ export default function CreateAccoutForm({ countries }: CreateAccountFormProps) 
           fullWidth
           variant="outlined"
           type="submit"
-          sx={{ ...formContentStyles, mb: 4, border: "1px black solid", color: "black" }}
+          sx={{
+            ...formContentStyles,
+            mb: 4,
+            border: "1px black solid",
+            color: "black",
+          }}
           onClick={() => router.push("/login")}
         >
           SIGN IN

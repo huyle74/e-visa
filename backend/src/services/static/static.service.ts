@@ -14,7 +14,8 @@ import {
 export const staticService = {
   async getAllCountries() {
     const countries = await countryRepo.findAllCountry();
-    if (!countries) throw new Error("Get countries data from database got error");
+    if (!countries)
+      throw new Error("Get countries data from database got error");
 
     return countries;
   },
@@ -49,6 +50,13 @@ export const staticService = {
     const occupation = Object.values(Occupation);
     const annualIncome = Object.values(AnnualIncome);
 
-    return { title, sex, maritalStatus, travelDocumentType, occupation, annualIncome };
+    return {
+      title,
+      sex,
+      maritalStatus,
+      travelDocumentType,
+      occupation,
+      annualIncome,
+    };
   },
 };

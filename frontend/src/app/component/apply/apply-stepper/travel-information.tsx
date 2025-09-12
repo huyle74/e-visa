@@ -18,6 +18,7 @@ import RadioComponent from "../select-ratio";
 import DatePickerComponent from "../date-picker";
 import MobileTextField from "../mobileInput";
 import ButtonSumbit from "../button-submit-group";
+import { useCountries } from "@/app/contexts/countriesContext";
 
 type EventTextField = (
   e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -74,13 +75,16 @@ const TravelInformation = ({
   onChangeAdditionalAccomodation,
   onClickNext,
 }: TravelInformationProps) => {
+  const { countries } = useCountries();
+  const countriesNameArr = countries.map((nation: any) => nation.engName);
+
   return (
     <Box>
       {/* Travel Information */}
       <FormContainer title="Travel Information">
         <Box sx={{ p: 1 }}>
-          Applicant should not apply for visa more than 3 months before the date of
-          intended arrival.
+          Applicant should not apply for visa more than 3 months before the date
+          of intended arrival.
         </Box>
         <InputContainer width={100}>
           <DatePickerComponent
@@ -103,7 +107,7 @@ const TravelInformation = ({
         <InputContainer width={50}>
           <AutoCompleteForm
             title="Country / Territory ( Last port of embarkation )"
-            inputData={travelInformationEntries.travelInfo.country}
+            inputData={countriesNameArr}
             placeHolder="Select your Country / Territory"
             onChange={(e) => onChangeSelectCountry(e, "country")}
             value={data.country}
@@ -176,7 +180,9 @@ const TravelInformation = ({
 
         <InputContainer>
           <SwithYesNo
-            onChange={(e) => onChangeAdditionalAccomodation(e, "additionalAccommodation")}
+            onChange={(e) =>
+              onChangeAdditionalAccomodation(e, "additionalAccommodation")
+            }
             checked={data.additionalAccommodation}
             content="Additional accommodation in?"
           />

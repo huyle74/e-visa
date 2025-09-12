@@ -1,9 +1,3 @@
-import { countries } from "../static/countries";
-
-const nationArr = countries.map((country) => {
-  return country.engName;
-});
-
 export const eligibilityEntries = {
   applyAt: ["USA", "China", "Thailand"],
   currentLocation: ["Vietnam", "Cambodia", "Isarel", "UAE"],
@@ -32,8 +26,8 @@ export const applicationInformationEntries = {
   personalInfo: {
     title: ["Mr", "Miss", "Mrs", "Master", "Other"],
     sex: ["Male", "Female", "Others"],
-    nationality: nationArr,
-    nationalityBirth: nationArr,
+    nationality: [],
+    nationalityBirth: [],
     maritalStatus: [
       "Single",
       "Married",
@@ -45,8 +39,13 @@ export const applicationInformationEntries = {
     ],
   },
   travelDocument: {
-    type: ["Certificate of Identity-C.I", "Passport", "Seaman's Book", "Travel Document"],
-    country: nationArr,
+    type: [
+      "Certificate of Identity-C.I",
+      "Passport",
+      "Seaman's Book",
+      "Travel Document",
+    ],
+    country: [],
     state: [],
     city: [],
   },
@@ -92,7 +91,7 @@ export const transportationVehicle = {
 
 export const travelInformationEntries = {
   travelInfo: {
-    country: nationArr,
+    country: [],
     arrivalPort: ["Land", "Sea", "Air"],
     hadVisited: false,
     didApply: false,

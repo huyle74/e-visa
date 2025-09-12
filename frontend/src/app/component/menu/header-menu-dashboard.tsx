@@ -3,7 +3,7 @@ import LogoTitle from "./logo_name";
 import ButtonMenuDashboard from "./menu-button-dashboard";
 import { white } from "@/app/libs/color-config";
 
-const MenuDashboard = ({ userName }: { userName?: string }) => {
+const MenuDashboard = () => {
   return (
     <Box
       sx={{
@@ -15,7 +15,7 @@ const MenuDashboard = ({ userName }: { userName?: string }) => {
       }}
     >
       <LogoTitle />
-      <ButtonMenuDashboard userName={userName} />
+      <ButtonMenuDashboard />
     </Box>
   );
 };

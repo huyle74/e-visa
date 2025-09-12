@@ -32,9 +32,11 @@ export default function Home() {
             withCredentials: true,
           }
         );
-        console.log(data);
         const user = data.data;
-        localStorage.setItem(KEY, JSON.stringify({ ...user, lastUpdatedAt: Date.now() }));
+        localStorage.setItem(
+          KEY,
+          JSON.stringify({ ...user, lastUpdatedAt: Date.now() })
+        );
         setUser(user);
       })();
     } else {
@@ -48,33 +50,59 @@ export default function Home() {
       <HeaderMenu logged={user !== null} userName={user?.lastName || ""} />
       <Box>
         <Box sx={{ position: "relative" }}>
-          <img className={styles.backgroundImage} src={backgroundImage} alt="backdrop" />
+          <img
+            className={styles.backgroundImage}
+            src={backgroundImage}
+            alt="backdrop"
+          />
           <div className={styles.backgroundBlur}>
             <Image src={logoWhite} alt="logo" width={600} height={200} />
             <h1 className={styles.backgroundTitle}>
-              MY E-VISA <br /> <span style={{ margin: "1rem" }}>OFFCIAL WEBSITE</span>
+              MY E-VISA <br />{" "}
+              <span style={{ margin: "1rem" }}>OFFCIAL WEBSITE</span>
             </h1>
-            <div style={{ height: "2px", width: "50vw", backgroundColor: "white" }}></div>
-            <h2 className={styles.backgroundTitleBelow}>A product of My E-Visa</h2>
+            <div
+              style={{ height: "2px", width: "50vw", backgroundColor: "white" }}
+            ></div>
+            <h2 className={styles.backgroundTitleBelow}>
+              A product of My E-Visa
+            </h2>
           </div>
         </Box>
       </Box>
       <Box className={styles.applySection} sx={{ backgroundColor: primary }}>
         <Box sx={{ ml: 4 }}>
-          <Box sx={{ mb: 2 }}>HOW TO APPLY ONLINE</Box>
-          <div style={{ width: "10vw", height: "4px", backgroundColor: white }}></div>
+          <Box sx={{ mb: 2, mt: 3, ml: 3 }}>HOW TO APPLY ONLINE</Box>
+          <Box
+            sx={{
+              width: "10vw",
+              height: "4px",
+              backgroundColor: white,
+              ml: 3,
+            }}
+          ></Box>
         </Box>
         <Box
           sx={{
-            width: "70vw",
+            width: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             m: "auto",
+            pb: 10,
+            overflow: "hidden",
+            height: "100%",
           }}
         >
           {steps.map((content, i) => (
-            <Box sx={{ display: "flex", alignItems: "center" }} key={i}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                width: `${i !== 5 ? "16.66%" : 0}`,
+              }}
+              key={i}
+            >
               <Box sx={{ position: "relative" }}>
                 <div className={styles.circleStep}>{i + 1}</div>
                 <h5 className={styles.contentStep}>{content}</h5>

@@ -1,6 +1,10 @@
 import { Response, Request } from "express";
 import { validationResponse } from "@/utils/validateResponse.helper";
-import { responseError, responseFailed, responseSuccess } from "@/utils/response.helper";
+import {
+  responseError,
+  responseFailed,
+  responseSuccess,
+} from "@/utils/response.helper";
 import eligibilityService from "@/services/visa-application/1stEligibilty.service";
 
 const eligibilityController = {
@@ -16,7 +20,8 @@ const eligibilityController = {
       const user = (req as any).user;
 
       const result = await eligibilityService.create(user, `${userId}`, data);
-      if (!result) return responseFailed({ res, message: "Failed to add Eligibilty" });
+      if (!result)
+        return responseFailed({ res, message: "Failed to add Eligibilty" });
 
       return responseSuccess({ res, data: result, message: "successfully" });
     } catch (error: any) {
