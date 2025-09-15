@@ -5,6 +5,7 @@ import {
   responseError,
 } from "../../utils/response.helper";
 import visaApplicationService from "@/services/visa-application/visa-application.service";
+import { get } from "http";
 
 export const visaApplicationController = {
   async listVisaApplicationByUserId(req: Request, res: Response) {
@@ -35,11 +36,25 @@ export const visaApplicationController = {
       if (!userId) return responseError({ res, message: "User ID is missing" });
       const ids = req.body.applicationIds;
 
-      console.log(ids);
-
-      const result = await visaApplicationService.deleteMany(ids);
+      await visaApplicationService.deleteMany(ids);
 
       responseSuccess({ res, data: [], message: "successfully" });
+    } catch (error: any) {
+      console.error(error);
+      const message = error?.message;
+      return responseError({ res, message });
+    }
+  },
+
+  async getVisaApplicationById(req: Request, res: Response) {
+    try {
+      const id = String(req.query.applicationId);
+
+      const getOne = await visaApplicationService.findOne(id);
+      if (!getOne)
+        responseFailed({ res, message: "Failed to get this application" });
+
+      return responseSuccess({ res, data: getOne });
     } catch (error: any) {
       console.error(error);
       const message = error?.message;

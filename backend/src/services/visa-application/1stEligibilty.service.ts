@@ -10,6 +10,7 @@ const eligibilityService = {
     if (checkAuth === false) throw new Error("Cannot authenticate this user");
 
     const applicationId = data.applicationId;
+    const { fromCountry, toCountry, price, ...rest } = data;
 
     if (applicationId) {
       const checkApplyExisted =
@@ -17,17 +18,22 @@ const eligibilityService = {
       if (checkApplyExisted) {
         const updateEligibility = await eligibiltyRepo.update(
           applicationId,
-          data
+          rest
         );
         return updateEligibility;
       }
     } else {
-      const createNewApplication = await visaApplicationRepo.create(userId);
+      const createNewApplication = await visaApplicationRepo.create(
+        userId,
+        fromCountry,
+        toCountry,
+        price
+      );
       if (!createNewApplication)
         throw new Error("Cannot create application form");
 
       const correlationId = createNewApplication.correlationId;
-      const createEligibilty = await eligibiltyRepo.create(correlationId, data);
+      const createEligibilty = await eligibiltyRepo.create(correlationId, rest);
       if (!createEligibilty) throw new Error("Cannot create Eligibilty form");
 
       console.log(createEligibilty);

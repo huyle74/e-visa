@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
 import { validationResponse } from "@/utils/validateResponse.helper";
-import loginService from "@/services/user/auth.service";
+import loginService from "@/services/user/login.service";
 import { responseSuccess, responseFailed, responseError } from "@/utils/response.helper";
 import { loginDto } from "@/dto/auth.dto";
 

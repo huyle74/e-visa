@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import loginController from '../../controllers/user/auth.controller';
+import loginController from '../../controllers/user/login.controller';
 import { loginValidator } from '../../dto/auth.dto';
 
 const loginRoute = Router();

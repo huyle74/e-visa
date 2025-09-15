@@ -1,14 +1,24 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
-import type { } from "@mui/lab/themeAugmentation";
-import { Box, IconButton, Stack, Step, StepConnector, StepIconProps, StepLabel, Stepper } from "@mui/material";
+import type {} from "@mui/lab/themeAugmentation";
+import {
+  Box,
+  IconButton,
+  Stack,
+  Step,
+  StepConnector,
+  StepIconProps,
+  StepLabel,
+  Stepper,
+} from "@mui/material";
 import { stepConnectorClasses } from "@mui/material/StepConnector";
 import { styled } from "@mui/material/styles";
 import { FC, ReactElement } from "react";
 
 const steps = [
+  "Select Countries",
   "Check your eligibility",
-  "Applicant Information",
+  "Application Information",
   "Travel Information",
   "Supporting documents",
   "Payment",
@@ -20,12 +30,14 @@ const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   },
   [`&.${stepConnectorClasses.active}`]: {
     [`& .${stepConnectorClasses.line}`]: {
-      backgroundImage: "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
+      backgroundImage:
+        "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
     },
   },
   [`&.${stepConnectorClasses.completed}`]: {
     [`& .${stepConnectorClasses.line}`]: {
-      backgroundImage: "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
+      backgroundImage:
+        "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
     },
   },
   [`& .${stepConnectorClasses.line}`]: {
@@ -77,7 +89,7 @@ function ColorlibStepIcon(props: StepIconProps) {
   const { active, completed, className } = props;
 
   const iconObj: Record<number, ReactElement> = Object.fromEntries(
-    Array.from({ length: 5 }, (_, i) => [
+    Array.from({ length: 6 }, (_, i) => [
       i + 1,
       <div key={i} style={{ fontWeight: 900, fontSize: "1.3rem" }}>
         {i + 1}
@@ -89,7 +101,10 @@ function ColorlibStepIcon(props: StepIconProps) {
   };
 
   return (
-    <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
+    <ColorlibStepIconRoot
+      ownerState={{ completed, active }}
+      className={className}
+    >
       {completed ? <DoneOutlineIcon /> : icons[String(props.icon)]}
     </ColorlibStepIconRoot>
   );
@@ -109,7 +124,11 @@ const HeaderTitleApplyStepper: FC<Data> = ({ data, onClick }) => {
         <Box sx={{ fontWeight: 900 }}>{data.title}</Box>
       </Stack>
       <Box sx={{ mt: 4 }}>
-        <Stepper activeStep={data.activeStep} alternativeLabel connector={<ColorlibConnector />}>
+        <Stepper
+          activeStep={data.activeStep}
+          alternativeLabel
+          connector={<ColorlibConnector />}
+        >
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel StepIconComponent={ColorlibStepIcon}>

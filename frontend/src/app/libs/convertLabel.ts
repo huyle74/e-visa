@@ -1,9 +1,16 @@
 export const convertToLabel = (value: string) => {
   if (!value) return "";
-  const splited = value.toLowerCase().split("_");
-  const result =
-    splited[0][0].toUpperCase() + splited[0].slice(1) + " " + splited.slice(1);
-  return result.replaceAll(",", " ");
+
+  const check = value.includes("_");
+  if (check) {
+    const splited = value.toLowerCase().split("_");
+
+    const convert = splited.map((word: string) => {
+      return word[0].toUpperCase() + word.slice(1);
+    });
+
+    return convert.join(" ");
+  } else return value;
 };
 
 export const reverseLableToValue = (label: string) => {

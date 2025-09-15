@@ -1,8 +1,14 @@
-import { body } from 'express-validator';
+import { body } from "express-validator";
 
 export interface loginDto {
   email: string;
   password: string;
+}
+
+export interface ReCreatePassordDto {
+  email: string;
+  password: string;
+  re_password: string;
 }
 
 export interface Nation {
@@ -10,6 +16,13 @@ export interface Nation {
   countryCode: string;
   engName: string;
   code: string;
+}
+
+export interface CreateAdminAccountDto {
+  role: "ADMIN";
+  email: string;
+  password: string;
+  name: string;
 }
 
 export interface CreateUserDto {
@@ -23,35 +36,39 @@ export interface CreateUserDto {
 }
 
 export const loginValidator = [
-  body('email').isEmail().withMessage('Invalid Email'),
-  body('password').notEmpty().withMessage('Password is required'),
+  body("email").isEmail().withMessage("Invalid Email"),
+  body("password").notEmpty().withMessage("Password is required"),
+];
+
+export const adminLoginValidator = [
+  body("name").notEmpty().withMessage("Enter the name"),
+  body("email").isEmail().withMessage("Invalid Email"),
+  body("password").notEmpty().withMessage("Password is required"),
 ];
 
 export const createAccountValidator = [
-  body('email')
+  body("email")
     .isEmail()
-    .withMessage('Invalid Email')
+    .withMessage("Invalid Email")
     .trim()
     .not()
     .isEmpty()
-    .withMessage('Email cannot be empty'),
-  body('password').notEmpty().withMessage('Password is required'),
-  body('firstName')
+    .withMessage("Email cannot be empty"),
+  body("password").notEmpty().withMessage("Password is required"),
+  body("firstName")
     .notEmpty()
-    .withMessage('First name is required')
+    .withMessage("First name is required")
     .trim()
     .not()
     .isEmpty()
-    .withMessage('First Name cannot be empty'),
-  body('lastName').notEmpty().withMessage('Last name is required'),
-  body('phoneNumber').notEmpty().withMessage('Mobile phone is required'),
-  body('nation').notEmpty().withMessage('Nationality is required'),
+    .withMessage("First Name cannot be empty"),
+  body("lastName").notEmpty().withMessage("Last name is required"),
+  body("phoneNumber").notEmpty().withMessage("Mobile phone is required"),
+  body("nation").notEmpty().withMessage("Nationality is required"),
 ];
 
 export const changePasswordValidator = [
-  body('email').isEmail().withMessage('Invalid Email'),
-  body('password').notEmpty().withMessage('Password is required'),
-  body('re_password').notEmpty().withMessage('Re-enter Password is required'),
+  body("email").isEmail().withMessage("Invalid Email"),
+  body("password").notEmpty().withMessage("Password is required"),
+  body("re_password").notEmpty().withMessage("Re-enter Password is required"),
 ];
-
-

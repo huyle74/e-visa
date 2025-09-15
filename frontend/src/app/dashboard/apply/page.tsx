@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import type { Dayjs } from "dayjs";
 import axios from "axios";
 import { AuthProvider } from "@/app/contexts/authProvider";
+import CountrySelectionStep from "@/app/component/apply/apply-stepper/select-country-fromTo";
 import ApplicationInformation from "@/app/component/apply/apply-stepper/applyInformation";
 import TravelInformation from "@/app/component/apply/apply-stepper/travel-information";
 import EligibilityStep from "@/app/component/apply/apply-stepper/eligibility";
@@ -25,15 +26,15 @@ import {
   TravelInformationInputDto,
   TransportationVehicleInputDto,
   SupportingDocumentInputDto,
+  CountrySelectionDto,
 } from "@/app/libs/types";
 import { CountriesProvider } from "@/app/contexts/countriesContext";
 import ModalComponent from "@/app/component/common/modal";
 import { transportationVehicle } from "@/app/libs/entries-input-visa";
 import { backend_url } from "@/app/server-side/envLoader";
 import { getUserInfo } from "@/app/libs/getLocalStorage";
-import { getCountriesData } from "@/app/server-side/static-data";
 import Footer from "@/app/component/footer/footer";
-import { reverseLableToValue, convertToLabel } from "@/app/libs/convertLabel";
+import { reverseLableToValue } from "@/app/libs/convertLabel";
 
 const prefix = backend_url + "api" + "/visa-application";
 
@@ -43,11 +44,12 @@ interface Stepper {
 }
 
 const steps = [
-  { activeStep: 0, title: "Check your eligibility" },
-  { activeStep: 1, title: "Applicant Information" },
-  { activeStep: 2, title: "Travel Information" },
-  { activeStep: 3, title: "Supporting documents" },
-  { activeStep: 4, title: "Payment" },
+  { activeStep: 0, title: "Select countries" },
+  { activeStep: 1, title: "Check your eligibility" },
+  { activeStep: 2, title: "Applicant Information" },
+  { activeStep: 3, title: "Travel Information" },
+  { activeStep: 4, title: "Supporting documents" },
+  { activeStep: 5, title: "Payment" },
 ];
 
 const MAX_SIZE = 5 * 1024 * 1024;
@@ -70,6 +72,11 @@ const ApplyNewVisa = () => {
   const [modalContent, setModalContent] = useState({
     title: "",
     description: "",
+  });
+  const [selectCountryData, setCountryData] = useState<CountrySelectionDto>({
+    price: 100,
+    fromCountry: "",
+    toCountry: "",
   });
   const [eligibilityData, setEligibilityData] = useState<EligibilityInputDto>({
     applicationId: "",
@@ -184,6 +191,14 @@ const ApplyNewVisa = () => {
   useEffect(() => {
     if (applyId) {
       if (currentStep === 0) {
+        const endpoint = prefix + "/find-visa-application";
+        (async () => {
+          const results = await getData(endpoint, { applicationId: applyId });
+          if (results) setCountryData(results);
+        })();
+      }
+
+      if (currentStep === 1) {
         const endpoint = prefix + "/find-eligibilty-form";
         (async () => {
           const eligibilty = await getData(endpoint, {
@@ -192,7 +207,7 @@ const ApplyNewVisa = () => {
           if (eligibilty) setEligibilityData(eligibilty);
         })();
       }
-      if (currentStep === 1) {
+      if (currentStep === 2) {
         const endpoint = prefix + "/find-application-information-form";
         (async () => {
           const applicationInformation = await getData(endpoint, {
@@ -238,7 +253,7 @@ const ApplyNewVisa = () => {
         })();
       }
 
-      if (currentStep === 2) {
+      if (currentStep === 3) {
         (async () => {
           const endpoint = prefix + "/find-travel-information-form";
           const travelInformation = await getData(endpoint, {
@@ -248,7 +263,7 @@ const ApplyNewVisa = () => {
         })();
       }
 
-      if (currentStep === 3) {
+      if (currentStep === 4) {
         const endpoint = prefix + "/get-file-supporting-document";
         (async () => {
           try {
@@ -455,6 +470,7 @@ const ApplyNewVisa = () => {
 
       const data = {
         ...rest,
+        ...selectCountryData,
         visaType: reverseLableToValue(visaType),
         visitPurpose: reverseLableToValue(visitPurpose),
         documentType: reverseLableToValue(documentType),
@@ -507,7 +523,6 @@ const ApplyNewVisa = () => {
         annualIncome: reverseLableToValue(annualIncome),
         occupation: reverseLableToValue(occupation),
       };
-      console.log(convert);
       const form = formConvertApplicationInformation(convert);
       setLoading(true);
       setDisable(true);
@@ -653,6 +668,23 @@ const ApplyNewVisa = () => {
     }
   };
 
+  const handleOnchangeSelectCountriesForm = (
+    e: SelectChangeEvent,
+    name: string
+  ) => {
+    setCountryData((prev) => ({ ...prev, [name]: e.target.value }));
+  };
+
+  const handleSubmitSelectCountriesForm: MouseEventHandler<
+    HTMLButtonElement
+  > = (e) => {
+    e.preventDefault();
+    const { toCountry, fromCountry } = selectCountryData;
+    if (toCountry.length !== 0 && fromCountry.length !== 0) {
+      triggerNext();
+    } else return;
+  };
+
   return (
     <AuthProvider>
       <Box sx={{ backgroundColor: "#F2FCFC", height: "100%", pb: 6 }}>
@@ -665,6 +697,16 @@ const ApplyNewVisa = () => {
                 onClick={handleBackButton}
               />
               {stepStatus.activeStep === 0 && (
+                <CountrySelectionStep
+                  disabled={applyId ? true : disabled}
+                  values={selectCountryData}
+                  onChangeFromCountry={handleOnchangeSelectCountriesForm}
+                  onChangeToCountry={handleOnchangeSelectCountriesForm}
+                  loading={loading}
+                  onclickNext={handleSubmitSelectCountriesForm}
+                />
+              )}
+              {stepStatus.activeStep === 1 && (
                 <EligibilityStep
                   disabled={disabled}
                   loading={loading}
@@ -679,7 +721,7 @@ const ApplyNewVisa = () => {
                   onChangeVisitPurpose={handleOnchangeEligibility}
                 />
               )}
-              {stepStatus.activeStep === 1 && (
+              {stepStatus.activeStep === 2 && (
                 <ApplicationInformation
                   dataProps={applyInfoData}
                   // HANDLE FILES
@@ -730,7 +772,7 @@ const ApplyNewVisa = () => {
                   onChangeCompanyPlace={handleOnchangeApplicationInformation}
                 />
               )}
-              {stepStatus.activeStep === 2 && (
+              {stepStatus.activeStep === 3 && (
                 <TravelInformation
                   data={travelInfo}
                   onClickNext={handleSumbitTravelInformation}
@@ -765,7 +807,7 @@ const ApplyNewVisa = () => {
                   onChangeTransportVehicleCode={handleOnChangeTravelInformation}
                 />
               )}
-              {stepStatus.activeStep === 3 && (
+              {stepStatus.activeStep === 4 && (
                 <SupportingDocument
                   onClickNext={handleSubmitsupportingDocument}
                   data={supportingDoc}

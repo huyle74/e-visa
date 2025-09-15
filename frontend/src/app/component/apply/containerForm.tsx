@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import { teal } from "@mui/material/colors";
 import { ReactNode } from "react";
 import { primary } from "@/app/libs/color-config";
 

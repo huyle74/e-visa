@@ -24,10 +24,20 @@ const visaApplicationService = {
         nationality: rows.ApplyInformation?.nationality,
         documentNo: rows.ApplyInformation?.documentNumber,
         birthDate: rows.ApplyInformation?.birthDate,
+        fromCountry: rows.fromCountry,
+        tocountry: rows.toCountry,
       };
     });
 
     return results;
+  },
+  async findOne(applicationId: string) {
+    const result = await visaApplicationRepo.findOne(applicationId);
+    if (!result) throw new Error("Get to this Applications");
+
+    const { fromCountry, toCountry, price } = result;
+
+    return { fromCountry, toCountry, price };
   },
 
   async deleteMany(applicationIds: string[]) {

@@ -5,6 +5,12 @@ model Application {
 
     userId String
 
+    fromCountry String
+    toCountry   String
+
+    price   Decimal
+    payment Boolean? @default(false)
+
     Eligibility        Eligibility?
     ApplyInformation   ApplyInformation?
     travelInformation  TravelInformation?

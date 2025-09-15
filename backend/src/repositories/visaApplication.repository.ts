@@ -14,10 +14,15 @@ import {
 } from "@/dto/visaApply/visaApply.dto";
 
 export const visaApplicationRepo = {
-  async create(userId: string): Promise<Application> {
+  async create(
+    userId: string,
+    fromCountry: string,
+    toCountry: string,
+    price: number
+  ): Promise<Application> {
     try {
       const createApplication = await prisma.application.create({
-        data: { userId },
+        data: { userId, fromCountry, toCountry, price },
       });
       return createApplication;
     } catch (error) {
@@ -67,11 +72,14 @@ export const visaApplicationRepo = {
     try {
       const list = await prisma.application.findMany({
         where: { userId },
-        take: 10,
+        take: 20,
         orderBy: { createdAt: "desc" },
         select: {
           correlationId: true,
           createdAt: true,
+          fromCountry: true,
+          toCountry: true,
+          price: true,
           Eligibility: {
             select: {
               applyAt: true,

@@ -24,6 +24,10 @@ applicationRouter.post(
   "/delete-application-by-ids",
   visaApplicationController.deleteVisaApplicationByIds
 );
+applicationRouter.post(
+  "/find-visa-application",
+  visaApplicationController.getVisaApplicationById
+);
 
 // 1ST
 applicationRouter.post(

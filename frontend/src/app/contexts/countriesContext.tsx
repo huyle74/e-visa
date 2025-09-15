@@ -23,6 +23,7 @@ interface Country {
 
 interface Nation {
   countries: Country[];
+  countriesName: string[];
 }
 
 const CountriesContext = createContext<Nation | null>(null);
@@ -36,13 +37,18 @@ export const CountriesProvider = ({ children }: CountriesProviderProps) => {
         const response = await axios.get(endpoint);
         setAllCountries(response.data.data);
       } catch (error) {
-        console.error(error);
+        return [];
       }
     })();
   }, []);
+  const countriesName = allCountries.map((country: Country) => {
+    return country.engName;
+  });
 
   return (
-    <CountriesContext.Provider value={{ countries: allCountries }}>
+    <CountriesContext.Provider
+      value={{ countries: allCountries, countriesName }}
+    >
       {children}
     </CountriesContext.Provider>
   );

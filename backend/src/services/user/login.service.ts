@@ -6,7 +6,8 @@ import { generateToken } from "../../utils/jwt";
 const loginService = async ({ email, password }: loginDto) => {
   console.log(email);
   const user: any = await userRepos.findByEmail(email);
-  if (!user) throw new Error("User not found! Please enter your registerd Email.");
+  if (!user)
+    throw new Error("User not found! Please enter your registerd Email.");
 
   const isMatchPassword = await bcrypt.compare(password, user.password);
   if (!isMatchPassword) throw new Error("Wrong password");
@@ -19,6 +20,7 @@ const loginService = async ({ email, password }: loginDto) => {
     lastName: user.lastName,
     email: user.email,
     id: user.id,
+    role: user.role,
   };
 };
 
