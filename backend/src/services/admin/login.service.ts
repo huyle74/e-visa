@@ -47,11 +47,25 @@ const adminLoginService = {
   },
 
   async createAccount(data: CreateAdminAccountDto) {
-    const newAdmin = await adminRepos.create(data);
+    const { password, ...rest } = data;
 
+    const isExistedEmail = await adminRepos.findAdminByEmail(data.email);
+    if (isExistedEmail) throw new Error("This email is in used!");
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newAdmin = await adminRepos.create({
+      ...rest,
+      password: String(hashedPassword),
+    });
     if (!newAdmin) throw new Error("Service: cannot create new admin account");
 
-    return newAdmin;
+    return {
+      id: newAdmin.id,
+      email: newAdmin.email,
+      role: newAdmin.role,
+      name: newAdmin.name,
+    };
   },
 };
 

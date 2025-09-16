@@ -117,6 +117,23 @@ const adminRepos = {
       throw new Error(`Cannot creat admin account`);
     }
   },
+  async listAllAdmin() {
+    try {
+      const allAdmin = await prisma.admin.findMany({
+        select: {
+          id: true,
+          name: true,
+          role: true,
+          email: true,
+          password: false,
+        },
+      });
+
+      return allAdmin;
+    } catch (error) {
+      throw new Error("Cannot list all Admin");
+    }
+  },
 };
 
 export default adminRepos;
