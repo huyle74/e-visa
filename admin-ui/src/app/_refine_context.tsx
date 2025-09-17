@@ -4,19 +4,17 @@ import React from "react";
 import { Refine, type AuthProvider } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import { SessionProvider, useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
 import {
   useNotificationProvider,
   RefineSnackbarProvider,
 } from "@refinedev/mui";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
+import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import routerProvider from "@refinedev/nextjs-router";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import axios from "axios";
-import { dataProvider } from "@providers/data-provider";
-import AppIcon from "@components/app-icon";
+import dataProvider from "@providers/data-provider";
 import { ColorModeContextProvider } from "@contexts/color-mode";
-import Loading from "@components/loading";
 import { deleteUserInfo, getUserInfo } from "./libs/localStorage";
 
 const backendUrl = process.env.NEXT_PUBLIC_PREFIX_BACKEND_URL;
@@ -30,9 +28,9 @@ export const RefineContext = (
   props: React.PropsWithChildren<RefineContextProps>
 ) => {
   return (
-    <SessionProvider>
+    <>
       <App {...props} />
-    </SessionProvider>
+    </>
   );
 };
 
@@ -41,12 +39,11 @@ type AppProps = {
 };
 
 const App = (props: React.PropsWithChildren<AppProps>) => {
-  const { data, status } = useSession();
-  const to = usePathname();
+  // const { status } = useSession();
 
-  if (status === "loading") {
-    return <Loading />;
-  }
+  // if (status === "loading") {
+  //   return <Loading />;
+  // }
 
   const authProvider: AuthProvider = {
     login: async ({ email, password }) => {
@@ -55,20 +52,15 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
       try {
         const { data } = await axios.post(endpoint, { email, password });
 
-        console.log(data);
-
         if (data.success === "OK") {
-          localStorage.setItem(
-            KEY,
-            JSON.stringify({ ...data.data, lastUpdatedAt: Date.now() })
-          );
+          localStorage.setItem(KEY, JSON.stringify({ ...data.data }));
         }
 
         return {
           success: true,
           redirectTo: "/",
           successNotification: {
-            message: "Login Successful",
+            message: "Login Successfully!",
             description: "You have successfully logged in.",
           },
         };
@@ -87,6 +79,7 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
       deleteUserInfo();
 
       return {
+        redirectTo: "/login",
         success: true,
       };
     },
@@ -103,22 +96,12 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
     },
     check: async () => {
       const admin = getUserInfo();
-      const endpoint = backendUrl + "/admin-verified/verify-accessToken";
+      const endpoint = backendUrl + "/guard";
       try {
-        const { data } = await axios.post(
-          endpoint,
-          { accessToken: admin.accessToken },
-          {
-            headers: {
-              Authorization: `Bearer ${admin.accessToken}`,
-            },
-          }
-        );
-        if (data.success === "OK") {
-          return {
-            authenticated: true,
-          };
-        }
+        await axios.post(endpoint, {
+          accessToken: admin.accessToken,
+        });
+
         return {
           authenticated: true,
         };
@@ -149,7 +132,7 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
           <RefineSnackbarProvider>
             <Refine
               routerProvider={routerProvider}
-              dataProvider={dataProvider}
+              dataProvider={{ default: dataProvider() }}
               notificationProvider={useNotificationProvider}
               authProvider={authProvider}
               resources={[
@@ -175,11 +158,11 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
                   },
                 },
                 {
-                  name: "User",
-                  list: "/users",
-                  create: "/users/create",
-                  edit: "/users/edit/:id",
-                  show: "/users/show/:id",
+                  name: "Customer",
+                  list: "/customers",
+                  create: "/customers/create",
+                  edit: "/customers/edit/:id",
+                  show: "/customers/show/:id",
                   meta: {
                     canDelete: true,
                     icon: <EmojiPeopleIcon />,
@@ -189,7 +172,10 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
               options={{
                 syncWithLocation: true,
                 warnWhenUnsavedChanges: true,
-                title: { text: "My E-Visa - Admin", icon: <AppIcon /> },
+                title: {
+                  text: "My E-Visa - Admin",
+                  icon: <AirlineSeatReclineExtraIcon color="secondary" />,
+                },
               }}
             >
               {props.children}

@@ -1,7 +1,12 @@
 import { CorsOptions } from "cors";
-import { appUrl, paypalApiUrl, googleCredentials } from "./envLoader";
+import { appUrl, paypalApiUrl, googleCredentials, adminUrl } from "./envLoader";
 
-const allowList = [appUrl, paypalApiUrl, googleCredentials.googleAuthUri];
+const allowList = [
+  appUrl,
+  paypalApiUrl,
+  googleCredentials.googleAuthUri,
+  adminUrl,
+];
 const corsOption: CorsOptions = {
   origin: (
     origin: string | undefined,

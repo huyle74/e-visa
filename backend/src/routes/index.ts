@@ -8,7 +8,7 @@ import googleLoginRoute from "./user/googleLogin.routes";
 import paypalRoute from "./paypal/paypal.routes";
 import staticRoutes from "./static/static.routes";
 import applicationRouter from "./visa-application/allApplicationStep.routes";
-import guardRoute from "./user/guard.routes";
+import guardRoute from "./guard/guard.routes";
 import adminLoginRoute from "./admin/login.routes";
 import adminRoute from "./admin/admin.routes";
 

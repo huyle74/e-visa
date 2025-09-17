@@ -29,6 +29,7 @@
     "@refinedev/simple-rest": "^6.0.0",
     "axios": "^1.12.2",
     "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
     "next": "^15.2.4",
     "next-auth": "^4.24.5",
     "react": "^19.1.0",
@@ -37,6 +38,7 @@
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",

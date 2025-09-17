@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-const JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY?.replace(/\\n/g, "\n") || "";
+const JWT_PRIVATE_KEY =
+  process.env.JWT_PRIVATE_KEY?.replace(/\\n/g, "\n") || "";
 const JWT_PUBLIC_KEY = process.env.JWT_PUBLIC_KEY?.replace(/\\n/g, "\n") || "";
 
 const url = process.env.URL;
@@ -25,6 +26,7 @@ const paypalApiUrl =
   process.env.PAYPAL_API_PREFIX || "https://api-m.sandbox.paypal.com/v1";
 
 const appUrl = process.env.APP_URL || "";
+const adminUrl = process.env.ADMIN_URL || "";
 
 const hostingRoot = process.env.HOSTING_ROOT || "";
 
@@ -39,4 +41,5 @@ export {
   paypalApiUrl,
   appUrl,
   hostingRoot,
+  adminUrl,
 };

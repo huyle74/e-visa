@@ -39,7 +39,7 @@ export default function Login() {
 
     if (checkEmail || checkPassword) return;
 
-    return login({ email, password });
+    login({ email, password });
   };
 
   return (

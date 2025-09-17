@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
 import { responseSuccess, responseFailed, responseError } from "@/utils/response.helper";
-import guardService from "@/services/user/guard.service";
+import guardService from "@/services/guard/guard.service";
 
 const guardController = async (req: Request, res: Response) => {
   try {

@@ -4,27 +4,28 @@ import { ColorModeContext } from "@contexts/color-mode";
 import DarkModeOutlined from "@mui/icons-material/DarkModeOutlined";
 import LightModeOutlined from "@mui/icons-material/LightModeOutlined";
 import AppBar from "@mui/material/AppBar";
-import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useGetIdentity } from "@refinedev/core";
 import { HamburgerMenu, RefineThemedLayoutHeaderProps } from "@refinedev/mui";
+import SportsMartialArtsOutlinedIcon from "@mui/icons-material/SportsMartialArtsOutlined";
 import React, { useContext } from "react";
 
 type IUser = {
   id: number;
   name: string;
-  avatar: string;
+  email: string;
+  role: string;
+  accessToken: string;
 };
 
 export const Header: React.FC<RefineThemedLayoutHeaderProps> = ({
   sticky = true,
 }) => {
   const { mode, setMode } = useContext(ColorModeContext);
-
-  const { data: user } = useGetIdentity<IUser>();
+  const { data: admin } = useGetIdentity<IUser | undefined>();
 
   return (
     <AppBar position={sticky ? "sticky" : "relative"}>
@@ -51,14 +52,14 @@ export const Header: React.FC<RefineThemedLayoutHeaderProps> = ({
               {mode === "dark" ? <LightModeOutlined /> : <DarkModeOutlined />}
             </IconButton>
 
-            {(user?.avatar || user?.name) && (
+            {admin?.name && (
               <Stack
                 direction="row"
                 gap="16px"
                 alignItems="center"
                 justifyContent="center"
               >
-                {user?.name && (
+                {admin?.name && (
                   <Typography
                     sx={{
                       display: {
@@ -68,10 +69,10 @@ export const Header: React.FC<RefineThemedLayoutHeaderProps> = ({
                     }}
                     variant="subtitle2"
                   >
-                    {user?.name}
+                    {admin?.name}
                   </Typography>
                 )}
-                <Avatar src={user?.avatar} alt={user?.name} />
+                <SportsMartialArtsOutlinedIcon color="secondary" />
               </Stack>
             )}
           </Stack>

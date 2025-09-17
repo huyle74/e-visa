@@ -10,6 +10,7 @@ const Loading = () => {
         flexDirection: "column",
         alignItems: "center",
         m: "auto",
+        backgroundColor: "black",
       }}
     >
       <Box display={"flex"} alignItems={"center"} sx={{ height: "100%" }}>

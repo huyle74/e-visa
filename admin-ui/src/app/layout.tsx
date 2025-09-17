@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import React, { Suspense } from "react";
 import { RefineContext } from "./_refine_context";
+import Loading from "./loading";
 
 export const metadata: Metadata = {
   title: "My E-Visa Admin Page",
@@ -20,7 +21,7 @@ export default async function RootLayout({
   return (
     <html lang="en" style={{ margin: 0, padding: 0 }}>
       <body style={{ margin: 0, padding: 0 }}>
-        <Suspense>
+        <Suspense fallback={<Loading />}>
           <RefineContext defaultMode={defaultMode}>{children}</RefineContext>
         </Suspense>
       </body>
