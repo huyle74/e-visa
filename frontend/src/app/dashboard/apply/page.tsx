@@ -300,7 +300,6 @@ const ApplyNewVisa = () => {
             setDisable(false);
           } catch (error: any) {
             const message = error.response;
-            // console.error(message);
             setLoading(false);
             setDisable(false);
           }

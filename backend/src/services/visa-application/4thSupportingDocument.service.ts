@@ -7,18 +7,23 @@ import path from "path";
 import userRepos from "@/repositories/user.repository";
 
 const supportingDocumentService = {
-  async create(userId: string, files: Express.Multer.File[], applicationId: string) {
+  async create(
+    userId: string,
+    files: Express.Multer.File[],
+    applicationId: string
+  ) {
     const checkUser = await userRepos.findOne(userId);
     if (!checkUser) throw new Error("User doesn't exist");
 
     const result = Object.values(files).map(async (file: any) => {
-      const { path, filename, fieldname, size, mimetype, originalname } = file[0];
+      const { path, filename, fieldname, size, mimetype, originalname } =
+        file[0];
 
       // SHA256
       const buf = await fs.readFile(path);
       const sha256 = crypto.createHash("sha256").update(buf).digest("hex");
 
-      const fileUrl = `${hostingRoot}/${filename}`;
+      const fileUrl = `${hostingRoot}` + "\\" + `${filename}`;
 
       const final = {
         applicationId,

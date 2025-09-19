@@ -15,6 +15,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { ThemedTitle } from "@refinedev/mui";
 import { useLogin } from "@refinedev/core";
+import { useOnError } from "@refinedev/core";
 
 export default function Login() {
   const { mutate: login } = useLogin();
@@ -24,6 +25,8 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState<boolean>(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const { mutate: error } = useOnError();
 
   const handleLogin: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();

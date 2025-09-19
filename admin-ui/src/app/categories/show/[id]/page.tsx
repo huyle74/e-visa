@@ -1,7 +1,7 @@
 "use client";
 
 import { Stack, Typography } from "@mui/material";
-import { useShow } from "@refinedev/core";
+import { useShow, useOne } from "@refinedev/core";
 import {
   NumberField,
   Show,

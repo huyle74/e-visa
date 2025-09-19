@@ -11,13 +11,15 @@ export const responseSuccess = ({
   data = [],
   message = "successfully",
 }: responseDto) => {
-  return res.status(200).json({ success: "OK", data, message });
+  return res.status(200).json({ status: 200, success: "OK", data, message });
 };
 
 export const responseFailed = ({ res, data = [], message }: responseDto) => {
-  return res.status(400).json({ success: "Failed", data, message });
+  return res
+    .status(400)
+    .json({ status: 400, success: "Failed", data, message });
 };
 
 export const responseError = ({ res, data = [], message }: responseDto) => {
-  return res.status(500).json({ success: "Error", data, message });
+  return res.status(500).json({ status: 500, success: "Error", data, message });
 };

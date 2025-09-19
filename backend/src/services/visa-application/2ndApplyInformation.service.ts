@@ -1,7 +1,7 @@
-import fs from "fs";
 import { applyInformationRepo } from "@/repositories/visaApplication.repository";
 import userRepos from "@/repositories/user.repository";
 import { ApplicationInformationInputDto } from "@/dto/visaApply/visaApply.dto";
+import { fileConvert } from "@/utils/file";
 
 const applicationInformationService = {
   async create(data: ApplicationInformationInputDto, userId: string) {
@@ -9,7 +9,6 @@ const applicationInformationService = {
     if (!userExisted) throw new Error("User not found");
 
     const result = await applyInformationRepo.upsert(data);
-    console.log(result);
     return result;
   },
 
@@ -26,16 +25,3 @@ const applicationInformationService = {
   },
 };
 export default applicationInformationService;
-
-const fileConvert = (file: any) => {
-  const { path, originalname, mimetype } = file;
-  try {
-    console.log(originalname, mimetype);
-    const getFile = fs.readFileSync(path);
-    return { data: getFile.toString("base64"), name: originalname, type: mimetype };
-  } catch (error) {
-    console.error(`Failed to read file: ${path}`, error);
-
-    return { data: null, name: originalname, type: mimetype };
-  }
-};

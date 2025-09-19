@@ -1,7 +1,40 @@
 import prisma from "@/prisma/prisma";
-import { Prisma } from "@prisma/client";
+import { Document, Prisma } from "@prisma/client";
+import { Role } from "@prisma/client";
 
 const adminRepos = {
+  async adminHasCustomer(adminId: number, customerId: string) {
+    try {
+      const checkHad = await prisma.admin.findFirst({
+        where: {
+          id: adminId,
+          manage: {
+            some: { id: customerId },
+          },
+        },
+      });
+      if (!checkHad) throw new Error("user Not found");
+
+      return checkHad;
+    } catch (error) {
+      throw new Error("You do not have this Customer");
+    }
+  },
+  async adminCanAccessApplication(adminId: number, applicationId: string) {
+    try {
+      const check = await prisma.user.findFirst({
+        where: {
+          managerId: adminId,
+          application: { some: { correlationId: applicationId } },
+        },
+      });
+      if (!check) throw new Error("Application not found");
+
+      return check;
+    } catch (error) {
+      throw new Error("You do not have authority to access this application");
+    }
+  },
   async findAdminByEmail(email: string) {
     try {
       const admin = await prisma.admin.findUnique({
@@ -26,7 +59,7 @@ const adminRepos = {
 
       return newAdmin;
     } catch (error) {
-      throw new Error(`Cannot creat admin account`);
+      throw new Error(`Cannot create admin account`);
     }
   },
   async updatePassword(email: string, password: any) {
@@ -42,9 +75,9 @@ const adminRepos = {
     }
   },
 
-  async listAllUser(role: "ADMIN" | "SUPER_ADMIN", id?: number) {
+  async listAllCustomers(role: Role, id?: number) {
     try {
-      if (role === "SUPER_ADMIN") {
+      if (role === Role.SUPER_ADMIN) {
         const allUser = await prisma.user.findMany({
           select: {
             id: true,
@@ -53,11 +86,12 @@ const adminRepos = {
             firstName: true,
             lastName: true,
             managerId: true,
+            _count: { select: { application: true } },
           },
         });
         return allUser;
       }
-      if (role === "ADMIN") {
+      if (role === Role.ADMIN) {
         const allUser = await prisma.user.findMany({
           where: { managerId: id },
           take: 20,
@@ -67,19 +101,20 @@ const adminRepos = {
             phoneNumber: true,
             firstName: true,
             lastName: true,
+            _count: { select: { application: true } },
           },
         });
 
         return allUser;
       }
     } catch (error) {
-      throw new Error(`Cannot creat admin account`);
+      throw new Error(`Cannot create admin account`);
     }
   },
 
-  async listAllApplication(role: "ADMIN" | "SUPER_ADMIN", id?: number) {
+  async listAllApplication(role: Role, adminId?: number) {
     try {
-      if (role === "SUPER_ADMIN") {
+      if (role === Role.SUPER_ADMIN) {
         const allUser = await prisma.user.findMany({
           select: {
             application: {
@@ -95,9 +130,9 @@ const adminRepos = {
         });
         return allUser;
       }
-      if (role === "ADMIN") {
+      if (role === Role.ADMIN) {
         const allUser = await prisma.user.findMany({
-          where: { managerId: id },
+          where: { managerId: adminId },
           select: {
             application: {
               select: {
@@ -114,7 +149,7 @@ const adminRepos = {
         return allUser;
       }
     } catch (error) {
-      throw new Error(`Cannot creat admin account`);
+      throw new Error(`Cannot create admin account`);
     }
   },
   async listAllAdmin() {
@@ -132,6 +167,83 @@ const adminRepos = {
       return allAdmin;
     } catch (error) {
       throw new Error("Cannot list all Admin");
+    }
+  },
+  async getApplicationsByCustomerId(applicationId: string) {
+    try {
+      const applications = await prisma.application.findUnique({
+        where: {
+          correlationId: applicationId,
+        },
+        select: {
+          createdAt: true,
+          correlationId: true,
+          payment: true,
+          price: true,
+          updatedAt: true,
+          fromCountry: true,
+          toCountry: true,
+          Eligibility: true,
+          travelInformation: true,
+          ApplyInformation: true,
+        },
+      });
+      return applications;
+    } catch (error) {
+      throw new Error("Cannot get application by customer ID");
+    }
+  },
+  async getSupportingDocumentByApplicationId(
+    applicationId: string,
+    field: Document
+  ) {
+    try {
+      const document = await prisma.supportingDocument.findUnique({
+        where: { applicationId_type: { applicationId, type: field } },
+        select: {
+          originalName: true,
+          mimeType: true,
+          storageKey: true,
+          sizeBytes: true,
+        },
+      });
+
+      return document;
+    } catch (error) {
+      throw new Error(`Cannot get ${field} supporting document`);
+    }
+  },
+  async getCustomerById(id: string) {
+    try {
+      const customer = await prisma.user.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          email: true,
+          phoneNumber: true,
+          firstName: true,
+          lastName: true,
+          application: true,
+        },
+      });
+
+      return customer;
+    } catch (error) {
+      throw new Error("Cannot get this user by id");
+    }
+  },
+  async listAllApplicationByCustomerId(customerId: string) {
+    try {
+      const applications = await prisma.user.findMany({
+        where: { id: customerId },
+        select: {
+          application: true,
+        },
+      });
+
+      return applications;
+    } catch (error) {
+      throw new Error("Cannot get list application by customer id");
     }
   },
 };

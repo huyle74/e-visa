@@ -3,7 +3,6 @@
 import React from "react";
 import { Refine, type AuthProvider } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-import { SessionProvider, useSession } from "next-auth/react";
 import {
   useNotificationProvider,
   RefineSnackbarProvider,
@@ -16,9 +15,9 @@ import axios from "axios";
 import dataProvider from "@providers/data-provider";
 import { ColorModeContextProvider } from "@contexts/color-mode";
 import { deleteUserInfo, getUserInfo } from "./libs/localStorage";
+import { KEY } from "./libs/localStorage";
 
 const backendUrl = process.env.NEXT_PUBLIC_PREFIX_BACKEND_URL;
-const KEY = "app:admin";
 
 type RefineContextProps = {
   defaultMode?: string;
@@ -39,12 +38,6 @@ type AppProps = {
 };
 
 const App = (props: React.PropsWithChildren<AppProps>) => {
-  // const { status } = useSession();
-
-  // if (status === "loading") {
-  //   return <Loading />;
-  // }
-
   const authProvider: AuthProvider = {
     login: async ({ email, password }) => {
       const endpoint = backendUrl + "/admin/login";
@@ -106,7 +99,8 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
           authenticated: true,
         };
       } catch (error) {
-        const failed = { authenticated: false };
+        const failed = { authenticated: false, redirectTo: "/login" };
+
         return failed;
       }
     },
@@ -132,40 +126,25 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
           <RefineSnackbarProvider>
             <Refine
               routerProvider={routerProvider}
-              dataProvider={{ default: dataProvider() }}
+              dataProvider={dataProvider()}
               notificationProvider={useNotificationProvider}
               authProvider={authProvider}
               resources={[
                 {
-                  name: "blog_posts",
-                  list: "/blog-posts",
-                  create: "/blog-posts/create",
-                  edit: "/blog-posts/edit/:id",
-                  show: "/blog-posts/show/:id",
-                  meta: {
-                    canDelete: true,
-                  },
-                },
-                {
-                  name: "categories",
-                  list: "/categories",
-                  create: "/categories/create",
-                  edit: "/categories/edit/:id",
-                  show: "/categories/show/:id",
-                  meta: {
-                    canDelete: true,
-                    icon: <AssignmentIcon />,
-                  },
-                },
-                {
-                  name: "Customer",
+                  name: "customer",
                   list: "/customers",
-                  create: "/customers/create",
-                  edit: "/customers/edit/:id",
                   show: "/customers/show/:id",
                   meta: {
                     canDelete: true,
                     icon: <EmojiPeopleIcon />,
+                  },
+                },
+                {
+                  name: "application",
+                  show: "/application/show/:id",
+                  meta: {
+                    canDelete: true,
+                    icon: <AssignmentIcon />,
                   },
                 },
               ]}
@@ -174,7 +153,12 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
                 warnWhenUnsavedChanges: true,
                 title: {
                   text: "My E-Visa - Admin",
-                  icon: <AirlineSeatReclineExtraIcon color="secondary" />,
+                  icon: (
+                    <AirlineSeatReclineExtraIcon
+                      color="secondary"
+                      sx={{ fontSize: "2rem" }}
+                    />
+                  ),
                 },
               }}
             >

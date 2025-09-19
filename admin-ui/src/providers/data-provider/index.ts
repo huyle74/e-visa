@@ -3,25 +3,50 @@
 import axios from "axios";
 import { DataProvider } from "@refinedev/core";
 import { getUserInfo } from "@app/libs/localStorage";
+import { supportingDocumentField } from "@app/dto/application.dto";
 
-const API_URL = process.env.NEXT_PUBLIC_PREFIX_BACKEND_URL || "";
 const admin = getUserInfo();
 
+const prefix = process.env.NEXT_PUBLIC_PREFIX_BACKEND_URL + "/admin-verified/";
+
 const dataProvider = (): DataProvider => ({
-  getList: async () => {
-    const endpoint = API_URL + "/admin-verified/list-customers";
-    const { data } = await axios.post(
-      endpoint,
-      {},
-      {
-        headers: { Authorization: `Bearer ${admin.accessToken}` },
-      }
-    );
+  getList: async ({ resource }) => {
+    const endpoint = prefix + resource + "/list";
+    const { data } = await axios.get(endpoint, {
+      headers: { Authorization: `Bearer ${admin.accessToken}` },
+    });
 
     return { data: data.data, total: data.data.length };
   },
-  getOne: async () => {
-    throw new Error("Not implemented");
+  getOne: async ({ id, resource }) => {
+    const endpoint = prefix + resource + "/" + id;
+
+    const { data } = await axios.get(endpoint, {
+      headers: { Authorization: `Bearer ${admin.accessToken}` },
+    });
+
+    let supportingDocument: Blob[] | null = [];
+    if (resource === "application") {
+      for (const field of supportingDocumentField) {
+        const endpoint = prefix + resource + "/supporting-document";
+        const data = await axios.get(endpoint, {
+          headers: { Authorization: `Bearer ${admin.accessToken}` },
+          params: {
+            applicationId: id,
+            field,
+          },
+          responseType: "blob",
+        });
+        const convert = data
+        console.log(convert);
+        if (!data) break;
+
+        const result = { [`${field}`]: data.data };
+        supportingDocument.push(result);
+      }
+    }
+
+    return { data: { ...data.data, supportingDocument } };
   },
 
   create: async () => {
@@ -34,7 +59,7 @@ const dataProvider = (): DataProvider => ({
     throw new Error("Not implemented");
   },
 
-  getApiUrl: () => API_URL,
+  getApiUrl: () => prefix,
 });
 
 export default dataProvider;

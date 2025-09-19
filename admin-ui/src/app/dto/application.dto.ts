@@ -1,0 +1,10 @@
+export const SupportingDocumentFile = {
+  BIODATA: "BIODATA",
+  PHOTOGRAPH: "PHOTOGRAPH",
+  CURRENT_LOCATION: "CURRENT_LOCATION",
+  BOOKING_CONFIRMATION: "BOOKING_CONFIRMATION",
+  PROOF_OF_ACCOMMODATION: "PROOF_OF_ACCOMMODATION",
+  FINANCIAL_EVIDENCE: "FINANCIAL_EVIDENCE",
+};
+
+export const supportingDocumentField = Object.values(SupportingDocumentFile);

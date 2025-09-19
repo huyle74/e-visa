@@ -1,10 +1,10 @@
 import { Router } from "express";
-import adminController from "@/controllers/admin/admin.controller";
+import applicationRoute from "./application/application.routes";
+import customerRoute from "./customer/customer.routes";
 
 const adminRoute = Router();
 
-adminRoute.post("/list-customers", adminController.getUserData);
-adminRoute.post("/list-admin", adminController.getAllAdmin);
-adminRoute.post("/verify-accessToken", adminController.guardAdmin);
+adminRoute.use("/application", applicationRoute);
+adminRoute.use("/customer", customerRoute);
 
 export default adminRoute;

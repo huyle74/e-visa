@@ -1,4 +1,6 @@
-const KEY = "app:admin";
+"use client";
+
+export const KEY = "app:admin";
 
 export const getUserInfo = () => {
   if (typeof window !== "undefined") {

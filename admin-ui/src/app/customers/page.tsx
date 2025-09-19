@@ -2,18 +2,14 @@
 
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { useMany, useList } from "@refinedev/core";
-import {
-  DateField,
-  DeleteButton,
-  EditButton,
-  List,
-  ShowButton,
-  useDataGrid,
-} from "@refinedev/mui";
+import { List, ShowButton, useDataGrid } from "@refinedev/mui";
 import { useMemo } from "react";
 
 export default function CustomersList() {
-  const { result } = useList();
+  const {
+    result,
+    query: { isFetching },
+  } = useList();
 
   const columns = useMemo<GridColDef[]>(
     () => [
@@ -51,9 +47,9 @@ export default function CustomersList() {
         type: "string",
         minWidth: 250,
         display: "flex",
-        align: "left",
+        align: "right",
         sortable: false,
-        headerAlign: "left",
+        headerAlign: "center",
       },
       {
         field: "phoneNumber",
@@ -66,10 +62,20 @@ export default function CustomersList() {
         sortable: false,
       },
       {
-        field: "actions",
-        headerName: "Actions",
+        field: "totalApplications",
+        headerName: "Total Applications",
+        type: "string",
+        minWidth: 150,
+        display: "flex",
         align: "right",
         headerAlign: "right",
+        sortable: false,
+      },
+      {
+        field: "actions",
+        headerName: "Actions",
+        align: "center",
+        headerAlign: "center",
         minWidth: 80,
         sortable: false,
         display: "flex",
@@ -88,6 +94,7 @@ export default function CustomersList() {
   return (
     <List>
       <DataGrid
+        loading={isFetching}
         columns={columns}
         rows={result.data}
         sx={{
