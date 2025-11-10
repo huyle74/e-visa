@@ -43,7 +43,7 @@ interface ApplicationInforProps {
   onChangeTitle: (e: E, name: string) => void;
   onChangeSex: (e: E, name: string) => void;
   onChangeFirstName: Text;
-  onChangeMiddletName: Text;
+  onChangeMiddleName: Text;
   onChangeFamilyName: Text;
   onChangeBirthNation: (e: E, name: string) => void;
   onChangeOtherNationality: NonNullable<SwitchProps["onChange"]>;
@@ -85,7 +85,7 @@ const ApplicationInformation = ({
   onChangeSex,
   onChangeTitle,
   onChangeFirstName,
-  onChangeMiddletName,
+  onChangeMiddleName,
   onChangeFamilyName,
   onChangeBirthNation,
   onChangeOtherNationality,
@@ -405,7 +405,7 @@ const ApplicationInformation = ({
             name="middleName"
             title="Middle name (If applicable)"
             placeholder="Enter your middle name"
-            onChange={(e) => onChangeMiddletName(e, "middleName")}
+            onChange={(e) => onChangeMiddleName(e, "middleName")}
             value={dataProps.middleName}
           />
           <TextFieldApply

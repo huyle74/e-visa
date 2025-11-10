@@ -37,11 +37,9 @@ const dataProvider = (): DataProvider => ({
           },
           responseType: "blob",
         });
-        const convert = data
-        console.log(convert);
         if (!data) break;
 
-        const result = { [`${field}`]: data.data };
+        const result: any = { [`${field}`]: data.data };
         supportingDocument.push(result);
       }
     }

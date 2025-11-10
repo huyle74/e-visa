@@ -8,7 +8,7 @@ model Application {
     fromCountry String
     toCountry   String
 
-    price   Decimal
+    price   Int
     payment Boolean? @default(false)
 
     Eligibility        Eligibility?

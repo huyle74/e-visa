@@ -301,8 +301,6 @@ const FileDisplay = ({ data, label }: { data: any; label: string }) => {
     url = URL.createObjectURL(blob);
   }
 
-  console.log(url);
-
   return (
     <Box sx={{ height: "80vh", width: "100%" }}>
       <p style={{ height: "20px" }}>{label}</p>

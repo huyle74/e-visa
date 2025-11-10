@@ -10,6 +10,7 @@ import eligibilityController from "@/controllers/visa-application/1stEligibilty.
 import { applicationInformationController } from "@/controllers/visa-application/2ndApplicationInformation.controller";
 import { travelInformationController } from "@/controllers/visa-application/3rdTravelInformation.controller";
 import supportingDocumentController from "@/controllers/visa-application/4thSupportingDocument.controller";
+import chooseCountriesController from "@/controllers/visa-application/0thChooseCountry.controller";
 import multer from "multer";
 import { responseFailed } from "@/utils/response.helper";
 import { receiveFiles } from "@/config/multer";
@@ -28,6 +29,13 @@ applicationRouter.post(
   "/find-visa-application",
   visaApplicationController.getVisaApplicationById
 );
+
+// 0TH
+applicationRouter.get(
+  "/0th-get-from-to-countries",
+  chooseCountriesController.getFromToCountries
+);
+applicationRouter.post("/get-price", chooseCountriesController.getPrice);
 
 // 1ST
 applicationRouter.post(

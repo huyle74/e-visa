@@ -6,6 +6,7 @@ import {
   useEffect,
   DragEvent,
   MouseEventHandler,
+  useCallback,
 } from "react";
 import { useSearchParams } from "next/navigation";
 import { Box, SelectChangeEvent, SwitchProps } from "@mui/material";
@@ -28,6 +29,7 @@ import {
   SupportingDocumentInputDto,
   CountrySelectionDto,
 } from "@/app/libs/types";
+import PaypalButton from "@/app/component/paypal/paypalButton";
 import { CountriesProvider } from "@/app/contexts/countriesContext";
 import ModalComponent from "@/app/component/common/modal";
 import { transportationVehicle } from "@/app/libs/entries-input-visa";
@@ -67,14 +69,13 @@ const ApplyNewVisa = () => {
   const [disabled, setDisable] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [stepStatus, setStepStatus] = useState<Stepper>(steps[0]);
+  const [stepStatus, setStepStatus] = useState<Stepper>(steps[5]);
   const [modal, setModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState({
     title: "",
     description: "",
   });
   const [selectCountryData, setCountryData] = useState<CountrySelectionDto>({
-    price: 100,
     fromCountry: "",
     toCountry: "",
   });
@@ -168,6 +169,7 @@ const ApplyNewVisa = () => {
       values: [],
       placeholder: "Choose your transportation vehicle first",
     });
+  const [getPrice, setGetPrice] = useState<string | number | undefined>(0);
 
   const getData = async (url: string, params: any = {}) => {
     try {
@@ -201,10 +203,10 @@ const ApplyNewVisa = () => {
       if (currentStep === 1) {
         const endpoint = prefix + "/find-eligibilty-form";
         (async () => {
-          const eligibilty = await getData(endpoint, {
+          const eligibility = await getData(endpoint, {
             applicationId: applyId,
           });
-          if (eligibilty) setEligibilityData(eligibilty);
+          if (eligibility) setEligibilityData(eligibility);
         })();
       }
       if (currentStep === 2) {
@@ -459,7 +461,7 @@ const ApplyNewVisa = () => {
     }));
   };
 
-  const handleSumbitEligibility = async () => {
+  const handleSubmitEligibility = async () => {
     try {
       setLoading(true);
       setDisable(true);
@@ -473,6 +475,7 @@ const ApplyNewVisa = () => {
         visaType: reverseLableToValue(visaType),
         visitPurpose: reverseLableToValue(visitPurpose),
         documentType: reverseLableToValue(documentType),
+        price: getPrice,
       };
 
       const response = await axios.post(endpoint, data, {
@@ -603,7 +606,7 @@ const ApplyNewVisa = () => {
     }
   };
 
-  const handleSumbitTravelInformation: MouseEventHandler<
+  const handleSubmitTravelInformation: MouseEventHandler<
     HTMLButtonElement
   > = async (e) => {
     e.preventDefault();
@@ -635,7 +638,7 @@ const ApplyNewVisa = () => {
     }
   };
 
-  const handleSubmitsupportingDocument: MouseEventHandler<
+  const handleSubmitSupportingDocument: MouseEventHandler<
     HTMLButtonElement
   > = async (e) => {
     e.preventDefault();
@@ -681,8 +684,40 @@ const ApplyNewVisa = () => {
     const { toCountry, fromCountry } = selectCountryData;
     if (toCountry.length !== 0 && fromCountry.length !== 0) {
       triggerNext();
-    } else return;
+    } else {
+      setModal(true);
+      setModalContent({
+        title: "Please enter your route",
+        description: "",
+      });
+      return;
+    }
   };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { toCountry, fromCountry } = selectCountryData;
+        if (toCountry.length !== 0 && fromCountry.length !== 0) {
+          setGetPrice(undefined);
+          const endpoint = prefix + "/get-price";
+          const { data } = await axios.post(
+            endpoint,
+            { from: fromCountry, to: toCountry },
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          console.log(data);
+          setGetPrice(data?.data.totalPrice);
+        } else return;
+      } catch (error) {
+        setGetPrice(0);
+      }
+    })();
+  }, [selectCountryData]);
 
   return (
     <AuthProvider>
@@ -690,13 +725,16 @@ const ApplyNewVisa = () => {
         <MenuDashboard />
         <CountriesProvider>
           <form>
-            <Box sx={{ width: "70%", m: "auto", mt: 4, mb: 6, height: "100%" }}>
+            <Box
+              sx={{ width: "70vw", m: "auto", mt: 4, mb: 6, height: "100%" }}
+            >
               <HeaderTitleApplyStepper
                 data={stepStatus}
                 onClick={handleBackButton}
               />
               {stepStatus.activeStep === 0 && (
                 <CountrySelectionStep
+                  totalPrice={getPrice}
                   disabled={applyId ? true : disabled}
                   values={selectCountryData}
                   onChangeFromCountry={handleOnchangeSelectCountriesForm}
@@ -709,12 +747,12 @@ const ApplyNewVisa = () => {
                 <EligibilityStep
                   disabled={disabled}
                   loading={loading}
-                  onClickNext={handleSumbitEligibility}
+                  onClickNext={handleSubmitEligibility}
                   valueProps={eligibilityData}
                   onChangeApplyAt={handleOnchangeEligibility}
                   onChangeCurrentLocation={handleOnchangeEligibility}
                   onChangeDocumentType={handleOnchangeEligibility}
-                  onChangeInpurtCountryPassport={handleOnchangeEligibility}
+                  onChangeInputCountryPassport={handleOnchangeEligibility}
                   onChangeNumberOfEntries={handleOnchangeEligibility}
                   onChangeVisaType={handleOnchangeEligibility}
                   onChangeVisitPurpose={handleOnchangeEligibility}
@@ -744,7 +782,7 @@ const ApplyNewVisa = () => {
                   onChangeMaritalStatus={handleOnchangeApplicationInformation}
                   onChangeFamilyName={handleOnchangeApplicationInformation}
                   onChangeFirstName={handleOnchangeApplicationInformation}
-                  onChangeMiddletName={handleOnchangeApplicationInformation}
+                  onChangeMiddleName={handleOnchangeApplicationInformation}
                   onChangeOtherNationality={handleChangeOtherNationality}
                   onChangeSex={handleOnchangeApplicationInformation}
                   onChangeTitle={handleOnchangeApplicationInformation}
@@ -774,7 +812,7 @@ const ApplyNewVisa = () => {
               {stepStatus.activeStep === 3 && (
                 <TravelInformation
                   data={travelInfo}
-                  onClickNext={handleSumbitTravelInformation}
+                  onClickNext={handleSubmitTravelInformation}
                   onChangeArrivalPort={handleOnChangeTravelInformation}
                   vehicle={transVehicle}
                   onChangeAccommodationAddress={
@@ -808,7 +846,7 @@ const ApplyNewVisa = () => {
               )}
               {stepStatus.activeStep === 4 && (
                 <SupportingDocument
-                  onClickNext={handleSubmitsupportingDocument}
+                  onClickNext={handleSubmitSupportingDocument}
                   data={supportingDoc}
                   // Click
                   onChangeFileBiodata={handleOnChangeInputFile}
@@ -835,6 +873,11 @@ const ApplyNewVisa = () => {
                   disable={disabled}
                   loading={loading}
                 />
+              )}
+              {stepStatus.activeStep === 5 && (
+                <Box sx={{ justifyItems: "center", mt: 7 }}>
+                  <PaypalButton />
+                </Box>
               )}
             </Box>
           </form>
@@ -877,4 +920,10 @@ const formConvertTravelInformation = (data: SupportingDocumentInputDto) => {
   });
 
   return form;
+};
+
+const creditCartTesting = {
+  cartNumb: "4032038027746282",
+  expireDay: "12/2026",
+  csv: "760",
 };

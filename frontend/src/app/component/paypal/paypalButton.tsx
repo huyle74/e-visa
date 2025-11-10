@@ -1,9 +1,19 @@
-import { PayPalButtons, PayPalScriptProvider, ReactPayPalScriptOptions, PayPalButtonsComponentProps } from "@paypal/react-paypal-js";
+import { Box } from "@mui/material";
+import {
+  PayPalButtons,
+  PayPalScriptProvider,
+  ReactPayPalScriptOptions,
+  PayPalButtonsComponentProps,
+} from "@paypal/react-paypal-js";
 import { paypalClientId } from "@/app/server-side/envLoader";
 
 type CreateOrder = PayPalButtonsComponentProps["createOrder"];
 
-export default function PaypalButton(createOrder: CreateOrder) {
+interface PaypalProps {
+  price: number | string;
+}
+
+export default function PaypalButton({ price = 100 }: PaypalProps) {
   const initialOptions: ReactPayPalScriptOptions = {
     clientId: paypalClientId,
   };
@@ -11,13 +21,23 @@ export default function PaypalButton(createOrder: CreateOrder) {
   const style: PayPalButtonsComponentProps["style"] = {
     color: "blue",
     tagline: false,
+    shape: "rect",
   };
 
   return (
-    <div className="App">
+    <Box
+      className="App"
+      sx={{
+        width: "50%",
+      }}
+    >
+      <Box sx={{ mb: 2 }}>
+        Pay <span style={{ fontWeight: 1000 }}>{price}$</span> To complete this
+        application
+      </Box>
       <PayPalScriptProvider options={initialOptions}>
-        <PayPalButtons style={style} createOrder={createOrder} />
+        <PayPalButtons style={style} />
       </PayPalScriptProvider>
-    </div>
+    </Box>
   );
 }

@@ -10,10 +10,12 @@ import {
   Occupation,
   AnnualIncome,
 } from "@prisma/client";
+import { Country } from "@prisma/client";
 
 export const staticService = {
   async getAllCountries() {
     const countries = await countryRepo.findAllCountry();
+
     if (!countries)
       throw new Error("Get countries data from database got error");
 
@@ -29,7 +31,7 @@ export const staticService = {
 
   async getStatesByCountry(country: string) {
     const states = await countryRepo.findAllState(country);
-    if (!states) throw new Error("Cannot find citis with this state");
+    if (!states) throw new Error("Cannot find cities with this state");
 
     return states;
   },

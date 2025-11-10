@@ -8,6 +8,7 @@ import {
   RefineSnackbarProvider,
 } from "@refinedev/mui";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
+import HailIcon from "@mui/icons-material/Hail";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import routerProvider from "@refinedev/nextjs-router";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -116,7 +117,7 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
       return null;
     },
   };
-
+  const role = getUserInfo()?.role;
   const defaultMode = props?.defaultMode;
 
   return (
@@ -125,6 +126,21 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
         <ColorModeContextProvider defaultMode={defaultMode}>
           <RefineSnackbarProvider>
             <Refine
+              accessControlProvider={{
+                can: async ({ resource, action, params }) => {
+                  if (role === "SUPER_ADMIN") {
+                    return {
+                      can: true,
+                    };
+                  }
+                  if (role === "ADMIN") {
+                    if (resource === "employee") {
+                      return { can: false, reason: "Unauthorized" };
+                    }
+                  }
+                  return { can: true };
+                },
+              }}
               routerProvider={routerProvider}
               dataProvider={dataProvider()}
               notificationProvider={useNotificationProvider}
@@ -145,6 +161,15 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
                   meta: {
                     canDelete: true,
                     icon: <AssignmentIcon />,
+                  },
+                },
+                {
+                  name: "employee",
+                  list: "/employees",
+                  show: "/employees/show/:id",
+                  meta: {
+                    canDelete: true,
+                    icon: <HailIcon />,
                   },
                 },
               ]}

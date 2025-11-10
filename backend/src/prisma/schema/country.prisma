@@ -1,12 +1,16 @@
 model Country {
-    id          Int     @id @default(autoincrement())
-    code        String
-    engName     String
-    iso2        String  @unique
-    countryCode String? @unique
-    user        User[]
-    city        City[]
-    state       State[]
+    id            Int      @id @default(autoincrement())
+    code          String
+    engName       String
+    iso2          String   @unique
+    countryCode   String?  @unique
+    user          User[]
+    city          City[]
+    state         State[]
+    from          Boolean  @default(false)
+    to            Boolean  @default(false)
+    governmentFee Decimal? @db.Decimal(10, 2)
+    stayDays      Int?
 }
 
 model City {
@@ -24,4 +28,10 @@ model State {
     countries  Country @relation(fields: [nationIso2], references: [iso2])
     country    String
     state      String
+}
+
+model Price {
+    id   Int    @id @default(autoincrement())
+    type String
+    fee  Int
 }

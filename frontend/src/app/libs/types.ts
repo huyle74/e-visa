@@ -3,7 +3,6 @@ import { Dayjs } from "dayjs";
 type DateType = Dayjs | null;
 
 export interface CountrySelectionDto {
-  price: number;
   fromCountry: string;
   toCountry: string;
 }

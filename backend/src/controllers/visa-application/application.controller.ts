@@ -5,7 +5,6 @@ import {
   responseError,
 } from "../../utils/response.helper";
 import visaApplicationService from "@/services/visa-application/visa-application.service";
-import { get } from "http";
 
 export const visaApplicationController = {
   async listVisaApplicationByUserId(req: Request, res: Response) {

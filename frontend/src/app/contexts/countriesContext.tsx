@@ -19,11 +19,15 @@ interface Country {
   engName: string;
   iso2: string;
   countryCode: string;
+  from: boolean;
+  to: boolean;
 }
 
 interface Nation {
   countries: Country[];
   countriesName: string[];
+  fromCountries: Country[];
+  toCountries: Country[];
 }
 
 const CountriesContext = createContext<Nation | null>(null);
@@ -44,10 +48,21 @@ export const CountriesProvider = ({ children }: CountriesProviderProps) => {
   const countriesName = allCountries.map((country: Country) => {
     return country.engName;
   });
+  const fromCountries = allCountries.filter((nation: Country) => {
+    return nation.from === true;
+  });
+  const toCountries = allCountries.filter((nation: Country) => {
+    return nation.to === true;
+  });
 
   return (
     <CountriesContext.Provider
-      value={{ countries: allCountries, countriesName }}
+      value={{
+        countries: allCountries,
+        countriesName,
+        fromCountries,
+        toCountries,
+      }}
     >
       {children}
     </CountriesContext.Provider>

@@ -1,11 +1,11 @@
 import { MouseEventHandler } from "react";
-import { Box, SelectChangeEvent } from "@mui/material";
+import { Box, SelectChangeEvent, CircularProgress } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { useCountries } from "@/app/contexts/countriesContext";
 import AutoCompleteForm from "../autocompleteForm";
 import InputContainer from "../input-containter";
 import FormContainer from "../containerForm";
-import ButtonSumbit from "../button-submit-group";
+import ButtonSubmit from "../button-submit-group";
 import { primary } from "@/app/libs/color-config";
 import { CountrySelectionDto } from "@/app/libs/types";
 
@@ -18,6 +18,7 @@ interface CountrySelectionStepProps {
   disabled: boolean;
   loading: boolean;
   onclickNext: MouseEventHandler<HTMLButtonElement>;
+  totalPrice: number | string | undefined;
 }
 
 const CountrySelectionStep = ({
@@ -27,14 +28,21 @@ const CountrySelectionStep = ({
   disabled,
   loading,
   onclickNext,
+  totalPrice,
 }: CountrySelectionStepProps) => {
-  const { countriesName } = useCountries();
+  const { fromCountries, toCountries } = useCountries();
+  const fromCountry = fromCountries.map((nation: any) => {
+    if (nation.from === true) return nation.engName;
+  });
+  const toCountry = toCountries.map((nation: any) => {
+    if (nation.to === true) return nation.engName;
+  });
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <FormContainer title="Country to travel">
         <InputContainer>
           <AutoCompleteForm
-            inputData={countriesName}
+            inputData={fromCountry}
             name="fromCountry"
             placeHolder="Select your origin country"
             title="From"
@@ -43,7 +51,7 @@ const CountrySelectionStep = ({
             onChange={(e) => onChangeFromCountry(e, "fromCountry")}
           />
           <AutoCompleteForm
-            inputData={countriesName}
+            inputData={toCountry}
             name="toCountry"
             placeHolder="Select your destination country"
             title="To"
@@ -65,9 +73,9 @@ const CountrySelectionStep = ({
         }}
       >
         <AttachMoneyIcon color="secondary" />
-        {values.price} USD
+        {totalPrice ?? <CircularProgress size={20} />} USD
       </Box>
-      <ButtonSumbit loading={loading} onclickNext={onclickNext} />
+      <ButtonSubmit loading={loading} onclickNext={onclickNext} />
     </Box>
   );
 };

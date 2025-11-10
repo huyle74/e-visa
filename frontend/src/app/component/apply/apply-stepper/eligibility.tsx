@@ -18,7 +18,7 @@ interface EligibilityEntries {
 }
 
 interface EligibilityStepProps {
-  onChangeInpurtCountryPassport: Select;
+  onChangeInputCountryPassport: Select;
   onChangeCurrentLocation: Select;
   onChangeApplyAt: Select;
   onChangeDocumentType: Select;
@@ -31,7 +31,7 @@ interface EligibilityStepProps {
   valueProps: EligibilityInputDto;
 }
 const EligibilityStep = ({
-  onChangeInpurtCountryPassport,
+  onChangeInputCountryPassport,
   onChangeCurrentLocation,
   onChangeApplyAt,
   onChangeDocumentType,
@@ -77,7 +77,7 @@ const EligibilityStep = ({
         <AutoCompleteForm
           name="inputCountryPassport"
           onChange={(e) =>
-            onChangeInpurtCountryPassport(e, "inputCountryPassport")
+            onChangeInputCountryPassport(e, "inputCountryPassport")
           }
           value={inputCountryPassport}
           title="Country/Territory of Passport/TD"

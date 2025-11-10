@@ -18,8 +18,8 @@ const email = process.env.EMAIL || "";
 const emailPassword = process.env.EMAIL_PASSWORD || "";
 
 const paypalCredentials = {
-  cliend_id: process.env.PAYPAL_CLIEND_ID,
-  client_secret: process.env.PAYPAL_CLIEND_SECRET,
+  client_id: process.env.PAYPAL_CLIENT_ID,
+  client_secret: process.env.PAYPAL_CLIENT_SECRET,
 };
 
 const paypalApiUrl =

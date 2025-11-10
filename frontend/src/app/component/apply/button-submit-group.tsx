@@ -8,7 +8,7 @@ interface ButtonSubmitProps {
   loading?: boolean;
 }
 
-const ButtonSumbit = ({
+const ButtonSubmit = ({
   onclickNext,
   onClickBack,
   displayBackButton = false,
@@ -35,4 +35,4 @@ const ButtonSumbit = ({
     </Box>
   );
 };
-export default ButtonSumbit;
+export default ButtonSubmit;
