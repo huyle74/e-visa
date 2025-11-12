@@ -32,7 +32,10 @@ const BrowserFieldRoot = styled("div", { name: "BrowserField", slot: "Root" })({
   borderRadius: "4px",
 });
 
-const BrowserFieldContent = styled("div", { name: "BrowserField", slot: "Content" })({
+const BrowserFieldContent = styled("div", {
+  name: "BrowserField",
+  slot: "Content",
+})({
   fontSize: "1.1rem",
   lineHeight: "normal",
   whiteSpace: "nowrap",
@@ -114,7 +117,7 @@ function BrowserDateField(props: DatePickerFieldProps) {
           onKeyDown={onKeyDown}
         />
       </BrowserFieldContent>
-      {clearable && value && (
+      {value && (
         <BrowserIconButton
           type="button"
           title="Clear"
@@ -129,6 +132,7 @@ function BrowserDateField(props: DatePickerFieldProps) {
         onClick={() => pickerContext.setOpen((prev) => !prev)}
         sx={{ marginLeft: 1 }}
         aria-label={openPickerAriaLabel}
+        disabled={disabled}
       >
         <CalendarIcon />
       </BrowserIconButton>
@@ -137,7 +141,12 @@ function BrowserDateField(props: DatePickerFieldProps) {
 }
 
 function BrowserDatePicker(props: DatePickerProps) {
-  return <DatePicker {...props} slots={{ field: BrowserDateField, ...props.slots }} />;
+  return (
+    <DatePicker
+      {...props}
+      slots={{ field: BrowserDateField, ...props.slots }}
+    />
+  );
 }
 
 interface DatePickerComponentProps {
@@ -145,6 +154,7 @@ interface DatePickerComponentProps {
   onChange: (newValue: Dayjs | null, name: string) => void;
   value: Dayjs | null;
   name: string;
+  disabled?: boolean;
 }
 
 export default function DatePickerComponent({
@@ -152,12 +162,15 @@ export default function DatePickerComponent({
   onChange,
   value,
   name,
+  disabled,
 }: DatePickerComponentProps) {
   return (
     <Box sx={{ width: "100%", p: 1.5 }}>
       <Box sx={{ mb: 1, fontWeight: 900 }}>
         {title}
-        <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}>*</span>
+        <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}>
+          *
+        </span>
       </Box>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <BrowserDatePicker
@@ -167,6 +180,7 @@ export default function DatePickerComponent({
           }}
           onChange={(newValue) => onChange(newValue, name)}
           value={dayjs(value)}
+          disabled={disabled}
         />
       </LocalizationProvider>
     </Box>

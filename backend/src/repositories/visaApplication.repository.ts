@@ -67,6 +67,19 @@ export const visaApplicationRepo = {
       throw new Error("Failed to delete applications");
     }
   },
+  async update(applicationIds: string, payment: boolean) {
+    try {
+      const update = await prisma.application.update({
+        where: { correlationId: applicationIds },
+        data: { payment },
+      });
+
+      return update;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to update visa application");
+    }
+  },
 
   async listAll(userId: string) {
     try {

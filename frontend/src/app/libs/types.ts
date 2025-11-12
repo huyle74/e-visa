@@ -8,6 +8,7 @@ export interface CountrySelectionDto {
 }
 
 export interface EligibilityInputDto {
+  completed: boolean;
   applicationId?: string;
   applyAt: string;
   currentLocation: string;
@@ -33,6 +34,7 @@ export interface ApplicationInformationInputDto {
   birthDate: DateType;
   maritalStatus: string;
   anotherNationality: string;
+  completed: boolean;
 
   // travelDocument
   documentType: string;
@@ -68,6 +70,7 @@ export interface AccommodationInputDto {
 }
 
 export interface TravelInformationInputDto {
+  completed: boolean;
   // travel Information:
   arrivalDate: DateType | null;
   departureDate: DateType | null;
@@ -95,6 +98,8 @@ export interface TransportationVehicleInputDto {
 export type FileInputDto = File | null;
 
 export interface SupportingDocumentInputDto {
+  completed: boolean;
+
   BIODATA: FileInputDto;
   PHOTOGRAPH: FileInputDto;
   CURRENT_LOCATION: FileInputDto;

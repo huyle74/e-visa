@@ -5,9 +5,15 @@ interface SwitchYesNoProps {
   content: string;
   checked: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  disabled: boolean;
 }
 
-const SwithYesNo = ({ content, checked, onChange }: SwitchYesNoProps) => {
+const SwitchYesNo = ({
+  content,
+  checked,
+  onChange,
+  disabled,
+}: SwitchYesNoProps) => {
   return (
     <Box
       sx={{
@@ -21,7 +27,10 @@ const SwithYesNo = ({ content, checked, onChange }: SwitchYesNoProps) => {
     >
       <Box>
         {content}
-        <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}> *</span>
+        <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}>
+          {" "}
+          *
+        </span>
       </Box>
       <span style={{ marginLeft: "10px" }}>
         No
@@ -29,6 +38,7 @@ const SwithYesNo = ({ content, checked, onChange }: SwitchYesNoProps) => {
           slotProps={{ input: { "aria-label": "controlled" } }}
           checked={checked}
           onChange={onChange}
+          disabled={disabled}
         />
         Yes
       </span>
@@ -36,4 +46,4 @@ const SwithYesNo = ({ content, checked, onChange }: SwitchYesNoProps) => {
   );
 };
 
-export default SwithYesNo;
+export default SwitchYesNo;

@@ -7,7 +7,7 @@ import AutoCompleteForm from "../autocompleteForm";
 import { useCountries } from "@/app/contexts/countriesContext";
 import FormContainer from "../containerForm";
 import { getEligibilltyEnum } from "@/app/server-side/static-data";
-import ButtonSumbit from "../button-submit-group";
+import ButtonSubmit from "../button-submit-group";
 
 type Select = (e: SelectChangeEvent, name: string) => void;
 
@@ -29,6 +29,7 @@ interface EligibilityStepProps {
   loading: boolean;
   disabled: boolean;
   valueProps: EligibilityInputDto;
+  onClickBack: () => void;
 }
 const EligibilityStep = ({
   onChangeInputCountryPassport,
@@ -42,6 +43,7 @@ const EligibilityStep = ({
   loading,
   disabled,
   valueProps,
+  onClickBack,
 }: EligibilityStepProps) => {
   const {
     applyAt,
@@ -143,7 +145,12 @@ const EligibilityStep = ({
           placeHolder="Select your number of entries"
         />
       </FormContainer>
-      <ButtonSumbit onclickNext={onClickNext} loading={loading} />
+      <ButtonSubmit
+        onclickNext={onClickNext}
+        loading={loading}
+        displayBackButton={true}
+        onClickBack={onClickBack}
+      />
     </Box>
   );
 };

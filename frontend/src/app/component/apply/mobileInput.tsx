@@ -14,6 +14,7 @@ interface MobileTextFieldProps {
   ) => void;
   value: string;
   name: string;
+  disabled?: boolean;
 }
 
 interface Nation {
@@ -22,7 +23,12 @@ interface Nation {
   code: string;
 }
 
-const MobileTextField = ({ onChange, value, name }: MobileTextFieldProps) => {
+const MobileTextField = ({
+  onChange,
+  value,
+  name,
+  disabled,
+}: MobileTextFieldProps) => {
   const { countries } = useCountries();
   const ref = useRef<HTMLDivElement | null>(null);
   const [selectNation, setSelectNation] = useState<Nation>({
@@ -121,6 +127,7 @@ const MobileTextField = ({ onChange, value, name }: MobileTextFieldProps) => {
               startIcon={<ArrowDropDownIcon />}
               onClick={() => setDropdown((prev) => !prev)}
               sx={{ height: "100%" }}
+              disabled={disabled}
             >
               <Flag code={selectNation.iso2} name={selectNation.engName} />
             </Button>
@@ -149,6 +156,8 @@ const MobileTextField = ({ onChange, value, name }: MobileTextFieldProps) => {
                   placeholder="Search Country"
                   fullWidth
                   onChange={handleSearch}
+                  disabled={disabled}
+
                   // size="small"
                 />
                 <Box
@@ -185,6 +194,7 @@ const MobileTextField = ({ onChange, value, name }: MobileTextFieldProps) => {
             fullWidth
             // type="number"
             name={name}
+            disabled={disabled}
           />
         </Box>
       </Box>

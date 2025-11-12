@@ -14,6 +14,7 @@ interface TextFieldProps {
   type?: React.HTMLInputTypeAttribute;
   name: string;
   value?: string;
+  disabled?: boolean;
 }
 
 const TextFieldApply = ({
@@ -24,13 +25,16 @@ const TextFieldApply = ({
   type,
   name,
   value,
+  disabled,
 }: TextFieldProps) => {
   return (
     <Box sx={{ width: "100%", p: 1.5 }}>
       <Box sx={{ mb: 1, fontWeight: 900 }}>
         {title}
         {requiredMasked && (
-          <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}>*</span>
+          <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}>
+            *
+          </span>
         )}
       </Box>
       <Box
@@ -54,6 +58,7 @@ const TextFieldApply = ({
           type={type}
           name={name}
           value={value}
+          disabled={disabled}
         />
       </Box>
     </Box>

@@ -17,7 +17,12 @@ const ButtonSubmit = ({
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
       {displayBackButton ? (
-        <Button onClick={onClickBack} variant="contained" color="secondary">
+        <Button
+          onClick={onClickBack}
+          variant="contained"
+          color="secondary"
+          size="large"
+        >
           BACK
         </Button>
       ) : (

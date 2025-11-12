@@ -35,7 +35,7 @@ import { transportationVehicle } from "@/app/libs/entries-input-visa";
 import { backend_url } from "@/app/server-side/envLoader";
 import { getUserInfo } from "@/app/libs/getLocalStorage";
 import Footer from "@/app/component/footer/footer";
-import { reverseLableToValue } from "@/app/libs/convertLabel";
+import { reverseLabelToValue } from "@/app/libs/convertLabel";
 import { PayPalButtonsComponentProps } from "@paypal/react-paypal-js";
 
 const prefix = backend_url + "api" + "/visa-application";
@@ -69,7 +69,7 @@ const ApplyNewVisa = () => {
   const [disabled, setDisable] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [stepStatus, setStepStatus] = useState<Stepper>(steps[5]);
+  const [stepStatus, setStepStatus] = useState<Stepper>(steps[0]);
   const [modal, setModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState({
     title: "",
@@ -81,6 +81,7 @@ const ApplyNewVisa = () => {
     toCountry: "",
   });
   const [eligibilityData, setEligibilityData] = useState<EligibilityInputDto>({
+    completed: false,
     applicationId: "",
     applyAt: "",
     currentLocation: "",
@@ -92,6 +93,7 @@ const ApplyNewVisa = () => {
   });
   const [applyInfoData, setApplyInfoData] =
     useState<ApplicationInformationInputDto>({
+      completed: false,
       title: "",
       sex: "",
       firstName: "",
@@ -132,6 +134,7 @@ const ApplyNewVisa = () => {
     });
 
   const [travelInfo, setTravelInfo] = useState<TravelInformationInputDto>({
+    completed: false,
     arrivalDate: null,
     departureDate: null,
     country: "",
@@ -157,6 +160,7 @@ const ApplyNewVisa = () => {
   });
   const [supportingDoc, setSupportingDoc] =
     useState<SupportingDocumentInputDto>({
+      completed: false,
       BIODATA: null,
       PHOTOGRAPH: null,
       CURRENT_LOCATION: null,
@@ -207,7 +211,8 @@ const ApplyNewVisa = () => {
           const eligibility = await getData(endpoint, {
             applicationId: applyId,
           });
-          if (eligibility) setEligibilityData(eligibility);
+          if (eligibility)
+            return setEligibilityData({ ...eligibility, completed: true });
         })();
       }
       if (currentStep === 2) {
@@ -243,6 +248,7 @@ const ApplyNewVisa = () => {
                 ...rest,
                 biodata: biodataBlob,
                 photograph: photographBlob,
+                completed: true,
               }));
             } else {
               setApplyInfoData((prev) => ({
@@ -250,6 +256,7 @@ const ApplyNewVisa = () => {
                 ...rest,
                 biodata: null,
                 photograph: null,
+                completed: true,
               }));
             }
           }
@@ -262,7 +269,8 @@ const ApplyNewVisa = () => {
           const travelInformation = await getData(endpoint, {
             applicationId: applyId,
           });
-          if (travelInformation) setTravelInfo(travelInformation);
+          if (travelInformation)
+            setTravelInfo({ ...travelInformation, completed: true });
         })();
       }
 
@@ -299,10 +307,10 @@ const ApplyNewVisa = () => {
                 setSupportingDoc((prev) => ({ ...prev, [docs]: file }));
               })
             );
+            setSupportingDoc((prev) => ({ ...prev, completed: true }));
             setLoading(false);
             setDisable(false);
           } catch (error: any) {
-            const message = error.response;
             setLoading(false);
             setDisable(false);
           }
@@ -466,18 +474,21 @@ const ApplyNewVisa = () => {
 
   const handleSubmitEligibility = async () => {
     try {
+      if (eligibilityData.completed) return triggerNext();
+
       setLoading(true);
       setDisable(true);
       const endpoint = prefix + "/1st-eligibilty";
 
-      const { visaType, visitPurpose, documentType, ...rest } = eligibilityData;
+      const { visaType, visitPurpose, documentType, completed, ...rest } =
+        eligibilityData;
 
       const data = {
         ...rest,
         ...selectCountryData,
-        visaType: reverseLableToValue(visaType),
-        visitPurpose: reverseLableToValue(visitPurpose),
-        documentType: reverseLableToValue(documentType),
+        visaType: reverseLabelToValue(visaType),
+        visitPurpose: reverseLabelToValue(visitPurpose),
+        documentType: reverseLabelToValue(documentType),
         price: getPrice,
       };
 
@@ -510,8 +521,9 @@ const ApplyNewVisa = () => {
     HTMLButtonElement
   > = async (e) => {
     e.preventDefault();
+    if (applyInfoData.completed) return triggerNext();
+
     try {
-      console.log(applyInfoData);
       const {
         sex,
         maritalStatus,
@@ -522,17 +534,17 @@ const ApplyNewVisa = () => {
       } = applyInfoData;
       const convert = {
         ...rest,
-        sex: reverseLableToValue(sex),
-        maritalStatus: reverseLableToValue(maritalStatus),
-        documentType: reverseLableToValue(documentType),
-        annualIncome: reverseLableToValue(annualIncome),
-        occupation: reverseLableToValue(occupation),
+        sex: reverseLabelToValue(sex),
+        maritalStatus: reverseLabelToValue(maritalStatus),
+        documentType: reverseLabelToValue(documentType),
+        annualIncome: reverseLabelToValue(annualIncome),
+        occupation: reverseLabelToValue(occupation),
       };
       const form = formConvertApplicationInformation(convert);
       setLoading(true);
       setDisable(true);
       const endpoint = prefix + "/2nd-applicationInformation";
-      const repsonse = await axios.post(endpoint, form, {
+      const response = await axios.post(endpoint, form, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -542,8 +554,7 @@ const ApplyNewVisa = () => {
           section: "application_information",
         },
       });
-      if (repsonse.data.success === "OK") {
-        console.log(repsonse.data);
+      if (response.data.success === "OK") {
         setLoading(false);
         setDisable(false);
         triggerNext();
@@ -570,7 +581,7 @@ const ApplyNewVisa = () => {
     }
   };
 
-  const handleDropfileApplicationInformation = (
+  const handleDropFileApplicationInformation = (
     e: DragEvent<HTMLInputElement>,
     name: string
   ) => {
@@ -616,13 +627,16 @@ const ApplyNewVisa = () => {
     HTMLButtonElement
   > = async (e) => {
     e.preventDefault();
+    const { completed, ...data } = travelInfo;
+    if (completed) return triggerNext();
+
     setLoading(true);
     setDisable(true);
     try {
       const endpoint = prefix + "/3rd-travelInformation";
       const response = await axios.post(
         endpoint,
-        { applicationId, ...travelInfo },
+        { applicationId, ...data },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -631,14 +645,11 @@ const ApplyNewVisa = () => {
         }
       );
       if (response.data.success === "OK") {
-        console.log(response.data);
         triggerNext();
         setLoading(false);
         setDisable(false);
       }
     } catch (error: any) {
-      const message = error.response.data.message;
-      console.log(message);
       setLoading(false);
       setDisable(false);
     }
@@ -648,6 +659,8 @@ const ApplyNewVisa = () => {
     HTMLButtonElement
   > = async (e) => {
     e.preventDefault();
+    if (supportingDoc.completed) return triggerNext();
+
     setLoading(true);
     setDisable(true);
     try {
@@ -752,10 +765,9 @@ const ApplyNewVisa = () => {
 
     const response = await axios(endpoint, {
       method: "POST",
-      data: { orderId: data.orderID },
+      data: { orderId: data.orderID, applicationId },
     });
     const status = response.data.data.status;
-    console.log(status);
     if (status === "COMPLETED") {
       setModal(true);
       setModalContent({
@@ -763,6 +775,7 @@ const ApplyNewVisa = () => {
         description: "",
         status: "success",
       });
+      router.push("/dashboard");
     }
   };
 
@@ -792,7 +805,7 @@ const ApplyNewVisa = () => {
               )}
               {stepStatus.activeStep === 1 && (
                 <EligibilityStep
-                  disabled={disabled}
+                  disabled={eligibilityData.completed}
                   loading={loading}
                   onClickNext={handleSubmitEligibility}
                   valueProps={eligibilityData}
@@ -803,6 +816,7 @@ const ApplyNewVisa = () => {
                   onChangeNumberOfEntries={handleOnchangeEligibility}
                   onChangeVisaType={handleOnchangeEligibility}
                   onChangeVisitPurpose={handleOnchangeEligibility}
+                  onClickBack={handleBackButton}
                 />
               )}
               {stepStatus.activeStep === 2 && (
@@ -812,10 +826,10 @@ const ApplyNewVisa = () => {
                   onChangeBiodata={handleOnchangeFilesApplicationInformation}
                   onChangePhotograph={handleOnchangeFilesApplicationInformation}
                   onDragBiodata={(e) =>
-                    handleDropfileApplicationInformation(e, "biodata")
+                    handleDropFileApplicationInformation(e, "biodata")
                   }
                   onDragPhotograph={(e) =>
-                    handleDropfileApplicationInformation(e, "photograph")
+                    handleDropFileApplicationInformation(e, "photograph")
                   }
                   //
                   onclickNext={handleSubmitApplicationInformation}
@@ -860,6 +874,7 @@ const ApplyNewVisa = () => {
                 <TravelInformation
                   data={travelInfo}
                   onClickNext={handleSubmitTravelInformation}
+                  onClickBack={handleBackButton}
                   onChangeArrivalPort={handleOnChangeTravelInformation}
                   vehicle={transVehicle}
                   onChangeAccommodationAddress={
@@ -897,14 +912,14 @@ const ApplyNewVisa = () => {
                   data={supportingDoc}
                   // Click
                   onChangeFileBiodata={handleOnChangeInputFile}
-                  onChangeFileAccomodationProof={handleOnChangeInputFile}
+                  onChangeFileAccommodationProof={handleOnChangeInputFile}
                   onChangeFileFinancialEvidence={handleOnChangeInputFile}
                   onChangeFileLocation={handleOnChangeInputFile}
                   onChangeFilePhoto={handleOnChangeInputFile}
                   onChangeFileTravelBooking={handleOnChangeInputFile}
                   // DRAG
                   handleDropFileBioData={(e) => handleDropFile(e, "BIODATA")}
-                  handleDropFileAccomodationProof={(e) =>
+                  handleDropFileAccommodationProof={(e) =>
                     handleDropFile(e, "PROOF_OF_ACCOMMODATION")
                   }
                   handleDropFileFinancialEvidence={(e) =>
@@ -917,7 +932,6 @@ const ApplyNewVisa = () => {
                   handleDropFileTravelBooking={(e) =>
                     handleDropFile(e, "BOOKING_CONFIRMATION")
                   }
-                  disable={disabled}
                   loading={loading}
                 />
               )}
@@ -950,7 +964,7 @@ const formConvertApplicationInformation = (
   data: ApplicationInformationInputDto
 ) => {
   const form = new FormData();
-  const { biodata, photograph, ...rest } = data;
+  const { biodata, photograph, completed, ...rest } = data;
 
   Object.entries(rest).forEach(([k, v]) => {
     if (v === undefined || v === null) return;
@@ -963,9 +977,10 @@ const formConvertApplicationInformation = (
 };
 
 const formConvertTravelInformation = (data: SupportingDocumentInputDto) => {
+  const { completed, ...rest } = data;
   const form = new FormData();
 
-  Object.entries(data).forEach(([k, v]) => {
+  Object.entries(rest).forEach(([k, v]) => {
     if (v === undefined || v === null) return;
     form.append(k, v);
   });

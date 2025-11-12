@@ -15,18 +15,17 @@ interface SupportingDocumentProps {
   onChangeFilePhoto: EventInput;
   onChangeFileLocation: EventInput;
   onChangeFileTravelBooking: EventInput;
-  onChangeFileAccomodationProof: EventInput;
+  onChangeFileAccommodationProof: EventInput;
   onChangeFileFinancialEvidence: EventInput;
 
   handleDropFileBioData: EventDrop;
   handleDropFilePhoto: EventDrop;
   handleDropFileLocation: EventDrop;
   handleDropFileTravelBooking: EventDrop;
-  handleDropFileAccomodationProof: EventDrop;
+  handleDropFileAccommodationProof: EventDrop;
   handleDropFileFinancialEvidence: EventDrop;
 
   loading: boolean;
-  disable: boolean;
 
   onClickNext: MouseEventHandler<HTMLButtonElement>;
 }
@@ -37,18 +36,17 @@ const SupportingDocument = ({
   onChangeFilePhoto,
   onChangeFileLocation,
   onChangeFileTravelBooking,
-  onChangeFileAccomodationProof,
+  onChangeFileAccommodationProof,
   onChangeFileFinancialEvidence,
 
   handleDropFileBioData,
   handleDropFilePhoto,
   handleDropFileLocation,
   handleDropFileTravelBooking,
-  handleDropFileAccomodationProof,
+  handleDropFileAccommodationProof,
   handleDropFileFinancialEvidence,
   onClickNext,
   loading,
-  disable,
 }: SupportingDocumentProps) => {
   return (
     <Box>
@@ -63,7 +61,7 @@ const SupportingDocument = ({
             fileValue={data.BIODATA}
             handleDropFile={handleDropFileBioData}
             name="BIODATA"
-            disabled={disable}
+            disabled={data.completed}
           />
         </InputContainer>
         <InputContainer>
@@ -73,7 +71,7 @@ const SupportingDocument = ({
             fileValue={data.PHOTOGRAPH}
             handleDropFile={handleDropFilePhoto}
             name="PHOTOGRAPH"
-            disabled={disable}
+            disabled={data.completed}
           />
         </InputContainer>
 
@@ -84,7 +82,7 @@ const SupportingDocument = ({
             fileValue={data.CURRENT_LOCATION}
             handleDropFile={handleDropFileLocation}
             name="CURRENT_LOCATION"
-            disabled={disable}
+            disabled={data.completed}
           />
         </InputContainer>
 
@@ -95,18 +93,18 @@ const SupportingDocument = ({
             fileValue={data.BOOKING_CONFIRMATION}
             handleDropFile={handleDropFileTravelBooking}
             name="BOOKING_CONFIRMATION"
-            disabled={disable}
+            disabled={data.completed}
           />
         </InputContainer>
 
         <InputContainer>
           <FileInput
             title="5. Proof of accommodation"
-            onChange={onChangeFileAccomodationProof}
+            onChange={onChangeFileAccommodationProof}
             fileValue={data.PROOF_OF_ACCOMMODATION}
-            handleDropFile={handleDropFileAccomodationProof}
+            handleDropFile={handleDropFileAccommodationProof}
             name="PROOF_OF_ACCOMMODATION"
-            disabled={disable}
+            disabled={data.completed}
           />
         </InputContainer>
 
@@ -117,11 +115,15 @@ const SupportingDocument = ({
             fileValue={data.FINANCIAL_EVIDENCE}
             handleDropFile={handleDropFileFinancialEvidence}
             name="FINANCIAL_EVIDENCE"
-            disabled={disable}
+            disabled={data.completed}
           />
         </InputContainer>
       </FormContainer>
-      <ButtonSumbit onclickNext={onClickNext} loading={loading} />
+      <ButtonSumbit
+        onclickNext={onClickNext}
+        loading={loading}
+        displayBackButton={true}
+      />
     </Box>
   );
 };

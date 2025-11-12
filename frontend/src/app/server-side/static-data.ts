@@ -58,7 +58,6 @@ export async function getEligibilltyEnum() {
     const endpoint = prefix + "/static/eligibiltyData";
     const response = await axios.get(endpoint);
     if (response.data.success === "OK") {
-      console.log(response.data.data);
       return response.data.data;
     } else return [];
   } catch (error) {
@@ -71,7 +70,6 @@ export async function getApplicationInfoEnum() {
     const endpoint = prefix + "/static/applicationInfoData";
     const response = await axios.get(endpoint);
     if (response.data.success === "OK") {
-      console.log(response.data.data);
       return response.data.data;
     } else return [];
   } catch (error) {

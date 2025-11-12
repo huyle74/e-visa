@@ -31,7 +31,7 @@ export default function LoginPage() {
     })();
   }, []);
 
-  const handleSumbitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.currentTarget);
@@ -61,7 +61,7 @@ export default function LoginPage() {
     <Box>
       <HeaderMenu loginDisable={true} createAccDisable={false} logged={false} />
       <SigninForm
-        submit={handleSumbitForm}
+        submit={handleSubmitForm}
         loading={loading}
         errorMessage={errMessage}
         googleApi={googleApi}

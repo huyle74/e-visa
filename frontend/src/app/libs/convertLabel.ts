@@ -13,6 +13,6 @@ export const convertToLabel = (value: string) => {
   } else return value;
 };
 
-export const reverseLableToValue = (label: string) => {
+export const reverseLabelToValue = (label: string) => {
   return label.trim().replaceAll(" ", "_").toUpperCase();
 };

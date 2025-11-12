@@ -21,8 +21,8 @@ const paypalController = {
   },
   async captureOrder(req: Request, res: Response) {
     try {
-      const orderId = req.body.orderId;
-      const capture = await paypalService.captureOrder(orderId);
+      const { orderId, applicationId } = req.body;
+      const capture = await paypalService.captureOrder(orderId, applicationId);
       if (!capture) return responseFailed({ res });
 
       responseSuccess({ res, data: capture });

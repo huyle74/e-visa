@@ -72,6 +72,7 @@ interface ApplicationInforProps {
 
   onclickNext: MouseEventHandler<HTMLButtonElement>;
   onClickBack: () => void;
+  disabled?: boolean;
 
   // FILES
   onChangeBiodata: (e: ChangeEvent<HTMLInputElement>, name: string) => void;
@@ -120,6 +121,8 @@ const ApplicationInformation = ({
   const { countries } = useCountries();
   const countriesNameArr = countries.map((nation: any) => nation.engName);
 
+  console.log(dataProps.completed);
+
   const [entriesEnum, setEntriesEnum] = useState({
     annualIncome: [],
     maritalStatus: [],
@@ -139,7 +142,6 @@ const ApplicationInformation = ({
     (async () => {
       try {
         const statesResponse = await getStatesData(dataProps.addressCountry);
-        console.log(statesResponse);
         if (statesResponse) {
           const states = statesResponse.map((state: any) => {
             return state.state;
@@ -156,7 +158,6 @@ const ApplicationInformation = ({
     (async () => {
       try {
         const citesResponse = await getCitiesData(dataProps.addressState);
-        console.log(citesResponse);
         if (citesResponse) {
           const cities = citesResponse.map((city: any) => {
             return city.city;
@@ -275,6 +276,7 @@ const ApplicationInformation = ({
                 startIcon={<CloudUploadIcon />}
                 role={undefined}
                 size="small"
+                disabled={dataProps.completed}
               >
                 {dataProps.biodata
                   ? "Upload new file"
@@ -286,6 +288,7 @@ const ApplicationInformation = ({
                   accept=".png, .jpg, .jpeg, .pdf"
                   required
                   name="biodata"
+                  disabled={dataProps.completed}
                 />
               </Button>
             </Box>
@@ -338,6 +341,7 @@ const ApplicationInformation = ({
                 variant="outlined"
                 tabIndex={-1}
                 startIcon={<CloudUploadIcon />}
+                disabled={dataProps.completed}
                 size="small"
               >
                 {dataProps.photograph
@@ -349,6 +353,7 @@ const ApplicationInformation = ({
                   multiple
                   accept=".png, .jpg, .jpeg, .pdf"
                   required
+                  disabled={dataProps.completed}
                 />
               </Button>
             </Box>
@@ -381,6 +386,7 @@ const ApplicationInformation = ({
             inputData={entriesEnum.title}
             value={dataProps.title}
             placeHolder="Select your title"
+            disabled={dataProps.completed}
           />
           <AutoCompleteForm
             name="sex"
@@ -389,6 +395,7 @@ const ApplicationInformation = ({
             onChange={(e) => onChangeSex(e, "sex")}
             title="Sex"
             inputData={entriesEnum.sex}
+            disabled={dataProps.completed}
           />
         </InputContainer>
 
@@ -400,6 +407,7 @@ const ApplicationInformation = ({
             placeholder="Enter your first name"
             onChange={(e) => onChangeFirstName(e, "firstName")}
             value={dataProps.firstName}
+            disabled={dataProps.completed}
           />
           <TextFieldApply
             name="middleName"
@@ -407,6 +415,7 @@ const ApplicationInformation = ({
             placeholder="Enter your middle name"
             onChange={(e) => onChangeMiddleName(e, "middleName")}
             value={dataProps.middleName}
+            disabled={dataProps.completed}
           />
           <TextFieldApply
             name="familyName"
@@ -415,6 +424,7 @@ const ApplicationInformation = ({
             placeholder="Enter your family name"
             onChange={(e) => onChangeFamilyName(e, "familyName")}
             value={dataProps.familyName}
+            disabled={dataProps.completed}
           />
         </InputContainer>
 
@@ -423,6 +433,7 @@ const ApplicationInformation = ({
             name="contactNo"
             onChange={(e) => onChangeContactNo(e, "contactNo")}
             value={dataProps.contactNo}
+            disabled={dataProps.completed}
           />
           <TextFieldApply
             name="email"
@@ -430,6 +441,7 @@ const ApplicationInformation = ({
             placeholder="Enter your Email"
             onChange={(e) => onChangeEmail(e, "email")}
             value={dataProps.email}
+            disabled={dataProps.completed}
           />
         </InputContainer>
 
@@ -441,6 +453,7 @@ const ApplicationInformation = ({
             name="nationality"
             onChange={(e) => onChangeNationality(e, "nationality")}
             value={dataProps.nationality}
+            disabled={dataProps.completed}
           />
         </InputContainer>
 
@@ -456,6 +469,7 @@ const ApplicationInformation = ({
               slotProps={{ input: { "aria-label": "controlled" } }}
               checked={dataProps.otherNationality}
               onChange={onChangeOtherNationality}
+              disabled={dataProps.completed}
             />
             Yes
           </span>
@@ -468,6 +482,7 @@ const ApplicationInformation = ({
             inputData={countriesNameArr}
             title="Nationality at birth"
             placeHolder="Select your place of birth"
+            disabled={dataProps.completed}
             onChange={(e) => onChangeBirthNation(e, "nationalityBirth")}
           />
         </InputContainer>
@@ -483,6 +498,7 @@ const ApplicationInformation = ({
               onChange={(e) =>
                 onChangeAnotherNationality(e, "anotherNationality")
               }
+              disabled={dataProps.completed}
             />
           </InputContainer>
         )}
@@ -494,12 +510,14 @@ const ApplicationInformation = ({
             inputData={countriesNameArr}
             value={dataProps.nationalityBirth}
             placeHolder="Select your Place of birth"
+            disabled={dataProps.completed}
           />
           <TextFieldApply
             name="cityBirth"
             title="City of birth"
             placeholder="Enter your City of birth"
             onChange={(e) => onChangeCityBirth(e, "cityBirth")}
+            disabled={dataProps.completed}
             requiredMasked={true}
             value={dataProps.cityBirth}
           />
@@ -511,6 +529,7 @@ const ApplicationInformation = ({
             value={dataProps.birthDate}
             title="Date of birth"
             onChange={onChangeBirthDate}
+            disabled={dataProps.completed}
           />
           <AutoCompleteForm
             name="maritalStatus"
@@ -518,6 +537,7 @@ const ApplicationInformation = ({
             title="Marital status"
             inputData={entriesEnum.maritalStatus}
             value={dataProps.maritalStatus}
+            disabled={dataProps.completed}
             placeHolder="Select your Marital status"
           />
         </InputContainer>
@@ -533,6 +553,7 @@ const ApplicationInformation = ({
             inputData={entriesEnum.travelDocumentType}
             value={dataProps.documentType}
             placeHolder="Select your Type of Travel Document"
+            disabled={dataProps.completed}
           />
         </InputContainer>
         <InputContainer width={66.6}>
@@ -543,6 +564,7 @@ const ApplicationInformation = ({
             requiredMasked={true}
             onChange={(e) => onChangeDocumentNo(e, "documentNumber")}
             value={dataProps.documentNumber}
+            disabled={dataProps.completed}
           />
         </InputContainer>
         <InputContainer width={66.6}>
@@ -562,12 +584,14 @@ const ApplicationInformation = ({
             title="Date of issue"
             onChange={onChangeIssuedDate}
             value={dataProps.issuesDate}
+            disabled={dataProps.completed}
           />
           <DatePickerComponent
             name="expiryDate"
             title="Date of expiry"
             onChange={onChangeExpiredDate}
             value={dataProps.expiryDate}
+            disabled={dataProps.completed}
           />
         </InputContainer>
       </FormContainer>
@@ -582,6 +606,7 @@ const ApplicationInformation = ({
             onChange={(e) => onChangeHomeAddress(e, "homeAddress")}
             requiredMasked={true}
             value={dataProps.homeAddress}
+            disabled={dataProps.completed}
           />
         </InputContainer>
 
@@ -593,6 +618,7 @@ const ApplicationInformation = ({
             value={dataProps.addressCountry}
             inputData={countriesNameArr}
             onChange={(e) => onChangeCountryAddress(e, "addressCountry")}
+            disabled={dataProps.completed}
           />
           <AutoCompleteForm
             name="addressState"
@@ -601,6 +627,7 @@ const ApplicationInformation = ({
             value={dataProps.addressState}
             inputData={statesAddress}
             onChange={(e) => onChangeStateAddress(e, "addressState")}
+            disabled={dataProps.completed}
           />
         </InputContainer>
 
@@ -612,6 +639,7 @@ const ApplicationInformation = ({
             value={dataProps.addressCity}
             inputData={citiesAddress}
             onChange={(e) => onChangeCityAddress(e, "addressCity")}
+            disabled={dataProps.completed}
           />
         </Box>
         <Box sx={{ pr: 2, mt: 1, pl: 2, mb: 1 }}>
@@ -625,6 +653,7 @@ const ApplicationInformation = ({
               slotProps={{ input: { "aria-label": "controlled" } }}
               checked={dataProps.currentAddress}
               onChange={onChangeOtherNationality}
+              disabled={dataProps.completed}
             />
             Yes
           </span>
@@ -641,6 +670,7 @@ const ApplicationInformation = ({
             value={dataProps.occupation}
             onChange={(e) => onChangeOccupation(e, "occupation")}
             inputData={entriesEnum.occupation}
+            disabled={dataProps.completed}
           />
           <TextFieldApply
             name="company"
@@ -649,6 +679,7 @@ const ApplicationInformation = ({
             placeholder="Enter your Company/Institute"
             onChange={(e) => onChangeCompanyPlace(e, "company")}
             value={dataProps.company}
+            disabled={dataProps.completed}
           />
           <AutoCompleteForm
             title="Annual income"
@@ -657,6 +688,7 @@ const ApplicationInformation = ({
             value={dataProps.annualIncome}
             onChange={(e) => onChangeAnnualIncome(e, "annualIncome")}
             inputData={entriesEnum.annualIncome}
+            disabled={dataProps.completed}
           />
         </InputContainer>
       </FormContainer>

@@ -1,4 +1,5 @@
 import { paypalCredentials, paypalApiUrl } from "@/config/envLoader";
+import { visaApplicationRepo } from "../../repositories/visaApplication.repository";
 
 const { client_id, client_secret } = paypalCredentials;
 
@@ -59,7 +60,7 @@ const paypalService = {
       console.error("createOrder", error);
     }
   },
-  async captureOrder(orderId: string) {
+  async captureOrder(orderId: string, applicationId: string) {
     try {
       const endpoint =
         paypalApiUrl + "v2/checkout/orders/" + orderId + "/capture";
@@ -78,8 +79,11 @@ const paypalService = {
       }
 
       const result = await handleResponse(response);
-      console.log(result);
-      return result;
+      if (result.status === "COMPLETED") {
+        const update = await visaApplicationRepo.update(applicationId, true);
+        console.log(update);
+        return result;
+      }
     } catch (error) {
       console.error("Capture Order", error);
     }

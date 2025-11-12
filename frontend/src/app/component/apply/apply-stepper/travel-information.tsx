@@ -13,11 +13,11 @@ import {
   AccommodationInputDto,
 } from "@/app/libs/types";
 import InputContainer from "../input-containter";
-import SwithYesNo from "../switch";
+import SwitchYesNo from "../switch";
 import RadioComponent from "../select-ratio";
 import DatePickerComponent from "../date-picker";
 import MobileTextField from "../mobileInput";
-import ButtonSumbit from "../button-submit-group";
+import ButtonSubmit from "../button-submit-group";
 import { useCountries } from "@/app/contexts/countriesContext";
 
 type EventTextField = (
@@ -52,6 +52,7 @@ interface TravelInformationProps {
   onChangeAccommodationDurationDay: AccommodationEvent;
   onChangeAdditionalAccomodation: EventSwitch;
   onClickNext: MouseEventHandler<HTMLButtonElement>;
+  onClickBack: () => void;
 }
 
 const TravelInformation = ({
@@ -74,6 +75,7 @@ const TravelInformation = ({
   onChangeAccommodationName,
   onChangeAdditionalAccomodation,
   onClickNext,
+  onClickBack,
 }: TravelInformationProps) => {
   const { countries } = useCountries();
   const countriesNameArr = countries.map((nation: any) => nation.engName);
@@ -112,6 +114,7 @@ const TravelInformation = ({
             onChange={(e) => onChangeSelectCountry(e, "country")}
             value={data.country}
             name="country"
+            disabled={data.completed}
           />
         </InputContainer>
 
@@ -121,6 +124,7 @@ const TravelInformation = ({
             value={data.arrivalPort}
             onChange={(e) => onChangeArrivalPort(e, "arrivalPort")}
             name="arrivalPort"
+            disabled={data.completed}
           />
         </InputContainer>
 
@@ -132,6 +136,7 @@ const TravelInformation = ({
             onChange={onChangeTransportMode}
             placeHolder="Select your transportation Mode"
             name="transportMode"
+            disabled={data.completed}
           />
         </InputContainer>
 
@@ -143,24 +148,28 @@ const TravelInformation = ({
             requiredMasked={true}
             name="vehicleNumber"
             value={data.vehicleNumber || ""}
+            disabled={data.completed}
           />
         </InputContainer>
 
         <InputContainer width={50} direction="column">
-          <SwithYesNo
+          <SwitchYesNo
             content="Have you ever visited this Country?"
             onChange={(e) => onChangeHadVisit(e, "hadVisited")}
             checked={data.hadVisited}
+            disabled={data.completed}
           />
-          <SwithYesNo
+          <SwitchYesNo
             onChange={(e) => onChangeDidApply(e, "didApply")}
             checked={data.didApply}
             content="Have you ever applied for this Country visa?"
+            disabled={data.completed}
           />
-          <SwithYesNo
+          <SwitchYesNo
             checked={data.partOfTour}
             onChange={(e) => onChangePartOfTour(e, "partOfTour")}
             content="Are you travelling as part of a tour group?"
+            disabled={data.completed}
           />
         </InputContainer>
       </FormContainer>
@@ -176,15 +185,17 @@ const TravelInformation = ({
           onChangePhone={onChangeAccommodationPhone}
           onChangeDurationDay={onChangeAccommodationDurationDay}
           data={data.accommodations[0]}
+          disabled={data.completed}
         />
 
         <InputContainer>
-          <SwithYesNo
+          <SwitchYesNo
             onChange={(e) =>
               onChangeAdditionalAccomodation(e, "additionalAccommodation")
             }
             checked={data.additionalAccommodation}
             content="Additional accommodation in?"
+            disabled={data.completed}
           />
         </InputContainer>
 
@@ -198,10 +209,15 @@ const TravelInformation = ({
             onChangePhone={onChangeAccommodationPhone}
             onChangeDurationDay={onChangeAccommodationDurationDay}
             data={data.accommodations[1]}
+            disabled={data.completed}
           />
         )}
       </FormContainer>
-      <ButtonSumbit onclickNext={onClickNext} />
+      <ButtonSubmit
+        onclickNext={onClickNext}
+        displayBackButton={true}
+        onClickBack={onClickBack}
+      />
     </Box>
   );
 };
@@ -217,6 +233,7 @@ interface AccommodationFormProps {
   onChangeAccommodationType: AccommodationEvent;
   data: AccommodationInputDto;
   index: number;
+  disabled: boolean;
 }
 
 const AccommodationForm = ({
@@ -228,6 +245,7 @@ const AccommodationForm = ({
   onChangeAccommodationType,
   data,
   index,
+  disabled,
 }: AccommodationFormProps) => {
   return (
     <Box sx={{ position: "relative" }}>
@@ -238,6 +256,7 @@ const AccommodationForm = ({
           title="Accommodation Type"
           name="type"
           value={data.type}
+          disabled={disabled}
         />
       </InputContainer>
       <InputContainer>
@@ -248,6 +267,7 @@ const AccommodationForm = ({
           requiredMasked={true}
           name="name"
           value={data.name}
+          disabled={disabled}
         />
       </InputContainer>
 
@@ -259,6 +279,7 @@ const AccommodationForm = ({
           requiredMasked={true}
           name="street"
           value={data.street}
+          disabled={disabled}
         />
         <AutoCompleteForm
           title="City"
@@ -267,6 +288,7 @@ const AccommodationForm = ({
           value={data.city}
           placeHolder="Select your city"
           name="city"
+          disabled={disabled}
         />
       </InputContainer>
       <InputContainer width={50}>
@@ -274,6 +296,7 @@ const AccommodationForm = ({
           value={data.contactNo}
           onChange={(e) => onChangePhone(e, index)}
           name="contactNo"
+          disabled={disabled}
         />
       </InputContainer>
 
@@ -286,6 +309,7 @@ const AccommodationForm = ({
           type="number"
           name="duration"
           value={data.duration}
+          disabled={disabled}
         />
       </InputContainer>
     </Box>
