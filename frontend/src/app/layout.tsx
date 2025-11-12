@@ -3,6 +3,8 @@ import { Roboto } from "next/font/google";
 import { ThemeProvider } from "@mui/material/styles";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import StyledComponentsRegistry from "./libs/register";
+import { connection } from "next/server";
+
 import theme from "./server-side/theme";
 import "./globals.css";
 
@@ -16,11 +18,13 @@ const roboto = Roboto({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await connection();
+
   return (
     <html lang="en" className={roboto.className}>
       <AppRouterCacheProvider>

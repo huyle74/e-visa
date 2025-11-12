@@ -1,13 +1,14 @@
 {
   "scripts": {
-    "start": "node dist/server.js",
-    "build": "tsc",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "build": "tsc && tsc-alias",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts",
     "seed": "node --max-old-space-size=6144 -r ts-node/register src/prisma/seed/fromTo.ts"
   },
   "prisma": {
     "schema": "src/prisma/schema"
   },
+  "type": "commonjs",
   "nodemonConfig": {
     "watch": [
       "src"
@@ -26,6 +27,7 @@
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "cross-env": "^10.1.0",
     "csv-parser": "^3.2.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
@@ -35,10 +37,14 @@
     "googleapis": "^155.0.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
+    "next": "^16.0.1",
     "nodemailer": "^7.0.5",
     "pg-promise": "^11.15.0",
     "postgres": "^3.4.7",
     "prisma": "^6.13.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tsc-alias": "^1.8.16",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

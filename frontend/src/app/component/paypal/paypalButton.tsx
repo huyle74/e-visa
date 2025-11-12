@@ -5,15 +5,19 @@ import {
   ReactPayPalScriptOptions,
   PayPalButtonsComponentProps,
 } from "@paypal/react-paypal-js";
-import { paypalClientId } from "@/app/server-side/envLoader";
-
-type CreateOrder = PayPalButtonsComponentProps["createOrder"];
+import { paypalClientId, backend_url } from "@/app/server-side/envLoader";
 
 interface PaypalProps {
-  price: number | string;
+  price: number | string | undefined;
+  createOrder: PayPalButtonsComponentProps["createOrder"];
+  onApprove: PayPalButtonsComponentProps["onApprove"];
 }
 
-export default function PaypalButton({ price = 100 }: PaypalProps) {
+export default function PaypalButton({
+  price,
+  createOrder,
+  onApprove,
+}: PaypalProps) {
   const initialOptions: ReactPayPalScriptOptions = {
     clientId: paypalClientId,
   };
@@ -31,12 +35,16 @@ export default function PaypalButton({ price = 100 }: PaypalProps) {
         width: "50%",
       }}
     >
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mb: 2, fontSize: "1.3rem" }}>
         Pay <span style={{ fontWeight: 1000 }}>{price}$</span> To complete this
         application
       </Box>
       <PayPalScriptProvider options={initialOptions}>
-        <PayPalButtons style={style} />
+        <PayPalButtons
+          style={style}
+          createOrder={createOrder}
+          onApprove={onApprove}
+        />
       </PayPalScriptProvider>
     </Box>
   );

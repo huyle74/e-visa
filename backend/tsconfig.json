@@ -10,15 +10,15 @@
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "sourceMap": true,
     "resolveJsonModule": true,
-    "baseUrl": "src",
     "paths": {
-      "@/*": ["*"],
-      "@controllers/*": ["controllers/*"],
-      "@routes/*": ["routes/*"],
-      "@services/*": ["services/*"],
-      "@prisma/*": ["prisma/*"],
-      "@utils/*": ["utils/*"],
-      "@dto/*": ["dto/*"]
+      "@/*": ["./src/*"],
+      "@controllers/*": ["./src/controllers/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@services/*": ["./src/services/*"],
+      "@prisma/*": ["./src/prisma/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@dto/*": ["./src/dto/*"],
+      "@/middleware/*": ["./src/middleware/*"]
     }
   },
   "include": ["src/**/*.ts"],

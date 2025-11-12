@@ -21,9 +21,9 @@ routes.use("/forgot-password", forgotPasswordRoute);
 routes.use("/login-google", googleLoginRoute);
 routes.use("/payment", paypalRoute);
 routes.use("/static", staticRoutes);
-routes.use("/visa-application", authenticationMiddleware(), applicationRouter);
+routes.use("/visa-application", authenticationMiddleware, applicationRouter);
 routes.use("/guard", guardRoute);
 routes.use("/admin", adminLoginRoute);
-routes.use("/admin-verified", authenticationMiddleware(), adminRoute);
+routes.use("/admin-verified", authenticationMiddleware, adminRoute);
 
 export default routes;

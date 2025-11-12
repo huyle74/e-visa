@@ -313,7 +313,7 @@ export const travelInfoRepos = {
 export const supportingDocumentRepos = {
   async upsert(data: SupportingDocumentInputDto): Promise<SupportingDocument> {
     try {
-      const { applicationId, ...rest } = data;
+      const { applicationId, fileUrl, ...rest } = data;
 
       const rows = await prisma.supportingDocument.upsert({
         where: {

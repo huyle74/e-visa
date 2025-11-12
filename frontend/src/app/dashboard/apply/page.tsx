@@ -6,7 +6,6 @@ import {
   useEffect,
   DragEvent,
   MouseEventHandler,
-  useCallback,
 } from "react";
 import { useSearchParams } from "next/navigation";
 import { Box, SelectChangeEvent, SwitchProps } from "@mui/material";
@@ -37,6 +36,7 @@ import { backend_url } from "@/app/server-side/envLoader";
 import { getUserInfo } from "@/app/libs/getLocalStorage";
 import Footer from "@/app/component/footer/footer";
 import { reverseLableToValue } from "@/app/libs/convertLabel";
+import { PayPalButtonsComponentProps } from "@paypal/react-paypal-js";
 
 const prefix = backend_url + "api" + "/visa-application";
 
@@ -74,6 +74,7 @@ const ApplyNewVisa = () => {
   const [modalContent, setModalContent] = useState({
     title: "",
     description: "",
+    status: "",
   });
   const [selectCountryData, setCountryData] = useState<CountrySelectionDto>({
     fromCountry: "",
@@ -317,7 +318,7 @@ const ApplyNewVisa = () => {
 
   const handleOnCloseModal = () => {
     setModal(false);
-    setModalContent({ title: "", description: "" });
+    setModalContent({ title: "", description: "", status: "" });
   };
 
   const handleOnchangeApplicationInformation = (
@@ -369,6 +370,7 @@ const ApplyNewVisa = () => {
         setModalContent({
           title: "Please choose file with size less than 3MB",
           description: "",
+          status: "success",
         });
         setModal(true);
         return;
@@ -386,6 +388,7 @@ const ApplyNewVisa = () => {
         setModalContent({
           title: "Please choose file with size less than 5MB",
           description: "",
+          status: "error",
         });
         setModal(true);
         return;
@@ -552,6 +555,7 @@ const ApplyNewVisa = () => {
       setDisable(false);
       setModalContent({
         title: "Please complete the required fields",
+        status: "error",
         description:
           message.map((msg: string) => {
             return (
@@ -577,6 +581,7 @@ const ApplyNewVisa = () => {
         setModalContent({
           title: "Please choose file with size less than 5MB",
           description: "",
+          status: "error",
         });
         setModal(true);
         return;
@@ -597,6 +602,7 @@ const ApplyNewVisa = () => {
         setModalContent({
           title: "Please choose file with size less than 5MB",
           description: "",
+          status: "error",
         });
         setModal(true);
         return;
@@ -689,6 +695,7 @@ const ApplyNewVisa = () => {
       setModalContent({
         title: "Please enter your route",
         description: "",
+        status: "error",
       });
       return;
     }
@@ -710,7 +717,6 @@ const ApplyNewVisa = () => {
               },
             }
           );
-          console.log(data);
           setGetPrice(data?.data.totalPrice);
         } else return;
       } catch (error) {
@@ -718,6 +724,47 @@ const ApplyNewVisa = () => {
       }
     })();
   }, [selectCountryData]);
+
+  const createOrder: PayPalButtonsComponentProps["createOrder"] = async () => {
+    try {
+      const { toCountry, fromCountry } = selectCountryData;
+      const endpoint = backend_url + "api/payment/create-order";
+      const { data } = await axios(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        data: {
+          id: applicationId,
+          price: getPrice,
+          from: fromCountry,
+          to: toCountry,
+        },
+      });
+
+      return data.data.id;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  const onApprove: PayPalButtonsComponentProps["onApprove"] = async (data) => {
+    const endpoint = backend_url + "api/payment/capture-order";
+
+    const response = await axios(endpoint, {
+      method: "POST",
+      data: { orderId: data.orderID },
+    });
+    const status = response.data.data.status;
+    console.log(status);
+    if (status === "COMPLETED") {
+      setModal(true);
+      setModalContent({
+        title: "Payment successfully",
+        description: "",
+        status: "success",
+      });
+    }
+  };
 
   return (
     <AuthProvider>
@@ -876,7 +923,11 @@ const ApplyNewVisa = () => {
               )}
               {stepStatus.activeStep === 5 && (
                 <Box sx={{ justifyItems: "center", mt: 7 }}>
-                  <PaypalButton />
+                  <PaypalButton
+                    price={getPrice}
+                    createOrder={createOrder}
+                    onApprove={onApprove}
+                  />
                 </Box>
               )}
             </Box>
@@ -922,8 +973,4 @@ const formConvertTravelInformation = (data: SupportingDocumentInputDto) => {
   return form;
 };
 
-const creditCartTesting = {
-  cartNumb: "4032038027746282",
-  expireDay: "12/2026",
-  csv: "760",
-};
+const modalPaypal = () => {};

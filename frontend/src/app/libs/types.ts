@@ -102,3 +102,8 @@ export interface SupportingDocumentInputDto {
   PROOF_OF_ACCOMMODATION: FileInputDto;
   FINANCIAL_EVIDENCE: FileInputDto;
 }
+
+export const StatusPaypal = {
+  success: "success",
+  error: "error",
+};
