@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, useMediaQuery } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import ButtonMenuHomePage from "./menu-button-home";
 import LogoTitle from "./logo_name";
@@ -20,12 +20,14 @@ export default function HeaderMenu({
   logged,
   userName,
 }: HeaderMenuProps) {
+  const matches = useMediaQuery("(max-width:600px)");
+
   return (
     <Box
       sx={{
         display: "flex",
         alignItems: "center",
-        height: "13vh",
+        height: `${matches ? "7vh" : "13vh"}`,
         backgroundColor: white,
         pl: 1,
       }}

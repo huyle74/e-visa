@@ -1,6 +1,5 @@
 import { ChangeEvent, MouseEventHandler } from "react";
-import { Box, SelectChangeEvent } from "@mui/material";
-import { DatePickerProps } from "@mui/x-date-pickers";
+import { Box, SelectChangeEvent, useMediaQuery } from "@mui/material";
 import AutoCompleteForm from "../autocompleteForm";
 import FormContainer from "../containerForm";
 import TextFieldApply from "../textField";
@@ -77,11 +76,13 @@ const TravelInformation = ({
   onClickNext,
   onClickBack,
 }: TravelInformationProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
+
   const { countries } = useCountries();
   const countriesNameArr = countries.map((nation: any) => nation.engName);
 
   return (
-    <Box>
+    <Box sx={{ fontSize: matches ? "0.8rem" : "1rem" }}>
       {/* Travel Information */}
       <FormContainer title="Travel Information">
         <Box sx={{ p: 1 }}>
@@ -106,7 +107,7 @@ const TravelInformation = ({
           <Box sx={{ p: 1 }}>Duration of stay (Days):: day(s)</Box>
         </InputContainer>
 
-        <InputContainer width={50}>
+        <InputContainer width={matches ? 100 : 50}>
           <AutoCompleteForm
             title="Country / Territory ( Last port of embarkation )"
             inputData={countriesNameArr}
@@ -118,7 +119,7 @@ const TravelInformation = ({
           />
         </InputContainer>
 
-        <InputContainer width={50}>
+        <InputContainer width={matches ? 100 : 50}>
           <SelectDepartPort
             title="Port of arrival"
             value={data.arrivalPort}
@@ -152,7 +153,7 @@ const TravelInformation = ({
           />
         </InputContainer>
 
-        <InputContainer width={50} direction="column">
+        <InputContainer width={matches ? 100 : 50} direction="column">
           <SwitchYesNo
             content="Have you ever visited this Country?"
             onChange={(e) => onChangeHadVisit(e, "hadVisited")}
@@ -247,8 +248,10 @@ const AccommodationForm = ({
   index,
   disabled,
 }: AccommodationFormProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
+
   return (
-    <Box sx={{ position: "relative" }}>
+    <Box sx={{ position: "relative", fontSize: matches ? "0.8rem" : "1rem" }}>
       <InputContainer width={100}>
         <RadioComponent
           labels={travelInformationEntries.Accommodation.accommodationType}
@@ -291,7 +294,7 @@ const AccommodationForm = ({
           disabled={disabled}
         />
       </InputContainer>
-      <InputContainer width={50}>
+      <InputContainer width={matches ? 100 : 50}>
         <MobileTextField
           value={data.contactNo}
           onChange={(e) => onChangePhone(e, index)}

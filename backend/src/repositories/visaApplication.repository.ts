@@ -88,6 +88,7 @@ export const visaApplicationRepo = {
         take: 20,
         orderBy: { createdAt: "desc" },
         select: {
+          payment: true,
           correlationId: true,
           createdAt: true,
           fromCountry: true,

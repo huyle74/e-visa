@@ -15,6 +15,7 @@ import {
   SelectChangeEvent,
   Switch,
   SwitchProps,
+  useMediaQuery,
 } from "@mui/material";
 import Image from "next/image";
 import { getStatesData, getCitiesData } from "@/app/server-side/static-data";
@@ -46,7 +47,8 @@ interface ApplicationInforProps {
   onChangeMiddleName: Text;
   onChangeFamilyName: Text;
   onChangeBirthNation: (e: E, name: string) => void;
-  onChangeOtherNationality: NonNullable<SwitchProps["onChange"]>;
+  onChangeSwitch: NonNullable<SwitchProps["onChange"]>;
+
   onChangeAnotherNationality: (e: E, name: string) => void;
   onChangeContactNo: Text;
   onChangeDocumentNo: Text;
@@ -89,7 +91,7 @@ const ApplicationInformation = ({
   onChangeMiddleName,
   onChangeFamilyName,
   onChangeBirthNation,
-  onChangeOtherNationality,
+  onChangeSwitch,
   onChangeAnotherNationality,
   onChangeContactNo,
   onChangeBirthDate,
@@ -118,10 +120,9 @@ const ApplicationInformation = ({
   onDragBiodata,
   onDragPhotograph,
 }: ApplicationInforProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
   const { countries } = useCountries();
   const countriesNameArr = countries.map((nation: any) => nation.engName);
-
-  console.log(dataProps.completed);
 
   const [entriesEnum, setEntriesEnum] = useState({
     annualIncome: [],
@@ -245,13 +246,18 @@ const ApplicationInformation = ({
           justifyContent: "space-between",
           position: "relative",
           height: "100%",
+          flexDirection: matches ? "column" : "row",
         }}
       >
-        <FormContainer title="Upload Biodata Page of Passport" width={60}>
+        <FormContainer
+          title="Upload Biodata Page of Passport"
+          width={matches ? 100 : 60}
+        >
           <div
             draggable={true}
             onDrop={onDragBiodata}
             onDragOver={handleDragOVerBiodata}
+            style={{ fontSize: matches ? "0.7rem" : "1rem" }}
           >
             <PaperDiv>
               Please upload the biodata page of your travel document. After the
@@ -307,30 +313,31 @@ const ApplicationInformation = ({
                 <Image
                   src="https://www.thaievisa.go.th/static/media/dummy_passport.f34bd0bb.jpg"
                   alt="passport Pic"
-                  width={460}
-                  height={270}
+                  width={matches ? 400 : 460}
+                  height={matches ? 220 : 270}
                 />
               )}
             </Box>
           </div>
         </FormContainer>
 
-        <FormContainer title="Upload a photograph" width={40}>
+        <FormContainer title="Upload a photograph" width={matches ? 100 : 40}>
           <div
             onDrop={onDragPhotograph}
             onDragOver={handleDragOVerPhotograph}
             draggable={true}
+            style={{ fontSize: matches ? "0.7rem" : "1rem" }}
           >
             <PaperDiv>
               Please upload an appropriate photograph taken within six months.
               Failure to do so may result in rejection of visa request.
             </PaperDiv>
 
-            <Box sx={{ m: 2 }}>
-              <Button fullWidth color="secondary">
+            <Button fullWidth color="secondary">
+              <Box sx={{ fontSize: matches ? "0.7rem" : "1rem" }}>
                 Download Example Photograph
-              </Button>
-            </Box>
+              </Box>
+            </Button>
 
             <Box sx={{ m: 2, mb: 1 }}>
               {/* UPLOAD BUTTON */}
@@ -378,7 +385,7 @@ const ApplicationInformation = ({
 
       {/* PERSONAL INFORMATION */}
       <FormContainer title="Personal Information">
-        <InputContainer width={66.6}>
+        <InputContainer width={matches ? 100 : 66.6}>
           <AutoCompleteForm
             name="title"
             onChange={(e) => onChangeTitle(e, "title")}
@@ -400,52 +407,68 @@ const ApplicationInformation = ({
         </InputContainer>
 
         <InputContainer width={100}>
-          <TextFieldApply
-            name="firstName"
-            requiredMasked={true}
-            title="First name"
-            placeholder="Enter your first name"
-            onChange={(e) => onChangeFirstName(e, "firstName")}
-            value={dataProps.firstName}
-            disabled={dataProps.completed}
-          />
-          <TextFieldApply
-            name="middleName"
-            title="Middle name (If applicable)"
-            placeholder="Enter your middle name"
-            onChange={(e) => onChangeMiddleName(e, "middleName")}
-            value={dataProps.middleName}
-            disabled={dataProps.completed}
-          />
-          <TextFieldApply
-            name="familyName"
-            title="Family name"
-            requiredMasked={true}
-            placeholder="Enter your family name"
-            onChange={(e) => onChangeFamilyName(e, "familyName")}
-            value={dataProps.familyName}
-            disabled={dataProps.completed}
-          />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: matches ? "column" : "row",
+              width: "100%",
+            }}
+          >
+            <TextFieldApply
+              name="firstName"
+              requiredMasked={true}
+              title="First name"
+              placeholder="Enter your first name"
+              onChange={(e) => onChangeFirstName(e, "firstName")}
+              value={dataProps.firstName}
+              disabled={dataProps.completed}
+            />
+            <TextFieldApply
+              name="middleName"
+              title="Middle name (If applicable)"
+              placeholder="Enter your middle name"
+              onChange={(e) => onChangeMiddleName(e, "middleName")}
+              value={dataProps.middleName}
+              disabled={dataProps.completed}
+            />
+            <TextFieldApply
+              name="familyName"
+              title="Family name"
+              requiredMasked={true}
+              placeholder="Enter your family name"
+              onChange={(e) => onChangeFamilyName(e, "familyName")}
+              value={dataProps.familyName}
+              disabled={dataProps.completed}
+            />
+          </Box>
         </InputContainer>
 
-        <InputContainer width={66.6}>
-          <MobileTextField
-            name="contactNo"
-            onChange={(e) => onChangeContactNo(e, "contactNo")}
-            value={dataProps.contactNo}
-            disabled={dataProps.completed}
-          />
-          <TextFieldApply
-            name="email"
-            title="Email"
-            placeholder="Enter your Email"
-            onChange={(e) => onChangeEmail(e, "email")}
-            value={dataProps.email}
-            disabled={dataProps.completed}
-          />
+        <InputContainer width={matches ? 100 : 66.6}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: matches ? "column" : "row",
+              width: "100%",
+            }}
+          >
+            <MobileTextField
+              name="contactNo"
+              onChange={(e) => onChangeContactNo(e, "contactNo")}
+              value={dataProps.contactNo}
+              disabled={dataProps.completed}
+            />
+            <TextFieldApply
+              name="email"
+              title="Email"
+              placeholder="Enter your Email"
+              onChange={(e) => onChangeEmail(e, "email")}
+              value={dataProps.email}
+              disabled={dataProps.completed}
+            />
+          </Box>
         </InputContainer>
 
-        <InputContainer width={66.6}>
+        <InputContainer width={matches ? 100 : 66.6}>
           <AutoCompleteForm
             inputData={countriesNameArr}
             placeHolder="Enter your nationality"
@@ -457,25 +480,37 @@ const ApplicationInformation = ({
           />
         </InputContainer>
 
-        <Box sx={{ pr: 2, mt: 1, pl: 2 }}>
+        <Box
+          sx={{
+            pr: 2,
+            mt: 1,
+            pl: matches ? 1 : 2,
+            fontSize: matches ? "0.8rem" : "1rem",
+          }}
+        >
           Do you hold any other nationality than the one indicated?
           <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}>
-            {" "}
             *
           </span>
-          <span style={{ marginLeft: "10px" }}>
+          <span
+            style={{
+              marginLeft: "10px",
+              fontSize: matches ? "0.8rem" : "1rem",
+            }}
+          >
             No
             <Switch
               slotProps={{ input: { "aria-label": "controlled" } }}
               checked={dataProps.otherNationality}
-              onChange={onChangeOtherNationality}
+              onChange={onChangeSwitch}
               disabled={dataProps.completed}
+              name="otherNationality"
             />
             Yes
           </span>
         </Box>
 
-        <InputContainer width={66.6}>
+        <InputContainer width={matches ? 100 : 66.6}>
           <AutoCompleteForm
             name="nationalityBirth"
             value={dataProps.nationalityBirth}
@@ -488,7 +523,7 @@ const ApplicationInformation = ({
         </InputContainer>
 
         {dataProps.otherNationality && (
-          <InputContainer width={66.6}>
+          <InputContainer width={matches ? 100 : 66.6}>
             <AutoCompleteForm
               name="anotherNationality"
               title="Other country/territory of nationality"
@@ -502,50 +537,74 @@ const ApplicationInformation = ({
             />
           </InputContainer>
         )}
-        <InputContainer width={66.6}>
-          <AutoCompleteForm
-            name="nationalityBirth"
-            onChange={(e) => onChangeTitle(e, "nationalityBirth")}
-            title="Place of birth"
-            inputData={countriesNameArr}
-            value={dataProps.nationalityBirth}
-            placeHolder="Select your Place of birth"
-            disabled={dataProps.completed}
-          />
-          <TextFieldApply
-            name="cityBirth"
-            title="City of birth"
-            placeholder="Enter your City of birth"
-            onChange={(e) => onChangeCityBirth(e, "cityBirth")}
-            disabled={dataProps.completed}
-            requiredMasked={true}
-            value={dataProps.cityBirth}
-          />
+        <InputContainer width={matches ? 100 : 66.6}>
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              "& > *": {
+                flex: "1 1 50%", // each child gets 50% width
+              },
+            }}
+          >
+            <AutoCompleteForm
+              name="nationalityBirth"
+              onChange={(e) => onChangeTitle(e, "nationalityBirth")}
+              title="Place of birth"
+              inputData={countriesNameArr}
+              value={dataProps.nationalityBirth}
+              placeHolder="Select your Place of birth"
+              disabled={dataProps.completed}
+            />
+            <TextFieldApply
+              name="cityBirth"
+              title="City of birth"
+              placeholder="Enter your City of birth"
+              onChange={(e) => onChangeCityBirth(e, "cityBirth")}
+              disabled={dataProps.completed}
+              requiredMasked={true}
+              value={dataProps.cityBirth}
+            />
+          </Box>
         </InputContainer>
 
-        <InputContainer width={66.6}>
-          <DatePickerComponent
-            name="birthDate"
-            value={dataProps.birthDate}
-            title="Date of birth"
-            onChange={onChangeBirthDate}
-            disabled={dataProps.completed}
-          />
-          <AutoCompleteForm
-            name="maritalStatus"
-            onChange={(e) => onChangeMaritalStatus(e, "maritalStatus")}
-            title="Marital status"
-            inputData={entriesEnum.maritalStatus}
-            value={dataProps.maritalStatus}
-            disabled={dataProps.completed}
-            placeHolder="Select your Marital status"
-          />
+        <InputContainer width={matches ? 100 : 66.6}>
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              "& > *": {
+                flex: "1 1 50%", // each child gets 50% width
+              },
+            }}
+          >
+            <DatePickerComponent
+              name="birthDate"
+              value={dataProps.birthDate}
+              title="Date of birth"
+              onChange={onChangeBirthDate}
+              disabled={dataProps.completed}
+            />
+            <AutoCompleteForm
+              name="maritalStatus"
+              onChange={(e) => onChangeMaritalStatus(e, "maritalStatus")}
+              title="Marital status"
+              inputData={entriesEnum.maritalStatus}
+              value={dataProps.maritalStatus}
+              disabled={dataProps.completed}
+              placeHolder={
+                matches
+                  ? "Select  Marital status"
+                  : "Select your Marital status"
+              }
+            />
+          </Box>
         </InputContainer>
       </FormContainer>
 
       {/* TRAVEL Document */}
       <FormContainer title="Travel Document">
-        <InputContainer width={66.6}>
+        <InputContainer width={matches ? 100 : 66.6}>
           <AutoCompleteForm
             name="documentType"
             onChange={(e) => onChangeDocumentType(e, "documentType")}
@@ -556,7 +615,7 @@ const ApplicationInformation = ({
             disabled={dataProps.completed}
           />
         </InputContainer>
-        <InputContainer width={66.6}>
+        <InputContainer width={matches ? 100 : 66.6}>
           <TextFieldApply
             name="documentNumber"
             title="Travel Document No. "
@@ -567,7 +626,7 @@ const ApplicationInformation = ({
             disabled={dataProps.completed}
           />
         </InputContainer>
-        <InputContainer width={66.6}>
+        <InputContainer width={matches ? 100 : 66.6}>
           <TextFieldApply
             name="issuesPlace"
             title="Place of issue"
@@ -578,7 +637,7 @@ const ApplicationInformation = ({
           />
         </InputContainer>
 
-        <InputContainer width={66.6}>
+        <InputContainer width={matches ? 100 : 66.6}>
           <DatePickerComponent
             name="issuesDate"
             title="Date of issue"
@@ -610,7 +669,7 @@ const ApplicationInformation = ({
           />
         </InputContainer>
 
-        <InputContainer width={100}>
+        <InputContainer width={100} direction={matches ? "column" : "row"}>
           <AutoCompleteForm
             name="addressCountry"
             title="Country / Territory"
@@ -631,7 +690,7 @@ const ApplicationInformation = ({
           />
         </InputContainer>
 
-        <Box sx={{ display: "flex", width: "33.3%" }}>
+        <Box sx={{ display: "flex", width: matches ? "100%" : "33.3%" }}>
           <AutoCompleteForm
             name="addressCity"
             title="City"
@@ -642,9 +701,24 @@ const ApplicationInformation = ({
             disabled={dataProps.completed}
           />
         </Box>
-        <Box sx={{ pr: 2, mt: 1, pl: 2, mb: 1 }}>
+        <Box
+          sx={{
+            pr: matches ? 0.5 : 2,
+            mt: 1,
+            pl: matches ? 0.5 : 2,
+            mb: 1,
+            fontSize: matches ? "0.8rem" : "1rem",
+          }}
+        >
           Is your permanent address same as your current address?
-          <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}>
+          <span
+            style={{
+              color: "red",
+              fontWeight: 900,
+              marginLeft: "2px",
+              fontSize: matches ? "0.8rem" : "1rem",
+            }}
+          >
             *
           </span>
           <span style={{ marginLeft: "10px" }}>
@@ -652,8 +726,9 @@ const ApplicationInformation = ({
             <Switch
               slotProps={{ input: { "aria-label": "controlled" } }}
               checked={dataProps.currentAddress}
-              onChange={onChangeOtherNationality}
+              onChange={onChangeSwitch}
               disabled={dataProps.completed}
+              name="currentAddress"
             />
             Yes
           </span>
@@ -662,7 +737,7 @@ const ApplicationInformation = ({
 
       {/* JOB */}
       <FormContainer title="Employment details">
-        <InputContainer width={100}>
+        <InputContainer width={100} direction={matches ? "column" : "row"}>
           <AutoCompleteForm
             title="Occupation "
             name="occupation"

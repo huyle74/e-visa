@@ -20,12 +20,13 @@ const visaApplicationService = {
         applyAt: rows.Eligibility?.applyAt,
         visaType: rows.Eligibility?.visaType,
         createAt: rows.createdAt,
-        fullName: familyName + firstName,
+        fullName: familyName + " " + firstName,
         nationality: rows.ApplyInformation?.nationality,
         documentNo: rows.ApplyInformation?.documentNumber,
         birthDate: rows.ApplyInformation?.birthDate,
         fromCountry: rows.fromCountry,
-        tocountry: rows.toCountry,
+        toCountry: rows.toCountry,
+        status: rows.payment ? "COMPLETED" : "UNCOMPLETED",
       };
     });
 

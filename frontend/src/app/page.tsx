@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 import { Box } from "@mui/material";
@@ -16,6 +17,7 @@ import { getUserInfo } from "./libs/getLocalStorage";
 const KEY = "app:user";
 
 export default function Home() {
+  const matches = useMediaQuery("(max-width:600px)");
   const [user, setUser] = useState<any>(null);
   const param = useSearchParams();
 
@@ -40,10 +42,18 @@ export default function Home() {
         setUser(user);
       })();
     } else {
-      const userInfor = getUserInfo();
-      if (userInfor) setUser(userInfor);
+      const userInfo = getUserInfo();
+      if (userInfo) setUser(userInfo);
     }
   }, []);
+  const steps = [
+    "Create an account",
+    "Fill in an application form",
+    "Upload supporting documents",
+    "Pay visa fee",
+    `Wait for the visa ${matches ? "" : "\n"} to be processed`,
+    `E-Visa confirmation${matches ? "" : "\n"} document sent by email`,
+  ];
 
   return (
     <Box>
@@ -56,10 +66,17 @@ export default function Home() {
             alt="backdrop"
           />
           <div className={styles.backgroundBlur}>
-            <Image src={logoWhite} alt="logo" width={600} height={200} />
+            <Image
+              src={logoWhite}
+              alt="logo"
+              width={matches ? 150 : 600}
+              height={matches ? 50 : 200}
+            />
             <h1 className={styles.backgroundTitle}>
-              MY E-VISA <br />{" "}
-              <span style={{ margin: "1rem" }}>OFFCIAL WEBSITE</span>
+              MY E-VISA <br />
+              <span style={{ margin: `${matches ? "0,1rem" : "1rem"}` }}>
+                OFFICIAL WEBSITE
+              </span>
             </h1>
             <div
               style={{ height: "2px", width: "50vw", backgroundColor: "white" }}
@@ -72,26 +89,36 @@ export default function Home() {
       </Box>
       <Box className={styles.applySection} sx={{ backgroundColor: primary }}>
         <Box sx={{ ml: 4 }}>
-          <Box sx={{ mb: 2, mt: 3, ml: 3 }}>HOW TO APPLY ONLINE</Box>
+          <Box
+            sx={{
+              mb: 2,
+              mt: 3,
+              ml: matches ? 0 : 3,
+              fontSize: matches ? "1rem" : "auto",
+            }}
+          >
+            HOW TO APPLY ONLINE
+          </Box>
           <Box
             sx={{
               width: "10vw",
               height: "4px",
               backgroundColor: white,
-              ml: 3,
+              ml: matches ? 0 : 3,
             }}
           ></Box>
         </Box>
         <Box
           sx={{
-            width: "100%",
+            width: matches ? "90vw" : "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             m: "auto",
-            pb: 10,
+            pb: matches ? 2 : 10,
             overflow: "hidden",
             height: "100%",
+            flexDirection: matches ? "column" : "row",
           }}
         >
           {steps.map((content, i) => (
@@ -99,15 +126,24 @@ export default function Home() {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                width: `${i !== 5 ? "16.66%" : 0}`,
+                width: matches ? "90%" : `${i !== 5 ? "16.66%" : 0}`,
               }}
               key={i}
             >
-              <Box sx={{ position: "relative" }}>
+              <Box
+                sx={{
+                  position: "relative",
+                  mt: matches ? 2 : 0,
+                  display: "flex",
+                  alignItems: matches ? "center" : "auto",
+                  height: "100%",
+                }}
+              >
                 <div className={styles.circleStep}>{i + 1}</div>
+                {matches && <Box className={styles.lineStep}></Box>}
                 <h5 className={styles.contentStep}>{content}</h5>
               </Box>
-              {i !== 5 && <Box className={styles.lineStep}></Box>}
+              {!matches && i !== 5 && <Box className={styles.lineStep}></Box>}
             </Box>
           ))}
         </Box>
@@ -117,12 +153,3 @@ export default function Home() {
     </Box>
   );
 }
-
-const steps = [
-  "Create an account",
-  "Fill in an application form",
-  "Upload supporting documents",
-  "Pay visa fee",
-  "Wait for the visa \nto be processed",
-  "e-Visa confirmation\n document sent by email",
-];

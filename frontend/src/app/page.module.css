@@ -85,7 +85,42 @@
   height: 100%;
 }
 
-/* #21706b */
-/*? #09feec */
-/* #F7F8F3 */
-/* ! red #F7444E  */
+@media (max-width: 600px) {
+  .backgroundImage {
+    width: 100%;
+    height: 30vh;
+    object-fit: cover;
+  }
+  .backgroundTitle {
+    font-size: 1.2rem;
+    width: 80%;
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .backgroundTitleBelow {
+    font-size: 1rem;
+    margin-top: 0;
+  }
+  .circleStep {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+  }
+  .contentStep {
+    position: relative;
+    font-size: 1rem;
+    display: flex;
+    justify-content: inherit;
+    bottom: auto;
+    left: auto;
+    width: 70vw;
+    transform: none;
+    text-align: left;
+    align-items: center;
+    margin-left: 10px;
+  }
+  .lineStep {
+    width: 10%;
+    height: 3px;
+  }
+}

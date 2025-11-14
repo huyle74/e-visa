@@ -5,6 +5,7 @@ import {
   Select,
   SelectChangeEvent,
   CircularProgress,
+  useMediaQuery,
 } from "@mui/material";
 import { convertToLabel } from "@/app/libs/convertLabel";
 
@@ -27,19 +28,32 @@ const AutoCompleteForm = ({
   disabled = false,
   name,
 }: AutoCompleteFormProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
+
   return (
-    <Box sx={{ p: 1.5, width: "100%" }}>
+    <Box sx={{ p: matches ? 0.5 : 1.5, width: "100%" }}>
       <FormControl fullWidth>
-        <Box sx={{ fontWeight: 900, mb: 1 }}>
+        <Box
+          sx={{ fontWeight: 900, mb: 1, fontSize: matches ? "0.8rem" : "1rem" }}
+        >
           {title}
-          <span style={{ fontWeight: 1000, color: "red", marginLeft: "2px" }}>
+          <span
+            style={{
+              fontWeight: 1000,
+              color: "red",
+              marginLeft: matches ? "1px" : "2px",
+            }}
+          >
             *
           </span>
         </Box>
         <Select
           name={name}
           disabled={disabled}
-          sx={{ height: "40px" }}
+          sx={{
+            height: matches ? "30px" : "40px",
+            fontSize: matches ? "0.7rem" : "1rem",
+          }}
           fullWidth
           displayEmpty
           required

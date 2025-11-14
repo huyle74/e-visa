@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import axios from "axios";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import HeaderMenu from "../component/menu/header-menu";
 import SigninForm from "../component/form-account/signinForm";
 import Footer from "../component/footer/footer";
@@ -13,6 +13,8 @@ import { backend_url } from "../server-side/envLoader";
 const KEY = "app:user";
 
 export default function LoginPage() {
+  const matches = useMediaQuery("(max-width:600px)");
+
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [errMessage, setErrMessage] = useState<string>("");
@@ -44,7 +46,10 @@ export default function LoginPage() {
 
       if (response.data.success == "OK") {
         const data = response.data.data;
-        localStorage.setItem(KEY, JSON.stringify({ ...data, lastUpdatedAt: Date.now() }));
+        localStorage.setItem(
+          KEY,
+          JSON.stringify({ ...data, lastUpdatedAt: Date.now() })
+        );
 
         setLoading(false);
         router.push("/dashboard");

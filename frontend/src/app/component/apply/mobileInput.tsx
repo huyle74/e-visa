@@ -1,5 +1,12 @@
 import { ChangeEvent, useState, useRef, useEffect } from "react";
-import { TextField, Box, Button, styled } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Button,
+  styled,
+  useMediaQuery,
+  responsiveFontSizes,
+} from "@mui/material";
 import { primary } from "@/app/libs/color-config";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useCountries } from "@/app/contexts/countriesContext";
@@ -29,6 +36,7 @@ const MobileTextField = ({
   name,
   disabled,
 }: MobileTextFieldProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
   const { countries } = useCountries();
   const ref = useRef<HTMLDivElement | null>(null);
   const [selectNation, setSelectNation] = useState<Nation>({
@@ -83,7 +91,12 @@ const MobileTextField = ({
         }}
       >
         <Button
-          sx={{ backgroundColor: "white", mr: "auto", height: "100%" }}
+          sx={{
+            backgroundColor: "white",
+            mr: "auto",
+            height: "100%",
+            color: "black",
+          }}
           onClick={() => handleSelectNation(nation.iso2)}
         >
           <p style={{ marginRight: "10px", width: "40px", textAlign: "end" }}>
@@ -103,14 +116,45 @@ const MobileTextField = ({
       </Box>
     );
   });
+  const CssTextField = styled(TextField)({
+    "& .MuiInput-underline:after": {
+      borderBottomColor: "#B2BAC2",
+    },
+    "& .MuiOutlinedInput-root": {
+      height: "40px",
+      padding: 0,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 0,
+      "& fieldset": {
+        borderColor: "white",
+      },
+      "&:hover fieldset": {
+        borderColor: "white",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "white",
+      },
+    },
+    "& .MuiInputBase-input::placeholder": {
+      opacity: 0.8,
+      fontStyle: "italic",
+      fontSize: matches ? "0.8rem" : "1rem",
+    },
+    "& .MuiInputBase-input": {
+      height: "40px",
+    },
+  });
 
   return (
     <Box
       sx={{
         width: "100%",
         p: 1.5,
-        pl: 2,
+        pl: matches ? 0.5 : 2,
         position: "relative",
+        fontSize: matches ? "0.8rem" : "1rem",
       }}
     >
       <Box sx={{ mb: 1, fontWeight: 900 }}>
@@ -119,9 +163,22 @@ const MobileTextField = ({
           *
         </span>
       </Box>
-      <Box sx={{ display: "flex", width: "100%", height: "40px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          width: "100%",
+          height: matches ? "30px" : "40px",
+        }}
+      >
         <Box>
-          <Box sx={{ height: "100%", display: "flex" }}>
+          <Box
+            sx={{
+              display: "flex",
+              height: matches ? "30px" : "40px",
+              width: matches ? "60px" : undefined,
+              color: "black",
+            }}
+          >
             <Button
               variant="outlined"
               startIcon={<ArrowDropDownIcon />}
@@ -143,9 +200,8 @@ const MobileTextField = ({
             {dropdown && (
               <Box
                 sx={{
-                  mt: 1,
                   position: "absolute",
-                  top: 105,
+                  top: 80,
                   left: 0,
                   right: 0,
                   backgroundColor: "white",
@@ -157,14 +213,13 @@ const MobileTextField = ({
                   fullWidth
                   onChange={handleSearch}
                   disabled={disabled}
-
-                  // size="small"
                 />
                 <Box
                   sx={{
                     height: "40vh",
                     overflowY: "scroll",
                     overflowX: "hidden",
+                    color: "black",
                   }}
                 >
                   {nationDropDown}
@@ -175,7 +230,6 @@ const MobileTextField = ({
         </Box>
         <Box
           sx={{
-            height: "40px",
             border: "1px solid rgb(194, 194, 194)",
             display: "flex",
             justifyContent: "center",
@@ -186,15 +240,16 @@ const MobileTextField = ({
             "&:focus-within": { borderColor: "#6F7E8C" },
             "&:hover": { borderColor: primary },
             width: "100%",
+            ml: matches ? 1 : 0.2,
           }}
         >
           <CssTextField
             value={value}
             onChange={(e) => onChange(e, name)}
             fullWidth
-            // type="number"
             name={name}
             disabled={disabled}
+            placeholder="Enter your phone"
           />
         </Box>
       </Box>
@@ -203,25 +258,3 @@ const MobileTextField = ({
 };
 
 export default MobileTextField;
-
-const CssTextField = styled(TextField)({
-  display: "flex",
-  "& .MuiInput-underline:after": {
-    borderBottomColor: "#B2BAC2",
-  },
-  "& .MuiOutlinedInput-root": {
-    zIndex: 0,
-    display: "flex",
-    alignItems: "center",
-    height: "100%",
-    "& fieldset": {
-      borderColor: "white",
-    },
-    "&:hover fieldset": {
-      borderColor: "white",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "white",
-    },
-  },
-});

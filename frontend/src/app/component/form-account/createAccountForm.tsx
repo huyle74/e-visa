@@ -17,6 +17,7 @@ import {
   Divider,
   Typography,
   Modal,
+  useMediaQuery,
 } from "@mui/material";
 import axios from "axios";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -27,8 +28,6 @@ import styles from "./form.module.css";
 import { primary, secondary, white } from "@/app/libs/color-config";
 import { backend_url } from "@/app/server-side/envLoader";
 import { useCountries } from "@/app/contexts/countriesContext";
-
-const formControlStyle = { width: "80%", m: "auto", mt: 3 };
 
 interface Country {
   code: string;
@@ -48,6 +47,7 @@ interface Account {
 }
 
 export default function CreateAccoutForm() {
+  const matches = useMediaQuery("(max-width:600px)");
   const { countries } = useCountries();
   const [nation, setNation] = useState("");
   const [nationData, setNationData] = useState<Country>({
@@ -206,6 +206,7 @@ export default function CreateAccoutForm() {
       }
     }
   };
+  const formControlStyle = { width: matches ? "95%" : "80%", m: "auto", mt: 3 };
 
   return (
     <Box sx={{ padding: "3rem 0 3rem 0", backgroundColor: secondary }}>
@@ -263,7 +264,7 @@ export default function CreateAccoutForm() {
             checkEmpty={checkEmpty}
           />
           <TextFormRow
-            label={"Familiy Name"}
+            label={"Family Name"}
             placeholder={"Enter Your Family Name"}
             name="lastName"
             onChange={handleInputChange}

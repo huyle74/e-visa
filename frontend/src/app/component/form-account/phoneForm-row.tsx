@@ -1,5 +1,12 @@
 import React, { forwardRef } from "react";
-import { Box, TextField, Button, Input, CircularProgress } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  Input,
+  CircularProgress,
+  useMediaQuery,
+} from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import styles from "./form.module.css";
 import { useCountries } from "@/app/contexts/countriesContext";
@@ -24,6 +31,7 @@ interface PhoneFormRowType {
 
 const PhoneFormRow = forwardRef<HTMLDivElement, PhoneFormRowType>(
   function PhoneRow(props, ref) {
+    const matches = useMediaQuery("(max-width:600px)");
     const { countries } = useCountries();
 
     const {

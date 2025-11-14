@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Box, Button, Tooltip, Modal, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Tooltip,
+  Modal,
+  Typography,
+  useMediaQuery,
+  IconButton,
+} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { deleteUserInfo } from "@/app/libs/getLocalStorage";
 
@@ -16,6 +24,8 @@ const ButtonMenuHomePage = ({
   disabledCreateAccount = false,
   userName,
 }: ButtonMenuProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
+
   const [open, setOpen] = useState<boolean>(false);
 
   const handleOpen = () => setOpen(true);
@@ -35,23 +45,46 @@ const ButtonMenuHomePage = ({
         alignItems: "center",
         marginLeft: "auto",
         justifyContent: "space-between",
-        pr: 2,
+        pr: matches ? 0 : 2,
         fontWeight: 900,
       }}
     >
       {loggedIn ? (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ mr: 2 }}>Welcome {userName} !</Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            // border: "red 1px solid",
+          }}
+        >
+          <Box
+            sx={{
+              mr: matches ? 1 : 2,
+              fontSize: matches ? "0.9rem" : "1.5rem",
+            }}
+          >
+            Welcome {userName} !
+          </Box>
           <Button
             variant="contained"
             href="/dashboard"
             color="secondary"
-            sx={{ fontWeight: 1000, mr: 1 }}
+            sx={{
+              fontWeight: 1000,
+              mr: matches ? 0 : 1,
+            }}
+            size={matches ? "small" : "large"}
           >
             DASHBOARD
           </Button>
           <Tooltip title="Logout">
-            <Button endIcon={<LogoutIcon />} onClick={handleOpen}></Button>
+            <IconButton
+              size={matches ? "small" : "large"}
+              onClick={handleOpen}
+              color="primary"
+            >
+              <LogoutIcon />
+            </IconButton>
           </Tooltip>
         </Box>
       ) : (
@@ -61,6 +94,7 @@ const ButtonMenuHomePage = ({
             variant="outlined"
             href="/login"
             sx={{ fontWeight: 1000, mr: 1 }}
+            size={matches ? "small" : "large"}
           >
             SIGN IN
           </Button>
@@ -69,6 +103,7 @@ const ButtonMenuHomePage = ({
             href="/signup"
             disabled={disabledCreateAccount}
             sx={{ fontWeight: 1000, mr: 1 }}
+            size={matches ? "small" : "large"}
           >
             CREATE ACCOUNT
           </Button>

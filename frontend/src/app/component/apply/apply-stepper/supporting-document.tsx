@@ -1,5 +1,5 @@
 import { ChangeEvent, DragEvent, MouseEventHandler } from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import InputContainer from "../input-containter";
 import FormContainer from "../containerForm";
 import FileInput from "../fileInput";
@@ -48,8 +48,10 @@ const SupportingDocument = ({
   onClickNext,
   loading,
 }: SupportingDocumentProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
+
   return (
-    <Box>
+    <Box sx={{ fontSize: matches ? "0.8rem" : "1rem" }}>
       <FormContainer
         title="Supporting documents."
         note="(.JPG .JPEG .PDF file, Limit Size is 5 MB)"

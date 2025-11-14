@@ -1,5 +1,5 @@
 import { ChangeEvent } from "react";
-import { Box, TextField, styled } from "@mui/material";
+import { Box, TextField, styled, useMediaQuery } from "@mui/material";
 import { primary } from "@/app/libs/color-config";
 
 interface TextFieldProps {
@@ -27,9 +27,39 @@ const TextFieldApply = ({
   value,
   disabled,
 }: TextFieldProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
+
+  const CssTextField = styled(TextField)({
+    "& .MuiInput-underline:after": {
+      borderBottomColor: "#B2BAC2",
+    },
+    "& .MuiOutlinedInput-root": {
+      zIndex: 0,
+      display: "flex",
+      alignItems: "center",
+      height: "100%",
+      "& fieldset": {
+        borderColor: "white",
+      },
+      "&:hover fieldset": {
+        borderColor: "white",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "white",
+      },
+    },
+    "& .MuiInputBase-input::placeholder": {
+      opacity: 0.8,
+      fontStyle: "italic",
+      fontSize: matches ? "0.8rem" : "1rem",
+    },
+  });
+
   return (
-    <Box sx={{ width: "100%", p: 1.5 }}>
-      <Box sx={{ mb: 1, fontWeight: 900 }}>
+    <Box sx={{ width: "100%", p: matches ? 0.5 : 1.5 }}>
+      <Box
+        sx={{ mb: 1, fontWeight: 900, fontSize: matches ? "0.8rem" : "1rem" }}
+      >
         {title}
         {requiredMasked && (
           <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}>
@@ -39,7 +69,7 @@ const TextFieldApply = ({
       </Box>
       <Box
         sx={{
-          height: "40px",
+          height: matches ? "30px" : "40px",
           border: "1px solid rgb(194, 194, 194)",
           display: "flex",
           justifyContent: "center",
@@ -49,6 +79,7 @@ const TextFieldApply = ({
           borderRadius: "4px",
           "&:focus-within": { borderColor: "#6F7E8C" },
           "&:hover": { borderColor: primary },
+          fontSize: matches ? "0.7rem" : "1rem",
         }}
       >
         <CssTextField
@@ -59,6 +90,7 @@ const TextFieldApply = ({
           name={name}
           value={value}
           disabled={disabled}
+          sx={{ fontSize: matches ? "0.7rem" : "1rem" }}
         />
       </Box>
     </Box>
@@ -66,24 +98,3 @@ const TextFieldApply = ({
 };
 
 export default TextFieldApply;
-
-const CssTextField = styled(TextField)({
-  "& .MuiInput-underline:after": {
-    borderBottomColor: "#B2BAC2",
-  },
-  "& .MuiOutlinedInput-root": {
-    zIndex: 0,
-    display: "flex",
-    alignItems: "center",
-    height: "100%",
-    "& fieldset": {
-      borderColor: "white",
-    },
-    "&:hover fieldset": {
-      borderColor: "white",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "white",
-    },
-  },
-});

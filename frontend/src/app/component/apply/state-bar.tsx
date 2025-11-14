@@ -1,5 +1,6 @@
-import { Box, Button, IconButton, Stack, Divider } from "@mui/material";
+import { Box, Button, Stack, Divider, useMediaQuery } from "@mui/material";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import ArticleIcon from "@mui/icons-material/Article";
 import PublicIcon from "@mui/icons-material/Public";
 
 interface StateBarProps {
@@ -8,35 +9,52 @@ interface StateBarProps {
 }
 
 const StateBar = ({ totalApplied, incompleteApplied }: StateBarProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
+
   return (
-    <Box sx={{ p: 2, mt: 4 }}>
-      <h2>My Dashboard</h2>
+    <Box sx={{ p: matches ? 1 : 2, mt: matches ? 0 : 4 }}>
+      <h2 style={{ fontSize: matches ? "1rem" : "2rem" }}>My Dashboard</h2>
       <Stack
-        direction="row"
-        spacing={2}
+        direction={matches ? "column" : "row"}
+        spacing={matches ? 1 : 2}
         marginTop={3}
-        marginLeft={5}
-        alignItems={"center"}
+        marginLeft={matches ? 0 : 5}
+        alignItems={matches ? "flex-start" : "center"}
       >
         <Button
           variant="contained"
           startIcon={<AddRoundedIcon />}
           href="/dashboard/apply"
         >
-          Apply for new Visa
+          <Box sx={{ fontSize: matches ? "0.7rem" : "1rem" }}>
+            Apply new Visa
+          </Box>
         </Button>
         <Box>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <PublicIcon />
-            <p style={{ marginLeft: "10px", fontWeight: 700 }}>
-              Total Application: <span style={{ color: "red" }}>{totalApplied}</span>
+            <PublicIcon color="primary" />
+            <p
+              style={{
+                marginLeft: "10px",
+                fontWeight: 700,
+              }}
+            >
+              Total Application:
+              <span style={{ marginLeft: "10px", color: "red" }}>
+                {totalApplied}
+              </span>
             </p>
           </Box>
         </Box>
         <Divider orientation="vertical" flexItem variant="middle" />
-        <Box sx={{ fontWeight: 700 }}>
-          Incomplete Visa Application:{" "}
-          <span style={{ color: "red" }}>{incompleteApplied}</span>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <ArticleIcon color="secondary" />
+          <p style={{ marginLeft: "10px", fontWeight: 700 }}>
+            Incomplete Visa Application:
+            <span style={{ marginLeft: "10px", color: "red" }}>
+              {incompleteApplied}
+            </span>
+          </p>
         </Box>
       </Stack>
     </Box>

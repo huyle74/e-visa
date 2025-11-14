@@ -1,5 +1,5 @@
 import { ChangeEvent } from "react";
-import { Switch, Box } from "@mui/material";
+import { Switch, Box, useMediaQuery } from "@mui/material";
 
 interface SwitchYesNoProps {
   content: string;
@@ -14,31 +14,34 @@ const SwitchYesNo = ({
   onChange,
   disabled,
 }: SwitchYesNoProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
+
   return (
     <Box
       sx={{
-        pr: 2,
-        pl: 2,
+        pr: matches ? 0.5 : 2,
+        pl: matches ? 0.5 : 2,
         width: "100%",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        fontSize: matches ? "0.8rem" : "1rem",
       }}
     >
       <Box>
         {content}
         <span style={{ color: "red", fontWeight: 900, marginLeft: "2px" }}>
-          {" "}
           *
         </span>
       </Box>
-      <span style={{ marginLeft: "10px" }}>
+      <span style={{ marginLeft: matches ? 0 : "10px" }}>
         No
         <Switch
           slotProps={{ input: { "aria-label": "controlled" } }}
           checked={checked}
           onChange={onChange}
           disabled={disabled}
+          size={matches ? "small" : "medium"}
         />
         Yes
       </span>

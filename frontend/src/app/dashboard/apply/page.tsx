@@ -8,7 +8,12 @@ import {
   MouseEventHandler,
 } from "react";
 import { useSearchParams } from "next/navigation";
-import { Box, SelectChangeEvent, SwitchProps } from "@mui/material";
+import {
+  Box,
+  SelectChangeEvent,
+  SwitchProps,
+  useMediaQuery,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import type { Dayjs } from "dayjs";
 import axios from "axios";
@@ -57,9 +62,11 @@ const steps = [
 const MAX_SIZE = 5 * 1024 * 1024;
 
 const ApplyNewVisa = () => {
+  const matches = useMediaQuery("(max-width:600px)");
   const user = getUserInfo();
   const search = useSearchParams();
   const applyId = search.get("applicationId");
+  const applicationStatus = search.get("status");
 
   const router = useRouter();
 
@@ -205,7 +212,7 @@ const ApplyNewVisa = () => {
         })();
       }
 
-      if (currentStep === 1) {
+      if (currentStep === 1 && !eligibilityData.completed) {
         const endpoint = prefix + "/find-eligibilty-form";
         (async () => {
           const eligibility = await getData(endpoint, {
@@ -215,7 +222,7 @@ const ApplyNewVisa = () => {
             return setEligibilityData({ ...eligibility, completed: true });
         })();
       }
-      if (currentStep === 2) {
+      if (currentStep === 2 && !applyInfoData.completed) {
         const endpoint = prefix + "/find-application-information-form";
         (async () => {
           const applicationInformation = await getData(endpoint, {
@@ -263,7 +270,7 @@ const ApplyNewVisa = () => {
         })();
       }
 
-      if (currentStep === 3) {
+      if (currentStep === 3 && !travelInfo.completed) {
         (async () => {
           const endpoint = prefix + "/find-travel-information-form";
           const travelInformation = await getData(endpoint, {
@@ -274,7 +281,7 @@ const ApplyNewVisa = () => {
         })();
       }
 
-      if (currentStep === 4) {
+      if (currentStep === 4 && !supportingDoc.completed) {
         const endpoint = prefix + "/get-file-supporting-document";
         (async () => {
           try {
@@ -345,13 +352,13 @@ const ApplyNewVisa = () => {
     setApplyInfoData((prev) => ({ ...prev, [name]: date }));
   };
 
-  const handleChangeOtherNationality: NonNullable<SwitchProps["onChange"]> = (
-    _e,
-    checked
-  ) => {
+  const handleChangeSwitchApplicationInformation: NonNullable<
+    SwitchProps["onChange"]
+  > = (e, checked) => {
+    const name = e.target.name;
     setApplyInfoData((prev) => ({
       ...prev,
-      otherNationality: checked,
+      [name]: checked,
     }));
   };
 
@@ -781,12 +788,23 @@ const ApplyNewVisa = () => {
 
   return (
     <AuthProvider>
-      <Box sx={{ backgroundColor: "#F2FCFC", height: "100%", pb: 6 }}>
+      <Box
+        sx={{
+          backgroundColor: "#F2FCFC",
+          height: matches ? "100vh" : "100%",
+        }}
+      >
         <MenuDashboard />
         <CountriesProvider>
           <form>
             <Box
-              sx={{ width: "70vw", m: "auto", mt: 4, mb: 6, height: "100%" }}
+              sx={{
+                width: matches ? "95vw" : "70vw",
+                m: "auto",
+                mt: 4,
+                pb: 6,
+                height: "100%",
+              }}
             >
               <HeaderTitleApplyStepper
                 data={stepStatus}
@@ -844,7 +862,7 @@ const ApplyNewVisa = () => {
                   onChangeFamilyName={handleOnchangeApplicationInformation}
                   onChangeFirstName={handleOnchangeApplicationInformation}
                   onChangeMiddleName={handleOnchangeApplicationInformation}
-                  onChangeOtherNationality={handleChangeOtherNationality}
+                  onChangeSwitch={handleChangeSwitchApplicationInformation}
                   onChangeSex={handleOnchangeApplicationInformation}
                   onChangeTitle={handleOnchangeApplicationInformation}
                   onChangeContactNo={handleOnchangeApplicationInformation}
@@ -938,6 +956,7 @@ const ApplyNewVisa = () => {
               {stepStatus.activeStep === 5 && (
                 <Box sx={{ justifyItems: "center", mt: 7 }}>
                   <PaypalButton
+                    didPayed={String(applicationStatus)}
                     price={getPrice}
                     createOrder={createOrder}
                     onApprove={onApprove}
@@ -952,8 +971,8 @@ const ApplyNewVisa = () => {
           content={modalContent}
           onClose={handleOnCloseModal}
         />
+        <Footer />
       </Box>
-      <Footer />
     </AuthProvider>
   );
 };
@@ -987,5 +1006,3 @@ const formConvertTravelInformation = (data: SupportingDocumentInputDto) => {
 
   return form;
 };
-
-const modalPaypal = () => {};

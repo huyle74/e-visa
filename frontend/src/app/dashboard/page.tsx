@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Chip, useMediaQuery } from "@mui/material";
 import { useRouter } from "next/navigation";
 import {
   DataGrid,
@@ -10,7 +10,7 @@ import {
   GridEventListener,
   GridRowSelectionModel,
 } from "@mui/x-data-grid";
-
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import MenuDashboard from "../component/menu/header-menu-dashboard";
 import StateBar from "../component/apply/state-bar";
 import Footer from "../component/footer/footer";
@@ -19,8 +19,19 @@ import { backend_url } from "../server-side/envLoader";
 import { dateConvert } from "../libs/dateConvert";
 import ModalWithButton from "../component/common/modalWithButton";
 import { getUserInfo } from "../libs/getLocalStorage";
+import { ApplicationStatus } from "../libs/types";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+
+interface Row {
+  id: string;
+  visaType: string;
+  applyAt: string;
+  fullName: string;
+  birthDate: string;
+}
 
 const Dashboard = () => {
+  const matches = useMediaQuery("(max-width:600px)");
   const router = useRouter();
   const [user, setUser] = useState<any>();
   const [applyInfo, setApplyInfo] = useState({
@@ -48,7 +59,19 @@ const Dashboard = () => {
         });
         const data = response.data;
         if (data.success === "OK") {
-          setApplyInfo((prev) => ({ ...prev, totalApplied: data.data.length }));
+          const uncompletedApplication = data.data.filter(
+            (application: any) => {
+              return application.status === ApplicationStatus.COMPLETED;
+            }
+          );
+          const totalApplied = data.data.length;
+          const incompleteApplied =
+            totalApplied - uncompletedApplication.length;
+          setApplyInfo({
+            totalApplied,
+            incompleteApplied,
+          });
+
           setRows(data.data);
         }
         setLoading(false);
@@ -59,7 +82,9 @@ const Dashboard = () => {
   }, [loading]);
 
   const handleRowClick: GridEventListener<"rowClick"> = (param) => {
-    router.push(`/dashboard/apply?applicationId=${param.id}`);
+    router.push(
+      `/dashboard/apply?applicationId=${param.id}&status=${param.row.status}`
+    );
   };
 
   const handleOpen = useCallback(() => setOpenModal(true), []);
@@ -90,6 +115,69 @@ const Dashboard = () => {
     }
   };
 
+  const columns: GridColDef<Row[][number]>[] = [
+    { field: "id", headerName: "id", width: matches ? 15 : 150 },
+    { field: "visaType", headerName: "Visa Type", width: 90 },
+    {
+      field: "fullName",
+      headerName: "Full name",
+      sortable: false,
+      width: 150,
+    },
+    {
+      field: "birthDate",
+      headerName: "Date of birth",
+      width: 150,
+      valueGetter: (value) => {
+        if (!value) return null;
+        return dateConvert(value);
+      },
+    },
+    {
+      field: "nationality",
+      headerName: "Nationality",
+      width: 150,
+    },
+    {
+      field: "documentNo",
+      headerName: "Travel Doc.",
+      sortable: false,
+      width: 150,
+    },
+    {
+      field: "createAt",
+      headerName: "Created Date",
+      width: 150,
+      valueGetter: (value) => {
+        return dateConvert(value);
+      },
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      sortable: true,
+      width: 150,
+      renderCell: (value: any) => {
+        const render =
+          value.row.status === ApplicationStatus.COMPLETED ? (
+            <Chip
+              label="Completed"
+              icon={<CheckCircleOutlineIcon />}
+              color="success"
+            />
+          ) : (
+            <Chip
+              label="Uncompleted"
+              icon={<ErrorOutlineIcon />}
+              color="secondary"
+            />
+          );
+
+        return render;
+      },
+    },
+  ];
+
   return (
     <AuthProvider>
       <MenuDashboard />
@@ -99,7 +187,7 @@ const Dashboard = () => {
       />
       <Box
         sx={{
-          width: "80vw",
+          width: matches ? "99vw" : "90vw",
           m: "auto",
           mb: 3,
           mt: 4,
@@ -158,50 +246,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-interface Row {
-  id: string;
-  visaType: string;
-  applyAt: string;
-  fullName: string;
-  birthDate: string;
-}
-
-const columns: GridColDef<Row[][number]>[] = [
-  { field: "id", headerName: "id", width: 150 },
-  { field: "visaType", headerName: "Visa Type", width: 90 },
-  {
-    field: "fullName",
-    headerName: "Full name",
-    sortable: false,
-    width: 150,
-  },
-  {
-    field: "birthDate",
-    headerName: "Date of birth",
-    width: 150,
-    valueGetter: (value) => {
-      if (!value) return null;
-      return dateConvert(value);
-    },
-  },
-  {
-    field: "nationality",
-    headerName: "Nationality",
-    width: 150,
-  },
-  {
-    field: "documentNo",
-    headerName: "Travel Doc.",
-    sortable: false,
-    width: 150,
-  },
-  {
-    field: "createAt",
-    headerName: "Createted Date",
-    width: 150,
-    valueGetter: (value) => {
-      return dateConvert(value);
-    },
-  },
-];

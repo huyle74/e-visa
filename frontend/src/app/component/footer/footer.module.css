@@ -1,5 +1,6 @@
 .info {
   margin-top: 0.5rem;
+  font-size: 1.5rem;
 }
 
 .iconsContainer {
@@ -10,5 +11,12 @@
 }
 
 .visa-letter {
-  color: #09feec;
+  color: #21130d;
+}
+
+@media (max-width: 600px) {
+  .info {
+    margin-top: 0.3rem;
+    font-size: 1rem;
+  }
 }

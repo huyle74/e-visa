@@ -1,5 +1,5 @@
 import { MouseEventHandler } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, useMediaQuery } from "@mui/material";
 
 interface ButtonSubmitProps {
   onclickNext: MouseEventHandler<HTMLButtonElement>;
@@ -14,6 +14,7 @@ const ButtonSubmit = ({
   displayBackButton = false,
   loading = false,
 }: ButtonSubmitProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
       {displayBackButton ? (
@@ -21,7 +22,7 @@ const ButtonSubmit = ({
           onClick={onClickBack}
           variant="contained"
           color="secondary"
-          size="large"
+          size={matches ? "small" : "large"}
         >
           BACK
         </Button>
@@ -31,7 +32,7 @@ const ButtonSubmit = ({
       <Button
         onClick={onclickNext}
         variant="contained"
-        size="large"
+        size={matches ? "small" : "large"}
         loading={loading}
         type="submit"
       >

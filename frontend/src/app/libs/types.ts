@@ -112,3 +112,8 @@ export const StatusPaypal = {
   success: "success",
   error: "error",
 };
+
+export const ApplicationStatus = {
+  COMPLETED: "COMPLETED",
+  UNCOMPLETED: "UNCOMPLETED",
+};

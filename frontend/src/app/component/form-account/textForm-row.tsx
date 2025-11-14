@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { OutlinedInput, FormHelperText } from "@mui/material";
+import { OutlinedInput, FormHelperText, useMediaQuery } from "@mui/material";
 import FormControl, { useFormControl } from "@mui/material/FormControl";
 import styles from "./form.module.css";
 import { white } from "@/app/libs/color-config";
@@ -19,7 +19,8 @@ export default function TextFormRow({
   checkEmpty,
   ...props
 }: FormRow) {
-  function ErroMessage() {
+  const matches = useMediaQuery("(max-width:600px)");
+  function ErrorMessage() {
     const { filled } = useFormControl() || {};
     const helperText = useMemo(() => {
       if (checkEmpty === true) {
@@ -34,7 +35,7 @@ export default function TextFormRow({
   }
 
   return (
-    <FormControl sx={{ width: "80%", m: "auto", mt: 3 }}>
+    <FormControl sx={{ width: matches ? "95%" : "80%", m: "auto", mt: 3 }}>
       <div className={styles.labelPasswordRow}>
         {label} <span className={styles.star}>&nbsp;*</span>
       </div>
@@ -44,9 +45,12 @@ export default function TextFormRow({
         value={value}
         {...props}
         size="small"
-        sx={{ backgroundColor: white, fontWeight: 900 }}
+        sx={{
+          backgroundColor: white,
+          fontWeight: 900,
+        }}
       />
-      <ErroMessage />
+      <ErrorMessage />
     </FormControl>
   );
 }

@@ -1,5 +1,10 @@
 import { MouseEventHandler } from "react";
-import { Box, SelectChangeEvent, CircularProgress } from "@mui/material";
+import {
+  Box,
+  SelectChangeEvent,
+  CircularProgress,
+  useMediaQuery,
+} from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { useCountries } from "@/app/contexts/countriesContext";
 import AutoCompleteForm from "../autocompleteForm";
@@ -30,6 +35,8 @@ const CountrySelectionStep = ({
   onclickNext,
   totalPrice,
 }: CountrySelectionStepProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
+
   const { fromCountries, toCountries } = useCountries();
   const fromCountry = fromCountries.map((nation: any) => {
     if (nation.from === true) return nation.engName;
@@ -38,13 +45,21 @@ const CountrySelectionStep = ({
     if (nation.to === true) return nation.engName;
   });
   return (
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: matches ? "45vh" : "100%",
+      }}
+    >
       <FormContainer title="Country to travel">
         <InputContainer>
           <AutoCompleteForm
             inputData={fromCountry}
             name="fromCountry"
-            placeHolder="Select your origin country"
+            placeHolder={
+              matches ? "Select country" : "Select your origin country"
+            }
             title="From"
             disabled={disabled}
             value={values.fromCountry}
@@ -53,7 +68,9 @@ const CountrySelectionStep = ({
           <AutoCompleteForm
             inputData={toCountry}
             name="toCountry"
-            placeHolder="Select your destination country"
+            placeHolder={
+              matches ? "Select country" : "Select your destination country"
+            }
             title="To"
             disabled={disabled}
             value={values.toCountry}

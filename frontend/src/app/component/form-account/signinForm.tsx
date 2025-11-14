@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Box, TextField, Button, Divider } from "@mui/material";
+import { Box, TextField, Button, Divider, useMediaQuery } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { white, secondary } from "@/app/libs/color-config";
 
@@ -17,6 +17,8 @@ export default function SigninForm({
   errorMessage,
   googleApi,
 }: actionForm) {
+  const matches = useMediaQuery("(max-width:600px)");
+
   const router = useRouter();
   const textFieldStyles = {
     mt: 2,
@@ -36,7 +38,7 @@ export default function SigninForm({
     >
       <Box
         sx={{
-          width: "35%",
+          width: matches ? "95%" : "35%",
           border: "2px #F7444E solid",
           m: "auto",
           backgroundColor: white,
@@ -54,11 +56,15 @@ export default function SigninForm({
         >
           MY E-VISA ACCOUNT
         </Box>
-        <Box sx={{ margin: "1rem 3rem 1rem 3rem" }}>
-          <Box sx={{ fontWeight: 700, mb: 2 }}>Sign In</Box>
+        <Box
+          sx={{
+            margin: matches ? "1rem 2rem 1rem 2rem" : "1rem 3rem 1rem 3rem",
+          }}
+        >
+          <Box sx={{ fontWeight: 700, mb: matches ? 1 : 2 }}>Sign In</Box>
           <Box>
-            You can sign in using your Global E-Visa account to apply for a visa and track
-            your application.
+            You can sign in using your Global E-Visa account to apply for a visa
+            and track your application.
           </Box>
         </Box>
         <form
@@ -70,7 +76,9 @@ export default function SigninForm({
             justifyContent: "space-between",
             alignItems: "center",
             margin: "auto",
-            padding: " 1rem 3rem 1rem 3rem ",
+            padding: matches
+              ? "0.5rem 2rem 0.5rem 2rem"
+              : "1rem 3rem 1rem 3rem",
           }}
         >
           <Box sx={{ mb: 2, width: "100%" }}>
@@ -114,8 +122,16 @@ export default function SigninForm({
           </Button>
         </Box>
 
-        <Box sx={{ display: "flex", mt: 1, mb: 1 }}>
-          <Link href={googleApi} style={{ margin: "auto", width: "40%" }}>
+        <Box
+          sx={{
+            display: "flex",
+            margin: matches ? "1rem 2rem 1rem 2rem" : "1rem 3rem 1rem 3rem",
+          }}
+        >
+          <Link
+            href={googleApi}
+            style={{ margin: "auto", width: matches ? "100%" : "40%" }}
+          >
             <Button
               variant="contained"
               startIcon={<GoogleIcon />}

@@ -6,6 +6,7 @@ import {
   OutlinedInput,
   InputAdornment,
   FormHelperText,
+  useMediaQuery,
 } from "@mui/material";
 import { useFormControl } from "@mui/material/FormControl";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -26,6 +27,8 @@ export default function PasswordFormRow({
   checkEmpty,
   ...props
 }: FormRow) {
+  const matches = useMediaQuery("(max-width:600px)");
+
   const [hiddenPassword, setHiddenpassword] = useState<boolean>(false);
 
   const handleRevealPassword = () => {
@@ -48,7 +51,13 @@ export default function PasswordFormRow({
 
   return (
     <Box
-      sx={{ display: "flex", width: "80%", m: "auto", mt: 2, flexDirection: "column" }}
+      sx={{
+        display: "flex",
+        width: matches ? "95%" : "80%",
+        m: "auto",
+        mt: 2,
+        flexDirection: "column",
+      }}
     >
       <div className={styles.labelPasswordRow}>
         {label} <span className={styles.star}>&nbsp;*</span>
@@ -59,7 +68,11 @@ export default function PasswordFormRow({
           sx={{ backgroundColor: white }}
           endAdornment={
             <InputAdornment position="end">
-              <IconButton size="small" edge="end" onClick={handleRevealPassword}>
+              <IconButton
+                size="small"
+                edge="end"
+                onClick={handleRevealPassword}
+              >
                 {hiddenPassword ? (
                   <VisibilityIcon fontSize="small" />
                 ) : (

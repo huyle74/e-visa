@@ -1,4 +1,10 @@
-import { Radio, FormControlLabel, RadioGroup, Box } from "@mui/material";
+import {
+  Radio,
+  FormControlLabel,
+  RadioGroup,
+  Box,
+  useMediaQuery,
+} from "@mui/material";
 import { ChangeEvent } from "react";
 
 interface RadioComponProps {
@@ -22,15 +28,25 @@ const RadioComponent = ({
   value,
   disabled,
 }: RadioComponProps) => {
+  const matches = useMediaQuery("(max-width:600px)");
+
   return (
-    <Box sx={{ p: 1.5 }}>
+    <Box sx={{ p: matches ? 0.5 : 1.5, fontSize: matches ? "0.8rem" : "1rem" }}>
       <Box sx={{ fontWeight: 900, mb: 1 }}>
         {title}
         <span style={{ fontWeight: 1000, color: "red", marginLeft: "2px" }}>
           *
         </span>
       </Box>
-      <RadioGroup row onChange={onChange} name={name} value={value}>
+      <RadioGroup
+        onChange={onChange}
+        name={name}
+        value={value}
+        sx={{
+          fontSize: matches ? "0.8rem" : "1rem",
+          flexDirection: matches ? "column" : "row",
+        }}
+      >
         {labels.map((label) => {
           return (
             <FormControlLabel
