@@ -5,7 +5,7 @@ export interface loginDto {
   password: string;
 }
 
-export interface ReCreatePassordDto {
+export interface ReCreatePasswordDto {
   email: string;
   password: string;
   re_password: string;

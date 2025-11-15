@@ -8,7 +8,7 @@ import {
 import {
   CreateAdminAccountDto,
   loginDto,
-  ReCreatePassordDto,
+  ReCreatePasswordDto,
 } from "@/dto/auth.dto";
 import adminLoginService from "@/services/admin/login.service";
 
@@ -33,8 +33,8 @@ const adminLoginController = {
       const checkValid = validationResponse(req);
       if (checkValid) return responseFailed({ res, message: checkValid });
 
-      const reCreatePassword: ReCreatePassordDto = req.body;
-      const data = await adminLoginService.createNewpassword(reCreatePassword);
+      const reCreatePassword: ReCreatePasswordDto = req.body;
+      const data = await adminLoginService.createNewPassword(reCreatePassword);
 
       console.log(data);
 

@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import adminRepos from "@/repositories/admin.repository";
 import {
   loginDto,
-  ReCreatePassordDto,
+  ReCreatePasswordDto,
   CreateAdminAccountDto,
 } from "@/dto/auth.dto";
 import { generateToken } from "@/utils/jwt";
@@ -26,14 +26,14 @@ const adminLoginService = {
       role: admin.role,
     };
   },
-  async createNewpassword(data: ReCreatePassordDto) {
+  async createNewPassword(data: ReCreatePasswordDto) {
     if (data.password !== data.re_password)
       throw new Error("2 Password not match");
 
     const adminExisted = await adminRepos.findAdminByEmail(data.email);
     if (!adminExisted)
       throw new Error(
-        "This email dont have authorization to access admin page"
+        "This email don't have authorization to access admin page"
       );
 
     const newPassword = bcrypt.hash(data.password, 10);
