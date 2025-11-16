@@ -8,8 +8,8 @@ export async function fileExists(p: string): Promise<boolean> {
     await access(p, constants.F_OK);
     return true;
   } catch (e: any) {
-    if (e.code === "ENOENT") return false; // <- what you want
-    throw e; // other errors should bubble
+    if (e.code === "ENOENT") return false; 
+    throw e; 
   }
 }
     

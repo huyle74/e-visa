@@ -38,6 +38,7 @@ const supportingDocumentService = {
       };
 
       const update = await supportingDocumentRepos.upsert(final);
+      console.log(update);
       return update;
     });
     return Promise.all(result);

@@ -230,7 +230,6 @@ const ApplyNewVisa = () => {
           });
           if (applicationInformation) {
             const { biodata, photograph, ...rest } = applicationInformation;
-
             if (biodata.data || photograph.data) {
               const biodataBlob = new File(
                 [Uint8Array.from(atob(biodata.data), (c) => c.charCodeAt(0))],

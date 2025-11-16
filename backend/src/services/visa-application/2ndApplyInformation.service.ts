@@ -18,8 +18,8 @@ const applicationInformationService = {
     if (!row) throw new Error("Cannot find this application form");
     const { biodata, photograph, id, ...rest } = row;
 
-    const BIODATA = fileConvert(biodata);
-    const PHOTOGRAPH = fileConvert(photograph);
+    const BIODATA = await fileConvert(biodata);
+    const PHOTOGRAPH = await fileConvert(photograph);
 
     return { ...rest, biodata: BIODATA, photograph: PHOTOGRAPH };
   },
