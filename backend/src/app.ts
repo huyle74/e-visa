@@ -30,7 +30,6 @@ const createServer = async () => {
   app.use("/api", routes);
   app.use((req, res) => {
     const host = req.hostname;
-    console.log(host);
     if (host === ADMIN_HOST) {
       return handleAdminNext(req, res);
     }

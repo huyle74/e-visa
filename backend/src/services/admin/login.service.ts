@@ -36,7 +36,7 @@ const adminLoginService = {
         "This email don't have authorization to access admin page"
       );
 
-    const newPassword = bcrypt.hash(data.password, 10);
+    const newPassword = await bcrypt.hash(data.password, 10);
     const addNewPassWord = await adminRepos.updatePassword(
       data.email,
       newPassword

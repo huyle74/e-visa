@@ -378,7 +378,6 @@ const ApplyNewVisa = () => {
 
   const handleOnChangeInputFile = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
-    console.log(name);
     if (files !== null) {
       const file = files[0];
       if (file.size > MAX_SIZE) {

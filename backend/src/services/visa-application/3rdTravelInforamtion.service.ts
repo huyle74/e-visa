@@ -13,8 +13,6 @@ const travelInformationService = {
   async findOne(applicationId: string) {
     const rows = await travelInfoRepos.findOne(applicationId);
 
-    console.log(applicationId);
-
     if (!rows) throw new Error("Cannot find this application form");
     const { id, ...rest } = rows;
 

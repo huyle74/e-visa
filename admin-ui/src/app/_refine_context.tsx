@@ -52,7 +52,7 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
 
         return {
           success: true,
-          redirectTo: "/",
+          redirectTo: "/customers",
           successNotification: {
             message: "Login Successfully!",
             description: "You have successfully logged in.",
@@ -81,6 +81,7 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
       if (error.response?.status === 401) {
         return {
           logout: true,
+          error: new Error(error),
         };
       }
 
@@ -115,6 +116,43 @@ const App = (props: React.PropsWithChildren<AppProps>) => {
       }
 
       return null;
+    },
+    forgotPassword: async ({ email, password, re_password }) => {
+      const endpoint = backendUrl + "/admin/create-new-password";
+      try {
+        const { data } = await axios.post(endpoint, {
+          email,
+          password,
+          re_password,
+        });
+        if (data.success !== "OK") {
+          return {
+            success: false,
+            // redirectTo: "/forgot-password",
+            error: {
+              name: "Register Error",
+              message: "Create new Password Failed",
+            },
+          };
+        }
+        return {
+          success: true,
+          // redirectTo: "/",
+          successNotification: {
+            message: "Create new Password Successfully!",
+            description: "You have created successfully.",
+          },
+        };
+      } catch (error: any) {
+        const err = {
+          success: false,
+          error: {
+            name: "Create new Password Failed",
+            message: error.response.data.message,
+          },
+        };
+        return err;
+      }
     },
   };
   const role = getUserInfo()?.role;

@@ -18,10 +18,8 @@ export const fileConvert = async (file: any) => {
   const { path, originalname, mimetype } = file;
   try {
     const checkFile = await fileExists(path)
-    console.log(checkFile);
     
     const getFile = fs.readFileSync(path);
-    console.log("\nWe here---", getFile);
     if (!getFile) return null;
     return {
       data: getFile.toString("base64"),

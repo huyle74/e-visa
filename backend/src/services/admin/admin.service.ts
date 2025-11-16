@@ -94,7 +94,6 @@ const adminService = {
     const { ApplyInformation, ...rest } = application;
 
     if (ApplyInformation) {
-      console.log("\nHERE\n");
       const biodata = (await fileConvert(ApplyInformation?.biodata)) || null;
       const photograph =
         (await fileConvert(ApplyInformation?.photograph)) || null;

@@ -47,13 +47,8 @@ const googleLoginController = {
   async loginCallBack(req: Request, res: Response) {
     try {
       const accessToken = req.cookies.session;
-
-      console.log("\nRECEIVED FROM FROM END:", accessToken);
-
       if (!accessToken) return responseFailed({ res, message: "AccessToken no found" });
       const decode: any = verify(accessToken);
-
-      console.log(decode);
 
       const email = decode.email;
       const user = await googleLoginService.loginCallBack(email);
