@@ -2,12 +2,14 @@
     "name": "e-visa-app",
     "private": true,
     "scripts": {
-      "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
-      "build": "npm run build --prefix frontend && npm run build --prefix admin-ui && npm run build --prefix backend ",
-      "start": "npm run start --prefix backend"
+        "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+        "build": "npm run build --prefix frontend && npm run build --prefix admin-ui && npm run build --prefix backend ",
+        "start": "cross-env NODE_ENV=production npm run start --prefix backend"
     },
     "devDependencies": {
-      "concurrently": "^9.0.0"
+        "concurrently": "^9.0.0"
+    },
+    "dependencies": {
+        "cross-env": "^10.1.0"
     }
-  }
-  
+}
