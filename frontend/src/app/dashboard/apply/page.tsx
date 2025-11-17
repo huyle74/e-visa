@@ -283,17 +283,17 @@ const ApplyNewVisa = () => {
       if (currentStep === 4 && !supportingDoc.completed) {
         const endpoint = prefix + "/get-file-supporting-document";
         (async () => {
-          try {
-            const documents = [
-              "BIODATA",
-              "PHOTOGRAPH",
-              "CURRENT_LOCATION",
-              "BOOKING_CONFIRMATION",
-              "PROOF_OF_ACCOMMODATION",
-              "FINANCIAL_EVIDENCE",
-            ];
-            axios.all(
-              documents.map(async (docs) => {
+          const documents = [
+            "BIODATA",
+            "PHOTOGRAPH",
+            "CURRENT_LOCATION",
+            "BOOKING_CONFIRMATION",
+            "PROOF_OF_ACCOMMODATION",
+            "FINANCIAL_EVIDENCE",
+          ];
+          axios.all(
+            documents.map(async (docs) => {
+              try {
                 const response = await axios.post(
                   endpoint,
                   {},
@@ -311,15 +311,16 @@ const ApplyNewVisa = () => {
                 const file = new File([response.data], name, { type });
 
                 setSupportingDoc((prev) => ({ ...prev, [docs]: file }));
-              })
-            );
-            setSupportingDoc((prev) => ({ ...prev, completed: true }));
-            setLoading(false);
-            setDisable(false);
-          } catch (error: any) {
-            setLoading(false);
-            setDisable(false);
-          }
+                setSupportingDoc((prev) => ({ ...prev, completed: true }));
+                setLoading(false);
+                setDisable(false);
+              } catch (error) {
+                setLoading(false);
+                setDisable(false);
+                setSupportingDoc((prev) => ({ ...prev, completed: false }));
+              }
+            })
+          );
         })();
       }
     }
