@@ -19,6 +19,8 @@ const handleAdminNext = adminNextApp.getRequestHandler();
 const ADMIN_HOST = process.env.ADMIN_URL || "admin.localhost";
 
 const createServer = async () => {
+  console.log(process.env.APP_ENV);
+
   await nextApp.prepare();
   await adminNextApp.prepare();
   const app = express();
