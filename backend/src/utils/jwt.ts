@@ -1,6 +1,5 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import { JWT_PRIVATE_KEY, JWT_PUBLIC_KEY } from "../config/envLoader";
-import { generateKeyPairSync } from "crypto";
 
 const generateToken = (payload: object, expiresIn?: SignOptions["expiresIn"]) => {
   const options: SignOptions = { algorithm: "ES256" };
@@ -20,10 +19,3 @@ const verify = (token: string) => {
 };
 
 export { generateToken, verify };
-
-// const { publicKey, privateKey } = generateKeyPairSync("ec", {
-//     namedCurve: "P-256",
-//     publicKeyEncoding: { type: "spki", format: "pem" },
-//     privateKeyEncoding: { type: "pkcs8", format: "pem" },
-//   });
-//   console.log(privateKey, publicKey);

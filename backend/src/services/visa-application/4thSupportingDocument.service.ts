@@ -25,6 +25,8 @@ const supportingDocumentService = {
 
       const fileUrl = `${hostingRoot}` + "\\" + `${filename}`;
 
+      console.log("HERR----", fileUrl);
+
       const final = {
         applicationId,
         type: fieldname,
@@ -38,7 +40,6 @@ const supportingDocumentService = {
       };
 
       const update = await supportingDocumentRepos.upsert(final);
-      console.log(update);
       return update;
     });
     return Promise.all(result);
