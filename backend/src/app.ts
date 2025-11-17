@@ -5,6 +5,9 @@ import routes from "./routes";
 import corsOption from "./config/corsConfig";
 import next from "next";
 import path from "path";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const frontendDir = path.resolve(__dirname, "../../frontend");
 const adminDir = path.resolve(__dirname, "../../admin-ui");
