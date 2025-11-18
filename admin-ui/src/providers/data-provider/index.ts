@@ -24,27 +24,32 @@ const dataProvider = (): DataProvider => ({
     const { data } = await axios.get(endpoint, {
       headers: { Authorization: `Bearer ${admin.accessToken}` },
     });
-
+    const result = { ...data.data };
     let supportingDocument: Blob[] | null = [];
-    if (resource === "application") {
-      for (const field of supportingDocumentField) {
-        const endpoint = prefix + resource + "/supporting-document";
-        const data = await axios.get(endpoint, {
-          headers: { Authorization: `Bearer ${admin.accessToken}` },
-          params: {
-            applicationId: id,
-            field,
-          },
-          responseType: "blob",
-        });
-        if (!data) break;
+    try {
+      if (resource === "application") {
+        for (const field of supportingDocumentField) {
+          const endpoint = prefix + resource + "/supporting-document";
+          const data = await axios.get(endpoint, {
+            headers: { Authorization: `Bearer ${admin.accessToken}` },
+            params: {
+              applicationId: id,
+              field,
+              responseType: "blob",
+            },
+          });
 
-        const result: any = { [`${field}`]: data.data };
-        supportingDocument.push(result);
+          if (!data) break;
+
+          const result: any = { [`${field}`]: data.data };
+          supportingDocument.push(result);
+        }
+        return { data: { ...result, supportingDocument } };
       }
+      return { data: { ...result } };
+    } catch (error) {
+      return { data: { ...result, supportingDocument } };
     }
-
-    return { data: { ...data.data, supportingDocument } };
   },
 
   create: async () => {

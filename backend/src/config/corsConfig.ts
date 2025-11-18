@@ -5,7 +5,7 @@ const allowList = [
   appUrl,
   paypalApiUrl,
   googleCredentials.googleAuthUri,
-  adminUrl,
+  // adminUrl,
 ];
 const corsOption: CorsOptions = {
   origin: (

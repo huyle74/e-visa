@@ -111,19 +111,25 @@ const adminController = {
         applicationId,
         field
       );
-      if (!data) return responseSuccess({ res, data });
+      if (!data) return responseFailed({ res, data: [] });
 
       const absPath = data.storageKey;
       const fileSize = data.sizeBytes;
-      res.setHeader("Accept-Ranges", "bytes");
-      res.setHeader("Content-Length", fileSize);
-      res.setHeader("Content-Type", data.mimeType);
-      res.setHeader("X-Document-Field", field);
-      res.setHeader(
-        "Content-Disposition",
-        `attachment; filename="${data.originalName}"`
-      );
-      fs.createReadStream(absPath).pipe(res);
+      const checkFileExited = fs.existsSync(absPath);
+
+      if (checkFileExited) {
+        res.setHeader("Accept-Ranges", "bytes");
+        res.setHeader("Content-Length", fileSize);
+        res.setHeader("Content-Type", data.mimeType);
+        res.setHeader("X-Document-Field", field);
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename="${data.originalName}"`
+        );
+        fs.createReadStream(absPath).pipe(res);
+      } else {
+        responseFailed({ res, message: "file not found" });
+      }
     } catch (error: any) {
       console.error(error);
       const message = error?.message;

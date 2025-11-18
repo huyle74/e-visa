@@ -23,6 +23,7 @@ const ADMIN_HOST = process.env.ADMIN_HOST;
 
 const createServer = async () => {
   console.log("\nCHECK ENVIRONMENT-----", process.env.APP_ENV, "\n");
+  console.log(ADMIN_HOST);
 
   await nextApp.prepare();
   await adminNextApp.prepare();
