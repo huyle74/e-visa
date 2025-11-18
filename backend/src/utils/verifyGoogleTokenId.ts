@@ -9,7 +9,7 @@ const verifyGoogleTokenId = async (idToken: string): Promise<TokenPayload> => {
     audience: googleCredentials.clientId,
   });
   const payload = ticket.getPayload();
-  if (!payload) throw new Error('Invail google token');
+  if (!payload) throw new Error('Invalid google token');
   return payload;
 };
 

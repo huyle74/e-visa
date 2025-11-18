@@ -1,7 +1,7 @@
 import userRepos from "@/repositories/user.repository";
 import { OAuth2Client } from "google-auth-library";
 import verifyGoogleTokenId from "@/utils/verifyGoogleTokenId";
-import { generateToken, verify } from "../../utils/jwt";
+import { generateToken } from "../../utils/jwt";
 import { googleCredentials } from "@/config/envLoader";
 
 const AuthClient = new OAuth2Client({

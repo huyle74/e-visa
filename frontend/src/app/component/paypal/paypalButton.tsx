@@ -32,12 +32,46 @@ export default function PaypalButton({
     tagline: false,
     shape: "rect",
   };
+
+  const Statement = () => {
+    return (
+      <Box
+        sx={{
+          border: `2px solid ${primary}`,
+          p: 4,
+          borderRadius: "10vh",
+          height: matches ? "10vh" : "20vh",
+          width: matches ? "80vw" : "40vw",
+          alignItems: "center",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Box
+          sx={{
+            fontSize: matches ? "0.9rem" : "2rem",
+            textAlign: "center",
+            alignItems: "center",
+            display: "flex",
+          }}
+        >
+          Please check your Email to receive your visa result!
+          <span style={{ marginLeft: "10px" }}>
+            <EmailIcon color="primary" fontSize="large" />
+          </span>
+        </Box>
+      </Box>
+    );
+  };
+
   return (
     <Box
       className="App"
       sx={{
         width: matches ? "90%" : "50%",
         height: matches ? "40vh" : "100%",
+        display: "flex",
+        justifyContent: "center",
       }}
     >
       {didPayed === ApplicationStatus.COMPLETED ? (
@@ -60,33 +94,3 @@ export default function PaypalButton({
     </Box>
   );
 }
-
-const Statement = () => {
-  return (
-    <Box
-      sx={{
-        border: `2px solid ${primary}`,
-        p: 4,
-        borderRadius: "10vh",
-        height: "20vh",
-        width: "40vw",
-        alignItems: "center",
-        display: "flex",
-      }}
-    >
-      <Box
-        sx={{
-          fontSize: "2rem",
-          textAlign: "center",
-          alignItems: "center",
-          display: "flex",
-        }}
-      >
-        Please check your Email to receive your visa result!
-        <span>
-          <EmailIcon color="primary" fontSize="large" />
-        </span>
-      </Box>
-    </Box>
-  );
-};

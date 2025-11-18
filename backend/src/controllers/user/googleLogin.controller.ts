@@ -1,5 +1,9 @@
 import { Response, Request } from "express";
-import { responseSuccess, responseFailed, responseError } from "@utils/response.helper";
+import {
+  responseSuccess,
+  responseFailed,
+  responseError,
+} from "@utils/response.helper";
 import googleLoginService from "@/services/user/googleLogin.service";
 import { appUrl } from "@/config/envLoader";
 import { verify } from "@/utils/jwt";
@@ -7,6 +11,9 @@ import { verify } from "@/utils/jwt";
 const googleLoginController = {
   async login(req: Request, res: Response) {
     try {
+      const error = req.query.error;
+      if (error && error === "access_denied") return res.redirect(`${appUrl}`);
+
       const login: any = await googleLoginService.login(req.token);
       if (!login)
         return responseFailed({
@@ -47,7 +54,8 @@ const googleLoginController = {
   async loginCallBack(req: Request, res: Response) {
     try {
       const accessToken = req.cookies.session;
-      if (!accessToken) return responseFailed({ res, message: "AccessToken no found" });
+      if (!accessToken)
+        return responseFailed({ res, message: "AccessToken no found" });
       const decode: any = verify(accessToken);
 
       const email = decode.email;
