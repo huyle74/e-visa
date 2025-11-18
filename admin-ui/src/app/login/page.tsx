@@ -10,7 +10,6 @@ import {
   IconButton,
   InputAdornment,
   TextField,
-  useMediaQuery,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -284,7 +283,6 @@ const handleMouseUpPassword = (event: MouseEvent<HTMLButtonElement>) => {
 };
 
 const FormContainer = ({ children }: { children: ReactNode }) => {
-  const matches = useMediaQuery("(max-width:600px)");
 
   return (
     <Box

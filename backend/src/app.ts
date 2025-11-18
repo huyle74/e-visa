@@ -19,10 +19,10 @@ const handleNext = nextApp.getRequestHandler();
 const adminNextApp = next({ dev, dir: adminDir });
 const handleAdminNext = adminNextApp.getRequestHandler();
 
-const ADMIN_HOST = process.env.ADMIN_URL || "admin.localhost";
+const ADMIN_HOST = process.env.ADMIN_HOST;
 
 const createServer = async () => {
-  console.log("\nCHECK ENVIRONMENT-----", process.env.APP_ENV, '\n');
+  console.log("\nCHECK ENVIRONMENT-----", process.env.APP_ENV, "\n");
 
   await nextApp.prepare();
   await adminNextApp.prepare();
