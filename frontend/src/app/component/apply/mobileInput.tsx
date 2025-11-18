@@ -1,12 +1,5 @@
 import { ChangeEvent, useState, useRef, useEffect } from "react";
-import {
-  TextField,
-  Box,
-  Button,
-  styled,
-  useMediaQuery,
-  responsiveFontSizes,
-} from "@mui/material";
+import { TextField, Box, Button, useMediaQuery } from "@mui/material";
 import { primary } from "@/app/libs/color-config";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useCountries } from "@/app/contexts/countriesContext";
@@ -116,36 +109,6 @@ const MobileTextField = ({
       </Box>
     );
   });
-  const CssTextField = styled(TextField)({
-    "& .MuiInput-underline:after": {
-      borderBottomColor: "#B2BAC2",
-    },
-    "& .MuiOutlinedInput-root": {
-      height: "40px",
-      padding: 0,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      zIndex: 0,
-      "& fieldset": {
-        borderColor: "white",
-      },
-      "&:hover fieldset": {
-        borderColor: "white",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "white",
-      },
-    },
-    "& .MuiInputBase-input::placeholder": {
-      opacity: 0.8,
-      fontStyle: "italic",
-      fontSize: matches ? "0.8rem" : "1rem",
-    },
-    "& .MuiInputBase-input": {
-      height: "40px",
-    },
-  });
 
   return (
     <Box
@@ -243,7 +206,37 @@ const MobileTextField = ({
             ml: matches ? 1 : 0.2,
           }}
         >
-          <CssTextField
+          <TextField
+            sx={{
+              "& .MuiInput-underline:after": {
+                borderBottomColor: "#B2BAC2",
+              },
+              "& .MuiOutlinedInput-root": {
+                height: "40px",
+                padding: 0,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 0,
+                "& fieldset": {
+                  borderColor: "white",
+                },
+                "&:hover fieldset": {
+                  borderColor: "white",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "white",
+                },
+              },
+              "& .MuiInputBase-input::placeholder": {
+                opacity: 0.8,
+                fontStyle: "italic",
+                fontSize: matches ? "0.8rem" : "1rem",
+              },
+              "& .MuiInputBase-input": {
+                height: "40px",
+              },
+            }}
             value={value}
             onChange={(e) => onChange(e, name)}
             fullWidth
