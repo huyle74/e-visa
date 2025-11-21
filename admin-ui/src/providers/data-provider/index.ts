@@ -10,11 +10,23 @@ const admin = getUserInfo();
 const prefix = process.env.NEXT_PUBLIC_PREFIX_BACKEND_URL + "/admin-verified/";
 
 const dataProvider = (): DataProvider => ({
-  getList: async ({ resource }) => {
+  getList: async ({ resource, pagination, sorters }) => {
+    const [sortBy]: any = sorters;
+
     const endpoint = prefix + resource + "/list";
+    const params = {
+      ...pagination,
+      sort: sortBy?.order,
+      sortBy: sortBy?.field,
+    };
     const { data } = await axios.get(endpoint, {
       headers: { Authorization: `Bearer ${admin.accessToken}` },
+      params,
     });
+
+    if (resource === "customer") {
+      return { data: data.data.results, total: data.data.total };
+    }
 
     return { data: data.data, total: data.data.length };
   },

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   images: {
@@ -15,10 +16,9 @@ const nextConfig: NextConfig = {
       new URL("https://darkred-crane-929274.hostingersite.com/*"),
     ],
   },
-  styledComponents: true,
-  rules: { "@next/next/no-img-element": "off" },
-  eslint: { ignoreDuringBuilds: true },
-  extends: ["next/core-web-vitals"],
+  turbopack: {
+    root: path.join(__dirname, ".."),
+  },
 };
 
 export default nextConfig;

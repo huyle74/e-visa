@@ -1,15 +1,25 @@
 "use client";
 
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import { useMany, useList } from "@refinedev/core";
 import { List, ShowButton, useDataGrid } from "@refinedev/mui";
 import { useMemo } from "react";
 
 export default function CustomersList() {
+  const { dataGridProps } = useDataGrid({
+    pagination: {
+      mode: "server",
+      pageSize: 10,
+    },
+    resource: "customer",
+    syncWithLocation: true,
+  });
+
   const {
-    result,
-    query: { isFetching },
-  } = useList();
+    paginationMode,
+    paginationModel,
+    onPaginationModelChange,
+    ...restDataGridProps
+  } = dataGridProps;
 
   const columns = useMemo<GridColDef[]>(
     () => [
@@ -72,6 +82,26 @@ export default function CustomersList() {
         sortable: false,
       },
       {
+        field: "createAt",
+        headerName: "Created At",
+        type: "string",
+        minWidth: 150,
+        display: "flex",
+        align: "right",
+        headerAlign: "right",
+        sortable: true,
+        valueFormatter: (date) => {
+          const newDate = new Date(date);
+          const hour = String(newDate.getHours()).padStart(2, "0");
+          const minute = String(newDate.getMinutes()).padStart(2, "0");
+          const day = String(newDate.getDate()).padStart(2, "0");
+          const month = String(newDate.getMonth() + 1).padStart(2, "0"); // FIX: +1
+          const year = newDate.getFullYear();
+
+          return hour + ":" + minute + " " + day + "-" + month + "-" + year;
+        },
+      },
+      {
         field: "actions",
         headerName: "Actions",
         align: "center",
@@ -94,9 +124,6 @@ export default function CustomersList() {
   return (
     <List>
       <DataGrid
-        loading={isFetching}
-        columns={columns}
-        rows={result.data}
         sx={{
           border: "1px",
           borderColor: "primary.light",
@@ -105,6 +132,11 @@ export default function CustomersList() {
           },
           cursor: "pointer",
         }}
+        paginationMode={paginationMode}
+        paginationModel={paginationModel}
+        onPaginationModelChange={onPaginationModelChange}
+        {...restDataGridProps}
+        columns={columns}
       />
     </List>
   );

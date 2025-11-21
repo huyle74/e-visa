@@ -2,7 +2,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "build": "tsc && tsc-alias",
-    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register --ignore-watch ../frontend/.next src/server.ts",
     "seed": "node --max-old-space-size=6144 -r ts-node/register src/prisma/seed/fromTo.ts"
   },
   "prisma": {

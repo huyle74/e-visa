@@ -23,6 +23,7 @@ routes.use("/payment", paypalRoute);
 routes.use("/static", staticRoutes);
 routes.use("/visa-application", authenticationMiddleware, applicationRouter);
 routes.use("/guard", guardRoute);
+
 routes.use("/admin", adminLoginRoute);
 routes.use("/admin-verified", authenticationMiddleware, adminRoute);
 
