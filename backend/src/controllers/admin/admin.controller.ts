@@ -8,6 +8,7 @@ import {
 import adminService from "@/services/admin/admin.service";
 import { AdminDataDto } from "@/dto/admin.dto";
 import { Document } from "@prisma/client";
+import { SortOrder, SortBy } from "@/services/admin/admin.dto";
 import fs from "fs";
 
 const adminController = {
@@ -19,7 +20,18 @@ const adminController = {
       const user = (req as any).user;
       const role = user.role;
       const id = user.id;
-      const data = await adminService.getListCostumers(role, id);
+      const sort = req.query.sort as SortOrder;
+      const currentPage = Number(req.query.currentPage);
+      const pageSize = Number(req.query.pageSize);
+      const sortBy = req.query.sortBy as SortBy;
+      const data = await adminService.getListCostumers(
+        role,
+        id,
+        sort,
+        currentPage,
+        pageSize,
+        sortBy
+      );
 
       if (!data) responseFailed({ res });
 

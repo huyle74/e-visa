@@ -22,25 +22,26 @@ const handleAdminNext = adminNextApp.getRequestHandler();
 const ADMIN_HOST = process.env.ADMIN_HOST;
 
 const createServer = async () => {
-  console.log("\nCHECK ENVIRONMENT-----", process.env.APP_ENV, "\n");
-  console.log(ADMIN_HOST);
-
-  await nextApp.prepare();
-  await adminNextApp.prepare();
   const app = express();
+
   app.use(cors(corsOption));
   app.use(cookieParser());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
   app.use("/api", routes);
-  app.use((req, res) => {
-    const host = req.hostname;
-    if (host === ADMIN_HOST) {
-      return handleAdminNext(req, res);
-    }
-    return handleNext(req, res);
-  });
+  if (!dev) {
+    await nextApp.prepare();
+    await adminNextApp.prepare();
+
+    app.use((req, res) => {
+      const host = req.hostname;
+      if (host === ADMIN_HOST) {
+        return handleAdminNext(req, res);
+      }
+      return handleNext(req, res);
+    });
+  }
   return app;
 };
 

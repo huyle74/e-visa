@@ -2,17 +2,35 @@ import adminRepos from "@/repositories/admin.repository";
 import { Document, Role } from "@prisma/client";
 import { AdminDataDto } from "@/dto/admin.dto";
 import { fileConvert } from "@/utils/file";
+import { SortOrder, SortBy } from "./admin.dto";
 
 const adminService = {
-  async getListCostumers(role: Role, id: number) {
-    const userList = await adminRepos.listAllCustomers(role, id);
+  async getListCostumers(
+    role: Role,
+    id: number,
+    sortOrder: SortOrder = "desc",
+    currentPage: number,
+    pageSize: number,
+    sortBy: SortBy
+  ) {
+    const userList = await adminRepos.listAllCustomers(
+      role,
+      id,
+      sortOrder,
+      currentPage,
+      pageSize,
+      sortBy
+    );
     if (!userList) throw new Error("Cannot find user list");
 
-    const results = userList.map(({ _count, ...rest }) => {
-      return { ...rest, totalApplications: _count.application };
+    const results = userList.allUsers.map(({ _count, ...rest }) => {
+      return {
+        ...rest,
+        totalApplications: _count.application,
+      };
     });
 
-    return results;
+    return { results, total: userList.total };
   },
 
   async listAllAdmin(role: Role, email: string) {

@@ -1,6 +1,8 @@
 import prisma from "@/prisma/prisma";
 import { Document, Prisma } from "@prisma/client";
 import { Role } from "@prisma/client";
+import { paginationHelper } from "@/utils/paginationHelper";
+import { SortOrder, SortBy } from "@/services/admin/admin.dto";
 
 const adminRepos = {
   async adminHasCustomer(adminId: number, customerId: string) {
@@ -75,40 +77,53 @@ const adminRepos = {
     }
   },
 
-  async listAllCustomers(role: Role, id?: number) {
+  async listAllCustomers(
+    role: Role,
+    id?: number,
+    sortOrder: SortOrder = "desc",
+    currentPage: number = 1,
+    pageSize: number = 10,
+    sortBy: SortBy = "createAt"
+  ) {
     try {
+      let allUsers: any[] = [];
+      let totalUsers;
+      const query = paginationHelper({
+        pageSize,
+        currentPage,
+        sortBy,
+        sortOrder,
+      });
+      const include = {
+        id: true,
+        email: true,
+        phoneNumber: true,
+        firstName: true,
+        lastName: true,
+        managerId: true,
+        _count: { select: { application: true } },
+        createAt: true,
+      };
+
       if (role === Role.SUPER_ADMIN) {
-        const allUser = await prisma.user.findMany({
-          select: {
-            id: true,
-            email: true,
-            phoneNumber: true,
-            firstName: true,
-            lastName: true,
-            managerId: true,
-            _count: { select: { application: true } },
-          },
+        allUsers = await prisma.user.findMany({
+          select: { ...include },
+          ...query,
         });
-        return allUser;
+        totalUsers = await prisma.user.count();
       }
       if (role === Role.ADMIN) {
-        const allUser = await prisma.user.findMany({
+        allUsers = await prisma.user.findMany({
           where: { managerId: id },
-          take: 20,
-          select: {
-            id: true,
-            email: true,
-            phoneNumber: true,
-            firstName: true,
-            lastName: true,
-            _count: { select: { application: true } },
-          },
+          select: { ...include },
+          ...query,
         });
-
-        return allUser;
+        totalUsers = await prisma.user.count({ where: { managerId: id } });
       }
+
+      return { allUsers, total: totalUsers };
     } catch (error) {
-      throw new Error(`Cannot create admin account`);
+      throw new Error(`Cannot find customers list`);
     }
   },
 
