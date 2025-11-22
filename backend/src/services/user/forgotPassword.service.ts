@@ -27,7 +27,9 @@ const forgotPasswordService = async (data: ChangePassword) => {
     { password: hashedPassword, verifyToken }
   );
 
-  sendEmail(email, link);
+  const userName = user.firstName + " " + user.lastName;
+
+  sendEmail(email, link, userName);
   return updatePassword;
 };
 

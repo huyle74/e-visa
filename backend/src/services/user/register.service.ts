@@ -25,7 +25,9 @@ const createAccountService = async (data: CreateUserDto) => {
     nation: { connect: { iso2: nation } },
   });
 
-  sendEmail(email, link, firstName + " " + lastName);
+  const userName = firstName + " " + lastName;
+
+  sendEmail(email, link, userName);
 
   return createUser;
 };
