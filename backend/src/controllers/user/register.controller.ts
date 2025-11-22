@@ -10,7 +10,6 @@ import createAccountService from "../../services/user/register.service";
 const createAccountController = async (req: Request, res: Response) => {
   try {
     const checkErrors = validationResponse(req);
-    console.log(checkErrors);
     if (checkErrors) return responseFailed({ res, message: checkErrors });
 
     const { confirmPassword, ...account } = req.body;

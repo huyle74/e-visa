@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import verfiyEmailController from '../../controllers/user/verifyEmail.controller';
+import verifyEmailController from '../../controllers/user/verifyEmail.controller';
 
 const verifyEmailRoute = Router();
-verifyEmailRoute.get('/', verfiyEmailController);
+verifyEmailRoute.get('/', verifyEmailController);
 
 export default verifyEmailRoute;

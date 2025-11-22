@@ -6,10 +6,10 @@ import { url } from "../../config/envLoader";
 import { generateToken } from "@/utils/jwt";
 
 const createAccountService = async (data: CreateUserDto) => {
-  const { password, email, nation, ...userData } = data;
+  const { password, email, nation, firstName, lastName, ...userData } = data;
 
   const verifyToken = generateToken({ email });
-  const link = url + "/verify-email?token=" + verifyToken;
+  const link = url + "/verify-email?token=" + verifyToken + "&email=" + email;
 
   const checkExist = await userRepos.findByEmail(email);
   if (checkExist) throw new Error("This Email already in used");
@@ -18,12 +18,14 @@ const createAccountService = async (data: CreateUserDto) => {
   const createUser = await userRepos.create({
     ...userData,
     email,
+    firstName,
+    lastName,
     password: hashedPassword,
     verifyToken,
     nation: { connect: { iso2: nation } },
   });
 
-  sendEmail(email, link);
+  sendEmail(email, link, firstName + " " + lastName);
 
   return createUser;
 };

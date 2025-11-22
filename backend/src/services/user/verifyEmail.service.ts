@@ -1,13 +1,12 @@
-import userRepos from '../../repositories/user.repository';
+import userRepos from "../../repositories/user.repository";
 
-const verifyEmailService = async (verifyToken: string) => {
-  const checkUser = await userRepos.findOne( verifyToken );
+const verifyEmailService = async (email: string) => {
+  const checkUser = await userRepos.findByEmail(email);
+  if (!checkUser) throw new Error("Failed to verify Email");
 
-  if (!checkUser) throw new Error('Failed to verify Email');
-
-  const email = checkUser.email;
+  const verifiedEmail = checkUser.email;
   const updateVerify = await userRepos.update(
-    { email },
+    { email: verifiedEmail },
     {
       emailVerify: true,
     }
