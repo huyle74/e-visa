@@ -5,9 +5,9 @@ import {
   Select,
   SelectChangeEvent,
   CircularProgress,
-  useMediaQuery,
 } from "@mui/material";
 import { convertToLabel } from "@/app/libs/convertLabel";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 interface AutoCompleteFormProps {
   title: string;
@@ -28,7 +28,7 @@ const AutoCompleteForm = ({
   disabled = false,
   name,
 }: AutoCompleteFormProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   return (
     <Box sx={{ p: matches ? 0.5 : 1.5, width: "100%" }}>

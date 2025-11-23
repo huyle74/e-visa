@@ -1,0 +1,51 @@
+.headerContainer {
+  display: flex;
+  height: 13vh;
+  align-items: center;
+  background-color: white;
+  padding-left: 8px;
+}
+.logoImage {
+  width: 170px;
+  height: 60px;
+}
+.buttonContainer {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 16px;
+  font-weight: 900;
+}
+.welcomeUser {
+  margin-right: 16px;
+  font-size: 1.5rem;
+}
+.button {
+  font-weight: 1000;
+  margin-right: 4px;
+  display: flex;
+}
+
+@media (max-width: 600px) {
+  .headerContainer {
+    height: 7vh;
+  }
+  .logoImage {
+    width: 100px;
+    height: 40px;
+  }
+  .buttonContainer {
+    padding-right: 0;
+  }
+  .welcomeUser {
+    margin-right: 8px;
+    font-size: 0.9rem;
+  }
+  .buttonDashBoard {
+    margin-right: 0;
+  }
+  .button {
+    margin-right: 2px;
+  }
+}

@@ -1,7 +1,8 @@
-import { Box, Button, Stack, Divider, useMediaQuery } from "@mui/material";
+import { Box, Button, Stack, Divider } from "@mui/material";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ArticleIcon from "@mui/icons-material/Article";
 import PublicIcon from "@mui/icons-material/Public";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 interface StateBarProps {
   totalApplied: string | null | number;
@@ -9,7 +10,7 @@ interface StateBarProps {
 }
 
 const StateBar = ({ totalApplied, incompleteApplied }: StateBarProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   return (
     <Box sx={{ p: matches ? 1 : 2, mt: matches ? 0 : 4 }}>

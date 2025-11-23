@@ -8,16 +8,10 @@ import {
   MouseEventHandler,
 } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  Box,
-  SelectChangeEvent,
-  SwitchProps,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, SelectChangeEvent, SwitchProps } from "@mui/material";
 import { useRouter } from "next/navigation";
 import type { Dayjs } from "dayjs";
 import axios from "axios";
-import { AuthProvider } from "@/app/contexts/authProvider";
 import CountrySelectionStep from "@/app/component/apply/apply-stepper/select-country-fromTo";
 import ApplicationInformation from "@/app/component/apply/apply-stepper/applyInformation";
 import TravelInformation from "@/app/component/apply/apply-stepper/travel-information";
@@ -33,8 +27,8 @@ import {
   SupportingDocumentInputDto,
   CountrySelectionDto,
 } from "@/app/libs/types";
+import { AuthProvider } from "@/app/contexts/authProvider";
 import PaypalButton from "@/app/component/paypal/paypalButton";
-import { CountriesProvider } from "@/app/contexts/countriesContext";
 import ModalComponent from "@/app/component/common/modal";
 import { transportationVehicle } from "@/app/libs/entries-input-visa";
 import { backend_url } from "@/app/server-side/envLoader";
@@ -42,6 +36,7 @@ import { getUserInfo } from "@/app/libs/getLocalStorage";
 import Footer from "@/app/component/footer/footer";
 import { reverseLabelToValue } from "@/app/libs/convertLabel";
 import { PayPalButtonsComponentProps } from "@paypal/react-paypal-js";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 const prefix = backend_url + "api" + "/visa-application";
 
@@ -62,7 +57,7 @@ const steps = [
 const MAX_SIZE = 5 * 1024 * 1024;
 
 const ApplyNewVisa = () => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
   const user = getUserInfo();
   const search = useSearchParams();
   const applyId = search.get("applicationId");
@@ -786,193 +781,191 @@ const ApplyNewVisa = () => {
   };
 
   return (
-    <AuthProvider>
-      <Box
-        sx={{
-          backgroundColor: "#F2FCFC",
-          height: matches ? "100vh" : "100%",
-        }}
-      >
+    <Box
+      sx={{
+        backgroundColor: "#F2FCFC",
+        height: matches ? "100vh" : "100%",
+      }}
+    >
+      <AuthProvider>
         <MenuDashboard />
-        <CountriesProvider>
-          <form>
-            <Box
-              sx={{
-                width: matches ? "95vw" : "70vw",
-                m: "auto",
-                mt: 4,
-                pb: 6,
-                height: "100%",
-              }}
-            >
-              <HeaderTitleApplyStepper
-                data={stepStatus}
-                onClick={handleBackButton}
+        <form>
+          <Box
+            sx={{
+              width: matches ? "95vw" : "70vw",
+              m: "auto",
+              mt: 4,
+              pb: 6,
+              height: "100%",
+            }}
+          >
+            <HeaderTitleApplyStepper
+              data={stepStatus}
+              onClick={handleBackButton}
+            />
+            {stepStatus.activeStep === 0 && (
+              <CountrySelectionStep
+                totalPrice={getPrice}
+                disabled={applyId ? true : disabled}
+                values={selectCountryData}
+                onChangeFromCountry={handleOnchangeSelectCountriesForm}
+                onChangeToCountry={handleOnchangeSelectCountriesForm}
+                loading={loading}
+                onclickNext={handleSubmitSelectCountriesForm}
               />
-              {stepStatus.activeStep === 0 && (
-                <CountrySelectionStep
-                  totalPrice={getPrice}
-                  disabled={applyId ? true : disabled}
-                  values={selectCountryData}
-                  onChangeFromCountry={handleOnchangeSelectCountriesForm}
-                  onChangeToCountry={handleOnchangeSelectCountriesForm}
-                  loading={loading}
-                  onclickNext={handleSubmitSelectCountriesForm}
+            )}
+            {stepStatus.activeStep === 1 && (
+              <EligibilityStep
+                disabled={eligibilityData.completed}
+                loading={loading}
+                onClickNext={handleSubmitEligibility}
+                valueProps={eligibilityData}
+                onChangeApplyAt={handleOnchangeEligibility}
+                onChangeCurrentLocation={handleOnchangeEligibility}
+                onChangeDocumentType={handleOnchangeEligibility}
+                onChangeInputCountryPassport={handleOnchangeEligibility}
+                onChangeNumberOfEntries={handleOnchangeEligibility}
+                onChangeVisaType={handleOnchangeEligibility}
+                onChangeVisitPurpose={handleOnchangeEligibility}
+                onClickBack={handleBackButton}
+              />
+            )}
+            {stepStatus.activeStep === 2 && (
+              <ApplicationInformation
+                dataProps={applyInfoData}
+                // HANDLE FILES
+                onChangeBiodata={handleOnchangeFilesApplicationInformation}
+                onChangePhotograph={handleOnchangeFilesApplicationInformation}
+                onDragBiodata={(e) =>
+                  handleDropFileApplicationInformation(e, "biodata")
+                }
+                onDragPhotograph={(e) =>
+                  handleDropFileApplicationInformation(e, "photograph")
+                }
+                //
+                onclickNext={handleSubmitApplicationInformation}
+                onClickBack={handleBackButton}
+                onChangeCityBirth={handleOnchangeApplicationInformation}
+                onChangeEmail={handleOnchangeApplicationInformation}
+                onChangeHomeAddress={handleOnchangeApplicationInformation}
+                onChangeNationality={handleOnchangeApplicationInformation}
+                onChangeBirthNation={handleOnchangeApplicationInformation}
+                onChangeDocumentType={handleOnchangeApplicationInformation}
+                onChangeMaritalStatus={handleOnchangeApplicationInformation}
+                onChangeFamilyName={handleOnchangeApplicationInformation}
+                onChangeFirstName={handleOnchangeApplicationInformation}
+                onChangeMiddleName={handleOnchangeApplicationInformation}
+                onChangeSwitch={handleChangeSwitchApplicationInformation}
+                onChangeSex={handleOnchangeApplicationInformation}
+                onChangeTitle={handleOnchangeApplicationInformation}
+                onChangeContactNo={handleOnchangeApplicationInformation}
+                onChangeAnotherNationality={
+                  handleOnchangeApplicationInformation
+                }
+                onChangeAnnualIncome={handleOnchangeApplicationInformation}
+                onChangeCityAddress={handleOnchangeApplicationInformation}
+                onChangeStateAddress={handleOnchangeApplicationInformation}
+                onChangeIssuedPlace={handleOnchangeApplicationInformation}
+                onChangeExpiredDate={(value, name) =>
+                  handlePickDateApplicationInformation(value, name)
+                }
+                onChangeDocumentNo={handleOnchangeApplicationInformation}
+                onChangeIssuedDate={(value, name) =>
+                  handlePickDateApplicationInformation(value, name)
+                }
+                onChangeOccupation={handleOnchangeApplicationInformation}
+                onChangeBirthDate={(value, name) =>
+                  handlePickDateApplicationInformation(value, name)
+                }
+                onChangeCountryAddress={handleOnchangeApplicationInformation}
+                onChangeCompanyPlace={handleOnchangeApplicationInformation}
+              />
+            )}
+            {stepStatus.activeStep === 3 && (
+              <TravelInformation
+                data={travelInfo}
+                onClickNext={handleSubmitTravelInformation}
+                onClickBack={handleBackButton}
+                onChangeArrivalPort={handleOnChangeTravelInformation}
+                vehicle={transVehicle}
+                onChangeAccommodationAddress={
+                  handleOnChangeAccommodationTravelInformation
+                }
+                onChangeAccommodationDurationDay={
+                  handleOnChangeAccommodationTravelInformation
+                }
+                onChangeAccommodationCity={
+                  handleOnChangeAccommodationTravelInformation
+                }
+                onChangeAccommodationName={
+                  handleOnChangeAccommodationTravelInformation
+                }
+                onChangeAccommodationPhone={
+                  handleOnChangeAccommodationTravelInformation
+                }
+                onChangeAccommodationType={
+                  handleOnChangeAccommodationTravelInformation
+                }
+                onChangeArrivalDate={handelPickDateTravelInformation}
+                onChangeDepartDate={handelPickDateTravelInformation}
+                onChangeHadVisit={handelSwitchTravelInformation}
+                onChangeDidApply={handelSwitchTravelInformation}
+                onChangePartOfTour={handelSwitchTravelInformation}
+                onChangeAdditionalAccomodation={handelSwitchTravelInformation}
+                onChangeSelectCountry={handleOnChangeTravelInformation}
+                onChangeTransportMode={handleOnChangeTravelInformation}
+                onChangeTransportVehicleCode={handleOnChangeTravelInformation}
+              />
+            )}
+            {stepStatus.activeStep === 4 && (
+              <SupportingDocument
+                onClickNext={handleSubmitSupportingDocument}
+                data={supportingDoc}
+                // Click
+                onChangeFileBiodata={handleOnChangeInputFile}
+                onChangeFileAccommodationProof={handleOnChangeInputFile}
+                onChangeFileFinancialEvidence={handleOnChangeInputFile}
+                onChangeFileLocation={handleOnChangeInputFile}
+                onChangeFilePhoto={handleOnChangeInputFile}
+                onChangeFileTravelBooking={handleOnChangeInputFile}
+                // DRAG
+                handleDropFileBioData={(e) => handleDropFile(e, "BIODATA")}
+                handleDropFileAccommodationProof={(e) =>
+                  handleDropFile(e, "PROOF_OF_ACCOMMODATION")
+                }
+                handleDropFileFinancialEvidence={(e) =>
+                  handleDropFile(e, "FINANCIAL_EVIDENCE")
+                }
+                handleDropFileLocation={(e) =>
+                  handleDropFile(e, "CURRENT_LOCATION")
+                }
+                handleDropFilePhoto={(e) => handleDropFile(e, "PHOTOGRAPH")}
+                handleDropFileTravelBooking={(e) =>
+                  handleDropFile(e, "BOOKING_CONFIRMATION")
+                }
+                loading={loading}
+              />
+            )}
+            {stepStatus.activeStep === 5 && (
+              <Box sx={{ justifyItems: "center", mt: 7 }}>
+                <PaypalButton
+                  didPayed={String(applicationStatus)}
+                  price={getPrice}
+                  createOrder={createOrder}
+                  onApprove={onApprove}
                 />
-              )}
-              {stepStatus.activeStep === 1 && (
-                <EligibilityStep
-                  disabled={eligibilityData.completed}
-                  loading={loading}
-                  onClickNext={handleSubmitEligibility}
-                  valueProps={eligibilityData}
-                  onChangeApplyAt={handleOnchangeEligibility}
-                  onChangeCurrentLocation={handleOnchangeEligibility}
-                  onChangeDocumentType={handleOnchangeEligibility}
-                  onChangeInputCountryPassport={handleOnchangeEligibility}
-                  onChangeNumberOfEntries={handleOnchangeEligibility}
-                  onChangeVisaType={handleOnchangeEligibility}
-                  onChangeVisitPurpose={handleOnchangeEligibility}
-                  onClickBack={handleBackButton}
-                />
-              )}
-              {stepStatus.activeStep === 2 && (
-                <ApplicationInformation
-                  dataProps={applyInfoData}
-                  // HANDLE FILES
-                  onChangeBiodata={handleOnchangeFilesApplicationInformation}
-                  onChangePhotograph={handleOnchangeFilesApplicationInformation}
-                  onDragBiodata={(e) =>
-                    handleDropFileApplicationInformation(e, "biodata")
-                  }
-                  onDragPhotograph={(e) =>
-                    handleDropFileApplicationInformation(e, "photograph")
-                  }
-                  //
-                  onclickNext={handleSubmitApplicationInformation}
-                  onClickBack={handleBackButton}
-                  onChangeCityBirth={handleOnchangeApplicationInformation}
-                  onChangeEmail={handleOnchangeApplicationInformation}
-                  onChangeHomeAddress={handleOnchangeApplicationInformation}
-                  onChangeNationality={handleOnchangeApplicationInformation}
-                  onChangeBirthNation={handleOnchangeApplicationInformation}
-                  onChangeDocumentType={handleOnchangeApplicationInformation}
-                  onChangeMaritalStatus={handleOnchangeApplicationInformation}
-                  onChangeFamilyName={handleOnchangeApplicationInformation}
-                  onChangeFirstName={handleOnchangeApplicationInformation}
-                  onChangeMiddleName={handleOnchangeApplicationInformation}
-                  onChangeSwitch={handleChangeSwitchApplicationInformation}
-                  onChangeSex={handleOnchangeApplicationInformation}
-                  onChangeTitle={handleOnchangeApplicationInformation}
-                  onChangeContactNo={handleOnchangeApplicationInformation}
-                  onChangeAnotherNationality={
-                    handleOnchangeApplicationInformation
-                  }
-                  onChangeAnnualIncome={handleOnchangeApplicationInformation}
-                  onChangeCityAddress={handleOnchangeApplicationInformation}
-                  onChangeStateAddress={handleOnchangeApplicationInformation}
-                  onChangeIssuedPlace={handleOnchangeApplicationInformation}
-                  onChangeExpiredDate={(value, name) =>
-                    handlePickDateApplicationInformation(value, name)
-                  }
-                  onChangeDocumentNo={handleOnchangeApplicationInformation}
-                  onChangeIssuedDate={(value, name) =>
-                    handlePickDateApplicationInformation(value, name)
-                  }
-                  onChangeOccupation={handleOnchangeApplicationInformation}
-                  onChangeBirthDate={(value, name) =>
-                    handlePickDateApplicationInformation(value, name)
-                  }
-                  onChangeCountryAddress={handleOnchangeApplicationInformation}
-                  onChangeCompanyPlace={handleOnchangeApplicationInformation}
-                />
-              )}
-              {stepStatus.activeStep === 3 && (
-                <TravelInformation
-                  data={travelInfo}
-                  onClickNext={handleSubmitTravelInformation}
-                  onClickBack={handleBackButton}
-                  onChangeArrivalPort={handleOnChangeTravelInformation}
-                  vehicle={transVehicle}
-                  onChangeAccommodationAddress={
-                    handleOnChangeAccommodationTravelInformation
-                  }
-                  onChangeAccommodationDurationDay={
-                    handleOnChangeAccommodationTravelInformation
-                  }
-                  onChangeAccommodationCity={
-                    handleOnChangeAccommodationTravelInformation
-                  }
-                  onChangeAccommodationName={
-                    handleOnChangeAccommodationTravelInformation
-                  }
-                  onChangeAccommodationPhone={
-                    handleOnChangeAccommodationTravelInformation
-                  }
-                  onChangeAccommodationType={
-                    handleOnChangeAccommodationTravelInformation
-                  }
-                  onChangeArrivalDate={handelPickDateTravelInformation}
-                  onChangeDepartDate={handelPickDateTravelInformation}
-                  onChangeHadVisit={handelSwitchTravelInformation}
-                  onChangeDidApply={handelSwitchTravelInformation}
-                  onChangePartOfTour={handelSwitchTravelInformation}
-                  onChangeAdditionalAccomodation={handelSwitchTravelInformation}
-                  onChangeSelectCountry={handleOnChangeTravelInformation}
-                  onChangeTransportMode={handleOnChangeTravelInformation}
-                  onChangeTransportVehicleCode={handleOnChangeTravelInformation}
-                />
-              )}
-              {stepStatus.activeStep === 4 && (
-                <SupportingDocument
-                  onClickNext={handleSubmitSupportingDocument}
-                  data={supportingDoc}
-                  // Click
-                  onChangeFileBiodata={handleOnChangeInputFile}
-                  onChangeFileAccommodationProof={handleOnChangeInputFile}
-                  onChangeFileFinancialEvidence={handleOnChangeInputFile}
-                  onChangeFileLocation={handleOnChangeInputFile}
-                  onChangeFilePhoto={handleOnChangeInputFile}
-                  onChangeFileTravelBooking={handleOnChangeInputFile}
-                  // DRAG
-                  handleDropFileBioData={(e) => handleDropFile(e, "BIODATA")}
-                  handleDropFileAccommodationProof={(e) =>
-                    handleDropFile(e, "PROOF_OF_ACCOMMODATION")
-                  }
-                  handleDropFileFinancialEvidence={(e) =>
-                    handleDropFile(e, "FINANCIAL_EVIDENCE")
-                  }
-                  handleDropFileLocation={(e) =>
-                    handleDropFile(e, "CURRENT_LOCATION")
-                  }
-                  handleDropFilePhoto={(e) => handleDropFile(e, "PHOTOGRAPH")}
-                  handleDropFileTravelBooking={(e) =>
-                    handleDropFile(e, "BOOKING_CONFIRMATION")
-                  }
-                  loading={loading}
-                />
-              )}
-              {stepStatus.activeStep === 5 && (
-                <Box sx={{ justifyItems: "center", mt: 7 }}>
-                  <PaypalButton
-                    didPayed={String(applicationStatus)}
-                    price={getPrice}
-                    createOrder={createOrder}
-                    onApprove={onApprove}
-                  />
-                </Box>
-              )}
-            </Box>
-          </form>
-        </CountriesProvider>
+              </Box>
+            )}
+          </Box>
+        </form>
         <ModalComponent
           open={modal}
           content={modalContent}
           onClose={handleOnCloseModal}
         />
         <Footer />
-      </Box>
-    </AuthProvider>
+      </AuthProvider>
+    </Box>
   );
 };
 

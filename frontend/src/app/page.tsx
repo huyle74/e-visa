@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import axios from "axios";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 import { Box } from "@mui/material";
@@ -11,13 +9,14 @@ import { backend_url } from "./server-side/envLoader";
 import HeaderMenu from "./component/menu/header-menu";
 import Footer from "./component/footer/footer";
 import { logoWhite, backgroundImage } from "./libs/image-config";
-import { primary, white } from "./libs/color-config";
+import { primary } from "./libs/color-config";
 import { getUserInfo } from "./libs/getLocalStorage";
+import { useMobileMedia } from "./contexts/mobileResponsiveProvider";
 
 const KEY = "app:user";
 
 export default function Home() {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
   const [user, setUser] = useState<any>(null);
   const param = useSearchParams();
 
@@ -66,17 +65,10 @@ export default function Home() {
             alt="backdrop"
           />
           <div className={styles.backgroundBlur}>
-            <Image
-              src={logoWhite}
-              alt="logo"
-              width={matches ? 150 : 600}
-              height={matches ? 50 : 200}
-            />
+            <img className={styles.logoImage} src={logoWhite} alt="logo" />
             <h1 className={styles.backgroundTitle}>
               MY E-VISA <br />
-              <span style={{ margin: `${matches ? "0,1rem" : "1rem"}` }}>
-                OFFICIAL WEBSITE
-              </span>
+              <span className={styles.backgroundSpan}>OFFICIAL WEBSITE</span>
             </h1>
             <div
               style={{ height: "2px", width: "50vw", backgroundColor: "white" }}
@@ -93,42 +85,21 @@ export default function Home() {
             sx={{
               mb: 2,
               mt: 3,
-              ml: matches ? 0 : 3,
-              fontSize: matches ? "1rem" : "auto",
             }}
+            className={styles.howToApply}
           >
             HOW TO APPLY ONLINE
           </Box>
-          <Box
-            sx={{
-              width: "10vw",
-              height: "4px",
-              backgroundColor: white,
-              ml: matches ? 0 : 3,
-            }}
-          ></Box>
+          <Box className={styles.underline}></Box>
         </Box>
-        <Box
-          sx={{
-            width: matches ? "90vw" : "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            m: "auto",
-            pb: matches ? 2 : 10,
-            overflow: "hidden",
-            height: "100%",
-            flexDirection: matches ? "column" : "row",
-          }}
-        >
+        <Box className={styles.stepContainer}>
           {steps.map((content, i) => (
             <Box
               sx={{
-                display: "flex",
-                alignItems: "center",
                 width: matches ? "90%" : `${i !== 5 ? "16.66%" : 0}`,
               }}
               key={i}
+              className={styles.stepper}
             >
               <Box
                 sx={{

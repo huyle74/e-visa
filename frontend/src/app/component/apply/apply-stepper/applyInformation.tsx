@@ -15,12 +15,11 @@ import {
   SelectChangeEvent,
   Switch,
   SwitchProps,
-  useMediaQuery,
 } from "@mui/material";
 import Image from "next/image";
 import { getStatesData, getCitiesData } from "@/app/server-side/static-data";
 import { Dayjs } from "dayjs";
-import { useCountries } from "@/app/contexts/countriesContext";
+import { useCountries } from "@/app/contexts/countriesProvider";
 import FormContainer from "../containerForm";
 import AutoCompleteForm from "../autocompleteForm";
 import { ApplicationInformationInputDto } from "@/app/libs/types";
@@ -30,6 +29,7 @@ import DatePickerComponent from "../date-picker";
 import InputContainer from "../input-containter";
 import ButtonSumbit from "../button-submit-group";
 import { getApplicationInfoEnum } from "@/app/server-side/static-data";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 type E = SelectChangeEvent;
 type PickDate = (newValue: Dayjs | null, name: string) => void;
@@ -120,7 +120,7 @@ const ApplicationInformation = ({
   onDragBiodata,
   onDragPhotograph,
 }: ApplicationInforProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
   const { countries } = useCountries();
   const countriesNameArr = countries.map((nation: any) => nation.engName);
 

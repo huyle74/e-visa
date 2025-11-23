@@ -2,9 +2,10 @@ import { ChangeEvent, useState, useRef, useEffect } from "react";
 import { TextField, Box, Button, useMediaQuery } from "@mui/material";
 import { primary } from "@/app/libs/color-config";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { useCountries } from "@/app/contexts/countriesContext";
+import { useCountries } from "@/app/contexts/countriesProvider";
 
 import Flag from "@/app/component/common/nationFlag";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 interface MobileTextFieldProps {
   onChange: (
@@ -29,7 +30,7 @@ const MobileTextField = ({
   name,
   disabled,
 }: MobileTextFieldProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
   const { countries } = useCountries();
   const ref = useRef<HTMLDivElement | null>(null);
   const [selectNation, setSelectNation] = useState<Nation>({

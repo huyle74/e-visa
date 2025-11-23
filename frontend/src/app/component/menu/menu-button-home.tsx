@@ -5,11 +5,13 @@ import {
   Tooltip,
   Modal,
   Typography,
-  useMediaQuery,
   IconButton,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { deleteUserInfo } from "@/app/libs/getLocalStorage";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
+
+import styles from "./header.module.css";
 
 interface ButtonMenuProps {
   disabledSignIn?: boolean;
@@ -24,7 +26,7 @@ const ButtonMenuHomePage = ({
   disabledCreateAccount = false,
   userName,
 }: ButtonMenuProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   const [open, setOpen] = useState<boolean>(false);
 
@@ -39,44 +41,20 @@ const ButtonMenuHomePage = ({
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        marginLeft: "auto",
-        justifyContent: "space-between",
-        pr: matches ? 0 : 2,
-        fontWeight: 900,
-      }}
-    >
+    <Box className={styles.buttonContainer}>
       {loggedIn ? (
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            // border: "red 1px solid",
           }}
         >
-          <Box
-            sx={{
-              mr: matches ? 1 : 2,
-              fontSize: matches ? "0.9rem" : "1.5rem",
-            }}
-          >
-            Welcome {userName} !
+          <Box className={styles.welcomeUser}>Welcome {userName} !</Box>
+          <Box className={styles.button}>
+            <Button variant="contained" href="/dashboard" color="secondary">
+              DASHBOARD
+            </Button>
           </Box>
-          <Button
-            variant="contained"
-            href="/dashboard"
-            color="secondary"
-            sx={{
-              fontWeight: 1000,
-              mr: matches ? 0 : 1,
-            }}
-            size={matches ? "small" : "large"}
-          >
-            DASHBOARD
-          </Button>
           <Tooltip title="Logout">
             <IconButton
               size={matches ? "small" : "large"}
@@ -88,22 +66,17 @@ const ButtonMenuHomePage = ({
           </Tooltip>
         </Box>
       ) : (
-        <Box>
-          <Button
-            disabled={disabledSignIn}
-            variant="outlined"
-            href="/login"
-            sx={{ fontWeight: 1000, mr: 1 }}
-            size={matches ? "small" : "large"}
-          >
-            SIGN IN
-          </Button>
+        <Box sx={{ display: "flex" }}>
+          <Box className={styles.button}>
+            <Button disabled={disabledSignIn} variant="outlined" href="/login">
+              SIGN IN
+            </Button>
+          </Box>
+          <Box className={styles.button}></Box>
           <Button
             variant="contained"
             href="/signup"
             disabled={disabledCreateAccount}
-            sx={{ fontWeight: 1000, mr: 1 }}
-            size={matches ? "small" : "large"}
           >
             CREATE ACCOUNT
           </Button>

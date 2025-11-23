@@ -1,5 +1,6 @@
 import { MouseEventHandler } from "react";
-import { Box, Button, useMediaQuery } from "@mui/material";
+import { Box, Button } from "@mui/material";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 interface ButtonSubmitProps {
   onclickNext: MouseEventHandler<HTMLButtonElement>;
@@ -14,7 +15,7 @@ const ButtonSubmit = ({
   displayBackButton = false,
   loading = false,
 }: ButtonSubmitProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
       {displayBackButton ? (

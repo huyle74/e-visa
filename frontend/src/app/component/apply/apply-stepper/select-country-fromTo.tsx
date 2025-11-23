@@ -3,16 +3,16 @@ import {
   Box,
   SelectChangeEvent,
   CircularProgress,
-  useMediaQuery,
 } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import { useCountries } from "@/app/contexts/countriesContext";
+import { useCountries } from "@/app/contexts/countriesProvider";
 import AutoCompleteForm from "../autocompleteForm";
 import InputContainer from "../input-containter";
 import FormContainer from "../containerForm";
 import ButtonSubmit from "../button-submit-group";
 import { primary } from "@/app/libs/color-config";
 import { CountrySelectionDto } from "@/app/libs/types";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 type Select = (e: SelectChangeEvent, name: string) => void;
 
@@ -35,7 +35,7 @@ const CountrySelectionStep = ({
   onclickNext,
   totalPrice,
 }: CountrySelectionStepProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   const { fromCountries, toCountries } = useCountries();
   const fromCountry = fromCountries.map((nation: any) => {

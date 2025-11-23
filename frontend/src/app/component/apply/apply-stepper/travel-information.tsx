@@ -1,5 +1,5 @@
 import { ChangeEvent, MouseEventHandler } from "react";
-import { Box, SelectChangeEvent, useMediaQuery } from "@mui/material";
+import { Box, SelectChangeEvent } from "@mui/material";
 import AutoCompleteForm from "../autocompleteForm";
 import FormContainer from "../containerForm";
 import TextFieldApply from "../textField";
@@ -17,7 +17,8 @@ import RadioComponent from "../select-ratio";
 import DatePickerComponent from "../date-picker";
 import MobileTextField from "../mobileInput";
 import ButtonSubmit from "../button-submit-group";
-import { useCountries } from "@/app/contexts/countriesContext";
+import { useCountries } from "@/app/contexts/countriesProvider";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 type EventTextField = (
   e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -76,7 +77,7 @@ const TravelInformation = ({
   onClickNext,
   onClickBack,
 }: TravelInformationProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   const { countries } = useCountries();
   const countriesNameArr = countries.map((nation: any) => nation.engName);
@@ -248,7 +249,7 @@ const AccommodationForm = ({
   index,
   disabled,
 }: AccommodationFormProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   return (
     <Box sx={{ position: "relative", fontSize: matches ? "0.8rem" : "1rem" }}>

@@ -1,6 +1,7 @@
 import { ChangeEvent } from "react";
-import { Box, TextField, useMediaQuery } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import { primary } from "@/app/libs/color-config";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 interface TextFieldProps {
   title: string;
@@ -27,7 +28,7 @@ const TextFieldApply = ({
   value,
   disabled,
 }: TextFieldProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   return (
     <Box sx={{ width: "100%", p: matches ? 0.5 : 1.5 }}>

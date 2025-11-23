@@ -13,6 +13,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import styles from "./form.module.css";
 import { white } from "@/app/libs/color-config";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 interface FormRow {
   label: string;
@@ -27,7 +28,7 @@ export default function PasswordFormRow({
   checkEmpty,
   ...props
 }: FormRow) {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   const [hiddenPassword, setHiddenpassword] = useState<boolean>(false);
 

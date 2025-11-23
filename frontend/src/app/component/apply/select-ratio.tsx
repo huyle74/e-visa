@@ -1,10 +1,5 @@
-import {
-  Radio,
-  FormControlLabel,
-  RadioGroup,
-  Box,
-  useMediaQuery,
-} from "@mui/material";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
+import { Radio, FormControlLabel, RadioGroup, Box } from "@mui/material";
 import { ChangeEvent } from "react";
 
 interface RadioComponProps {
@@ -28,7 +23,7 @@ const RadioComponent = ({
   value,
   disabled,
 }: RadioComponProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   return (
     <Box sx={{ p: matches ? 0.5 : 1.5, fontSize: matches ? "0.8rem" : "1rem" }}>

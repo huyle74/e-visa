@@ -1,37 +1,22 @@
 import { Box, IconButton, useMediaQuery } from "@mui/material";
-import Image from "next/image";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import EmailIcon from "@mui/icons-material/Email";
 import XIcon from "@mui/icons-material/X";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import style from "./footer.module.css";
 import { logoWhite } from "@/app/libs/image-config";
-import { white, secondary } from "@/app/libs/color-config";
+import { secondary } from "@/app/libs/color-config";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 const arrayText = Array.from("My");
 const visaText = Array.from("E-visa");
 
 export default function Footer() {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   return (
-    <Box
-      sx={{
-        backgroundColor: "#21130d",
-        color: white,
-        padding: `${matches ? "1rem 0 4rem 0" : "5rem 0 7rem 0"}`,
-        position: "relative",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          width: "100%",
-          justifyContent: "center",
-          height: `${matches ? "30%" : "50%"}`,
-          alignItems: "center",
-        }}
-      >
+    <Box className={style.footerDiv}>
+      <Box className={style.textContainer}>
         {arrayText.map((letter, i) => (
           <Box className="lienlucbaoFooter" key={i}>
             {letter}
@@ -45,20 +30,8 @@ export default function Footer() {
           ))}
         </Box>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: `${matches ? "column" : "row"}`,
-        }}
-      >
-        <Image
-          alt="logo"
-          src={logoWhite}
-          width={matches ? 150 : 450}
-          height={matches ? 50 : 150}
-        />
+      <Box className={style.infoContainer}>
+        <img className={style.logoImage} alt="logo" src={logoWhite} />
         <Box
           sx={{
             display: "flex",

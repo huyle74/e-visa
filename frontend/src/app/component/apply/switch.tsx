@@ -1,5 +1,6 @@
 import { ChangeEvent } from "react";
-import { Switch, Box, useMediaQuery } from "@mui/material";
+import { Switch, Box } from "@mui/material";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 interface SwitchYesNoProps {
   content: string;
@@ -14,7 +15,7 @@ const SwitchYesNo = ({
   onChange,
   disabled,
 }: SwitchYesNoProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   return (
     <Box

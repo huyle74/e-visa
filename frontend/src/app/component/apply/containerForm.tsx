@@ -1,6 +1,7 @@
 import { Box, useMediaQuery } from "@mui/material";
 import { ReactNode } from "react";
 import { primary } from "@/app/libs/color-config";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 interface FormContainerProps {
   children: ReactNode;
@@ -15,7 +16,7 @@ const FormContainer = ({
   note = "",
   width = 100,
 }: FormContainerProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   return (
     <Box

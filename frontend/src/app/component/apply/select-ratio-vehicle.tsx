@@ -6,12 +6,12 @@ import {
   FormControlLabel,
   styled,
   RadioProps,
-  useMediaQuery,
 } from "@mui/material";
 import { teal } from "@mui/material/colors";
 import FlightIcon from "@mui/icons-material/Flight";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import DirectionsBoatIcon from "@mui/icons-material/DirectionsBoat";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 const primary = teal[800];
 
@@ -30,7 +30,7 @@ const SelectDepartPort = ({
   name,
   disabled,
 }: SelectPortProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   const labelConvert = [
     {

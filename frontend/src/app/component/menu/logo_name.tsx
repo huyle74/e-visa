@@ -1,10 +1,11 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Box, useMediaQuery } from "@mui/material";
 import { primary } from "@/app/libs/color-config";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
+import styles from "./header.module.css";
 
 const LogoTitle = () => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   const titleStyle = {
     fontWeight: 900,
@@ -12,11 +13,10 @@ const LogoTitle = () => {
   };
   return (
     <Link href={"/"} style={{ display: "flex", alignItems: "center" }}>
-      <Image
+      <img
         src={"https://darkred-crane-929274.hostingersite.com/logo.png"}
         alt="logo"
-        width={matches ? 100 : 170}
-        height={matches ? 40 : 60}
+        className={styles.logoImage}
       />
       {!matches && (
         <Box

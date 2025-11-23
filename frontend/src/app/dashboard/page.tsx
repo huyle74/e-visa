@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { Box, Button, Chip, useMediaQuery } from "@mui/material";
+import { Box, Button, Chip } from "@mui/material";
 import { useRouter } from "next/navigation";
 import {
   DataGrid,
@@ -21,6 +21,7 @@ import ModalWithButton from "../component/common/modalWithButton";
 import { getUserInfo } from "../libs/getLocalStorage";
 import { ApplicationStatus } from "../libs/types";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { useMobileMedia } from "../contexts/mobileResponsiveProvider";
 
 interface Row {
   id: string;
@@ -31,7 +32,7 @@ interface Row {
 }
 
 const Dashboard = () => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
   const router = useRouter();
   const [user, setUser] = useState<any>();
   const [applyInfo, setApplyInfo] = useState({
@@ -180,67 +181,71 @@ const Dashboard = () => {
 
   return (
     <AuthProvider>
-      <MenuDashboard />
-      <StateBar
-        incompleteApplied={applyInfo.incompleteApplied}
-        totalApplied={applyInfo.totalApplied}
-      />
       <Box
-        sx={{
-          width: matches ? "99vw" : "90vw",
-          m: "auto",
-          mb: 3,
-          mt: 4,
-          display: "flex",
-          flexDirection: "column",
-        }}
+        sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
       >
-        {Array.from(selected.ids).length !== 0 && (
-          <Box sx={{ ml: "auto", mb: 1 }}>
-            <Button
-              size="small"
-              variant="contained"
-              color="secondary"
-              onClick={handleOpen}
-            >
-              Delete
-            </Button>
-          </Box>
-        )}
-        <DataGrid
-          sx={{ cursor: "pointer" }}
-          rows={rows}
-          onRowClick={handleRowClick}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 10,
+        <MenuDashboard />
+        <StateBar
+          incompleteApplied={applyInfo.incompleteApplied}
+          totalApplied={applyInfo.totalApplied}
+        />
+        <Box
+          sx={{
+            width: matches ? "99vw" : "90vw",
+            m: "auto",
+            mb: 3,
+            mt: 4,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {Array.from(selected.ids).length !== 0 && (
+            <Box sx={{ ml: "auto", mb: 1 }}>
+              <Button
+                size="small"
+                variant="contained"
+                color="secondary"
+                onClick={handleOpen}
+              >
+                Delete
+              </Button>
+            </Box>
+          )}
+          <DataGrid
+            sx={{ cursor: "pointer" }}
+            rows={rows}
+            onRowClick={handleRowClick}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
+                },
               },
-            },
-          }}
-          pageSizeOptions={[10]}
-          onRowSelectionModelChange={setSelected}
-          checkboxSelection
-          rowSelection
-          disableRowSelectionOnClick
+            }}
+            pageSizeOptions={[10]}
+            onRowSelectionModelChange={setSelected}
+            checkboxSelection
+            rowSelection
+            disableRowSelectionOnClick
+            loading={loading}
+            slotProps={{
+              loadingOverlay: {
+                variant: "linear-progress",
+                noRowsVariant: "skeleton",
+              },
+            }}
+          />
+        </Box>
+        <Footer />
+        <ModalWithButton
           loading={loading}
-          slotProps={{
-            loadingOverlay: {
-              variant: "linear-progress",
-              noRowsVariant: "skeleton",
-            },
-          }}
+          onClose={handleClose}
+          open={openModal}
+          title={"Are you sure to delete these applications?"}
+          onClick={handleDeleteForm}
         />
       </Box>
-      <Footer />
-      <ModalWithButton
-        loading={loading}
-        onClose={handleClose}
-        open={openModal}
-        title={"Are you sure to delete these applications?"}
-        onClick={handleDeleteForm}
-      />
     </AuthProvider>
   );
 };

@@ -1,8 +1,7 @@
-import { Box, Button, useMediaQuery } from "@mui/material";
-import PersonIcon from "@mui/icons-material/Person";
+import { Box, Button } from "@mui/material";
 import ButtonMenuHomePage from "./menu-button-home";
 import LogoTitle from "./logo_name";
-import { white } from "@/app/libs/color-config";
+import styles from "./header.module.css";
 
 interface HeaderMenuProps {
   loginDisable?: boolean;
@@ -20,18 +19,8 @@ export default function HeaderMenu({
   logged,
   userName,
 }: HeaderMenuProps) {
-  const matches = useMediaQuery("(max-width:600px)");
-
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        height: `${matches ? "7vh" : "13vh"}`,
-        backgroundColor: white,
-        pl: 1,
-      }}
-    >
+    <Box className={styles.headerContainer}>
       <LogoTitle />
       <ButtonMenuHomePage
         disabledCreateAccount={createAccDisable}

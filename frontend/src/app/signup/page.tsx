@@ -1,6 +1,6 @@
 "use client";
 
-import { CountriesProvider } from "../contexts/countriesContext";
+import { CountriesProvider } from "../contexts/countriesProvider";
 import HeaderMenu from "../component/menu/header-menu";
 import CreateAccoutForm from "../component/form-account/createAccountForm";
 import Footer from "../component/footer/footer";

@@ -1,4 +1,5 @@
 "use client";
+
 import type {} from "@mui/lab/themeAugmentation";
 import { createTheme } from "@mui/material";
 import { primary, white } from "../libs/color-config";
@@ -17,9 +18,7 @@ const theme = createTheme({
   },
   components: {
     MuiUseMediaQuery: {
-      defaultProps: {
-        noSsr: true,
-      },
+      defaultProps: {},
     },
     MuiButton: {
       styleOverrides: {

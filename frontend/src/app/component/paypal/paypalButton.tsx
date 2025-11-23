@@ -1,4 +1,4 @@
-import { Box, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 import {
   PayPalButtons,
   PayPalScriptProvider,
@@ -9,6 +9,7 @@ import { paypalClientId } from "@/app/server-side/envLoader";
 import { ApplicationStatus } from "@/app/libs/types";
 import EmailIcon from "@mui/icons-material/Email";
 import { primary } from "@/app/libs/color-config";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 interface PaypalProps {
   price: number | string | undefined;
@@ -23,7 +24,7 @@ export default function PaypalButton({
   onApprove,
   didPayed,
 }: PaypalProps) {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
   const initialOptions: ReactPayPalScriptOptions = {
     clientId: paypalClientId,
   };

@@ -3,6 +3,7 @@ import { OutlinedInput, FormHelperText, useMediaQuery } from "@mui/material";
 import FormControl, { useFormControl } from "@mui/material/FormControl";
 import styles from "./form.module.css";
 import { white } from "@/app/libs/color-config";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 interface FormRow {
   label: string;
@@ -19,7 +20,7 @@ export default function TextFormRow({
   checkEmpty,
   ...props
 }: FormRow) {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
   function ErrorMessage() {
     const { filled } = useFormControl() || {};
     const helperText = useMemo(() => {

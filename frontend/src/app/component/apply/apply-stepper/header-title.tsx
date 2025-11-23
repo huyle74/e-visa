@@ -14,6 +14,7 @@ import {
 import { stepConnectorClasses } from "@mui/material/StepConnector";
 import { styled } from "@mui/material/styles";
 import { FC, ReactElement } from "react";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 const steps = [
   "Select Countries",
@@ -30,7 +31,7 @@ interface Data {
 }
 
 const HeaderTitleApplyStepper: FC<Data> = ({ data, onClick }) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   const ColorLibConnector = styled(StepConnector)(({ theme }) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {

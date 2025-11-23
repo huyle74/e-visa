@@ -4,7 +4,7 @@ import { eligibilityEntries } from "@/app/libs/entries-input-visa";
 import { EligibilityInputDto } from "@/app/libs/types";
 import { Box, SelectChangeEvent } from "@mui/material";
 import AutoCompleteForm from "../autocompleteForm";
-import { useCountries } from "@/app/contexts/countriesContext";
+import { useCountries } from "@/app/contexts/countriesProvider";
 import FormContainer from "../containerForm";
 import { getEligibilltyEnum } from "@/app/server-side/static-data";
 import ButtonSubmit from "../button-submit-group";

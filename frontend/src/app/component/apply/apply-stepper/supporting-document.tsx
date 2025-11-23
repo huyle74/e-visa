@@ -1,10 +1,11 @@
 import { ChangeEvent, DragEvent, MouseEventHandler } from "react";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 import InputContainer from "../input-containter";
 import FormContainer from "../containerForm";
 import FileInput from "../fileInput";
 import { SupportingDocumentInputDto } from "@/app/libs/types";
 import ButtonSumbit from "../button-submit-group";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 type EventInput = (e: ChangeEvent<HTMLInputElement>) => void;
 type EventDrop = (e: DragEvent<HTMLInputElement>) => void;
@@ -48,7 +49,7 @@ const SupportingDocument = ({
   onClickNext,
   loading,
 }: SupportingDocumentProps) => {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   return (
     <Box sx={{ fontSize: matches ? "0.8rem" : "1rem" }}>

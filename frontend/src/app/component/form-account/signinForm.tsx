@@ -1,8 +1,9 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Box, TextField, Button, Divider, useMediaQuery } from "@mui/material";
+import { Box, TextField, Button, Divider } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { white, secondary } from "@/app/libs/color-config";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 interface actionForm {
   submit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -17,7 +18,7 @@ export default function SigninForm({
   errorMessage,
   googleApi,
 }: actionForm) {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   const router = useRouter();
   const textFieldStyles = {

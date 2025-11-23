@@ -1,5 +1,5 @@
 import useForkRef from "@mui/utils/useForkRef";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { CalendarIcon, ClearIcon } from "@mui/x-date-pickers/icons";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -14,6 +14,7 @@ import { Unstable_PickersSectionList as PickersSectionList } from "@mui/x-date-p
 import { usePickerContext } from "@mui/x-date-pickers/hooks";
 import dayjs, { Dayjs } from "dayjs";
 import { teal } from "@mui/material/colors";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 
 const primary = teal[800];
 
@@ -32,7 +33,7 @@ export default function DatePickerComponent({
   name,
   disabled,
 }: DatePickerComponentProps) {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
 
   const BrowserFieldRoot = styled("div", {
     name: "BrowserField",

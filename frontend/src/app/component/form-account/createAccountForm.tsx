@@ -19,6 +19,7 @@ import {
   Modal,
   useMediaQuery,
 } from "@mui/material";
+import { useMobileMedia } from "@/app/contexts/mobileResponsiveProvider";
 import axios from "axios";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import TextFormRow from "./textForm-row";
@@ -27,7 +28,7 @@ import PasswordFormRow from "./textPassword-row";
 import styles from "./form.module.css";
 import { primary, secondary, white } from "@/app/libs/color-config";
 import { backend_url } from "@/app/server-side/envLoader";
-import { useCountries } from "@/app/contexts/countriesContext";
+import { useCountries } from "@/app/contexts/countriesProvider";
 
 interface Country {
   code: string;
@@ -47,7 +48,7 @@ interface Account {
 }
 
 export default function CreateAccoutForm() {
-  const matches = useMediaQuery("(max-width:600px)");
+  const { matches } = useMobileMedia();
   const { countries } = useCountries();
   const [nation, setNation] = useState("");
   const [nationData, setNationData] = useState<Country>({
