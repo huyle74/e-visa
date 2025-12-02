@@ -1,10 +1,11 @@
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client"
+  engineType = "client"
+  output     = "../../../generate/prisma"
 }
 
 model User {
@@ -21,20 +22,22 @@ model User {
   verifyToken String?       @unique
   application Application[]
 
-  managerId Int?
-  manager   Admin? @relation(fields: [managerId], references: [id])
+  managerId        Int?
+  manager          Admin?             @relation(fields: [managerId], references: [id])
+  NotificationUser NotificationUser[]
 
   @@index([managerId])
   @@index([id])
 }
 
 model Admin {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
-  manage   User[]
-  role     Role   @default(ADMIN)
+  id            Int             @id @default(autoincrement())
+  name          String
+  email         String          @unique
+  password      String
+  manage        User[]
+  role          Role            @default(ADMIN)
+  Notifications Notifications[]
 }
 
 enum Role {

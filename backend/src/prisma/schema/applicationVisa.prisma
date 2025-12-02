@@ -1,19 +1,19 @@
 model Application {
-    correlationId String   @id @default(uuid())
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
+  correlationId String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-    userId String
+  userId String
 
-    fromCountry String
-    toCountry   String
+  fromCountry String
+  toCountry   String
 
-    price   Int
-    payment Boolean? @default(false)
+  price   Int
+  payment Boolean? @default(false)
 
-    Eligibility        Eligibility?
-    ApplyInformation   ApplyInformation?
-    travelInformation  TravelInformation?
-    supportingDocument SupportingDocument[]
-    user               User                 @relation(fields: [userId], references: [id])
+  Eligibility        Eligibility?
+  ApplyInformation   ApplyInformation?
+  travelInformation  TravelInformation?
+  supportingDocument SupportingDocument[]
+  user               User                 @relation(fields: [userId], references: [id])
 }

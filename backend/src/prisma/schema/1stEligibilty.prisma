@@ -1,40 +1,40 @@
 model Eligibility {
-    id                   Int          @id @default(autoincrement())
-    applyAt              String
-    currentLocation      String
-    documentType         DocumentType
-    inputCountryPassport String
-    numberOfEntries      String
-    visaType             visaType
-    visitPurpose         VisitPurpose
-    createdAt            DateTime     @default(now())
+  id                   Int          @id @default(autoincrement())
+  applyAt              String
+  currentLocation      String
+  documentType         DocumentType
+  inputCountryPassport String
+  numberOfEntries      String
+  visaType             visaType
+  visitPurpose         VisitPurpose
+  createdAt            DateTime     @default(now())
 
-    applicationId String      @unique
-    application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
+  applicationId String      @unique
+  application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
 
-    @@index([id])
+  @@index([id])
 }
 
 enum DocumentType {
-    ORDINARY_TRAVEL_DOCUMENT
-    DIPLOMATIC_PASSPORT
-    OFFICIAL_SERVICE_PASSPORT
-    PUBLIC_AFFAIRS
+  ORDINARY_TRAVEL_DOCUMENT
+  DIPLOMATIC_PASSPORT
+  OFFICIAL_SERVICE_PASSPORT
+  PUBLIC_AFFAIRS
 }
 
 enum visaType {
-    TOURIST
-    TRANSIT
-    NON_IMMIGRANT
-    SMART
-    COURTESY
-    LTR
-    DTV
-    THAILAND_PRIVILEGE_CARD
+  TOURIST
+  TRANSIT
+  NON_IMMIGRANT
+  SMART
+  COURTESY
+  LTR
+  DTV
+  THAILAND_PRIVILEGE_CARD
 }
 
 enum VisitPurpose {
-    VISIT_FAMILY
-    TRAVEL
-    FOR_WORK
+  VISIT_FAMILY
+  TRAVEL
+  FOR_WORK
 }

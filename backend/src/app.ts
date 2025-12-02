@@ -21,7 +21,7 @@ const handleAdminNext = adminNextApp.getRequestHandler();
 
 const ADMIN_HOST = process.env.ADMIN_HOST;
 
-const createServer = async () => {
+const initialServer = async () => {
   const app = express();
 
   app.use(cors(corsOption));
@@ -45,4 +45,4 @@ const createServer = async () => {
   return app;
 };
 
-export default createServer;
+export default initialServer;

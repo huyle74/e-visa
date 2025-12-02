@@ -1,27 +1,27 @@
 model SupportingDocument {
-    id            Int         @id @default(autoincrement())
-    applicationId String
-    application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
-    type          Document
-    originalName  String
-    mimeType      String
-    sizeBytes     Int
-    storageKey    String      @unique
-    fileUrl       String?     @db.Text
-    sha256        String?
-    meta          Json?
-    uploadedAt    DateTime    @default(now())
+  id            Int         @id @default(autoincrement())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
+  type          Document
+  originalName  String
+  mimeType      String
+  sizeBytes     Int
+  storageKey    String      @unique
+  fileUrl       String?     @db.Text
+  sha256        String?
+  meta          Json?
+  uploadedAt    DateTime    @default(now())
 
-    @@unique([applicationId, type], name: "applicationId_type")
-    @@index([applicationId])
-    @@index([uploadedAt])
+  @@unique([applicationId, type], name: "applicationId_type")
+  @@index([applicationId])
+  @@index([uploadedAt])
 }
 
 enum Document {
-    BIODATA
-    PHOTOGRAPH
-    CURRENT_LOCATION
-    BOOKING_CONFIRMATION
-    PROOF_OF_ACCOMMODATION
-    FINANCIAL_EVIDENCE
+  BIODATA
+  PHOTOGRAPH
+  CURRENT_LOCATION
+  BOOKING_CONFIRMATION
+  PROOF_OF_ACCOMMODATION
+  FINANCIAL_EVIDENCE
 }
