@@ -1,13 +1,8 @@
 model ApplyInformation {
-  id            Int         @id @default(autoincrement())
-  applicationId String      @unique
-  application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
-
-  // FILEs
-  biodata    Json?
-  photograph Json?
-
-  // personalInfo
+  id                 Int                @id @default(autoincrement())
+  applicationId      String             @unique
+  biodata            String?            @db.LongText
+  photograph         String?            @db.LongText
   title              String
   sex                Sex
   firstName          String
@@ -22,36 +17,22 @@ model ApplyInformation {
   birthDate          DateTime
   maritalStatus      MaritalStatus
   anotherNationality String
-
-  // travelDocument
-  documentType   TravelDocumentType
-  documentNumber String
-  issuesPlace    String
-  issuesDate     DateTime
-  expiryDate     DateTime
-
-  // address
-  homeAddress    String
-  addressCountry String
-  addressState   String
-  addressCity    String
-  currentAddress Boolean
-
-  // employment
-  occupation   Occupation
-  company      String
-  annualIncome AnnualIncome
+  documentType       TravelDocumentType
+  documentNumber     String
+  issuesPlace        String
+  issuesDate         DateTime
+  expiryDate         DateTime
+  homeAddress        String
+  addressCountry     String
+  addressState       String
+  addressCity        String
+  currentAddress     Boolean
+  occupation         Occupation
+  company            String
+  annualIncome       AnnualIncome
+  application        Application        @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
 
   @@index([id])
-}
-
-// ---- Enums ----
-enum Title {
-  MR
-  MISS
-  MRS
-  MASTER
-  OTHER
 }
 
 enum Sex {

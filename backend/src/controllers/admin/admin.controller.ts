@@ -7,7 +7,7 @@ import {
 } from "@/utils/response.helper";
 import adminService from "@/services/admin/admin.service";
 import { AdminDataDto } from "@/dto/admin.dto";
-import { Document } from "@prisma/client";
+import { Document } from "@/generate/prisma";
 import { SortOrder, SortBy } from "@/services/admin/admin.dto";
 import fs from "fs";
 
@@ -142,6 +142,32 @@ const adminController = {
       } else {
         responseFailed({ res, message: "file not found" });
       }
+    } catch (error: any) {
+      console.error(error);
+      const message = error?.message;
+      return responseError({ res, message });
+    }
+  },
+  // ANNOUNCE VISA RESULT
+  async pushResult(req: Request, res: Response) {
+    try {
+      const admin: AdminDataDto = (req as any).user;
+      const data = req.body;
+
+      const result = await adminService.postVisaResult({
+        adminId: admin.id,
+        applicationId: data.applicationId,
+        userId: data.userId,
+        result: data.result,
+      });
+      console.log(result);
+      if (!result)
+        return responseFailed({
+          res,
+          message: "Failed to submit visa result to customer",
+        });
+
+      return responseSuccess({ res, data: result });
     } catch (error: any) {
       console.error(error);
       const message = error?.message;

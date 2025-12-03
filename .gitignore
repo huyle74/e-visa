@@ -16,4 +16,4 @@ deployment
 tsconfig.json
 README.md
 
-backend/generate
+.vscode/settings.json

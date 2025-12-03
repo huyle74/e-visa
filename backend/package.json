@@ -6,7 +6,7 @@
     "seed": "node --max-old-space-size=6144 -r ts-node/register src/prisma/seed/fromTo.ts"
   },
   "prisma": {
-    "schema": "src/prisma"
+    "schema": "src/prisma/schema"
   },
   "type": "commonjs",
   "nodemonConfig": {

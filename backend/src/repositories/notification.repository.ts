@@ -1,9 +1,18 @@
-import { Notifications, NotificationUser } from "@prisma/client";
-
+import { NotificationUser } from "@/generate/prisma";
+import prisma from "@/prisma/prisma";
 const notificationRepo = {
-  async createUserNotify() {
+  async createUseNotification(
+    data: Omit<NotificationUser, "createAt" | "readAt" | "id">
+  ) {
     try {
-    } catch (error) {}
+      const createNotification = await prisma.notificationUser.create({
+        data,
+      });
+      return createNotification;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to created user notification");
+    }
   },
 };
 

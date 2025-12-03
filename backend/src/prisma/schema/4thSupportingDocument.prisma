@@ -1,16 +1,16 @@
 model SupportingDocument {
   id            Int         @id @default(autoincrement())
   applicationId String
-  application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
   type          Document
   originalName  String
   mimeType      String
   sizeBytes     Int
-  storageKey    String      @unique
-  fileUrl       String?     @db.Text
+  storageKey    String
+  fileUrl       String?     @db.VarChar(1000)
   sha256        String?
-  meta          Json?
+  meta          String?     @db.LongText
   uploadedAt    DateTime    @default(now())
+  application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
 
   @@unique([applicationId, type], name: "applicationId_type")
   @@index([applicationId])

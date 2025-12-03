@@ -1,28 +1,23 @@
 model TravelInformation {
-  id            Int         @id @default(autoincrement())
-  applicationId String      @unique
-  application   Application @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
-
-  // travelInfo
-  arrivalDate           DateTime
-  departureDate         DateTime
-  country               String
-  arrivalPort           String
-  hadVisited            Boolean
-  didApply              Boolean
-  partOfTour            Boolean
-  transportationVehicle String?
-  transportMode         String
-  shipName              String
-  fightNo               String
-  vehicleNumber         String
-
-  // Accommodation
-  accommodations          Accommodation[]
+  id                      Int             @id @default(autoincrement())
+  applicationId           String          @unique
+  arrivalDate             DateTime
+  departureDate           DateTime
+  country                 String
+  arrivalPort             String
+  hadVisited              Boolean
+  didApply                Boolean
+  partOfTour              Boolean
+  transportationVehicle   String?
+  transportMode           String
+  shipName                String
+  fightNo                 String
+  vehicleNumber           String
   additionalAccommodation Boolean         @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+  accommodations          Accommodation[]
+  application             Application     @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
 
   @@index([id])
 }
@@ -30,18 +25,15 @@ model TravelInformation {
 model Accommodation {
   id                  Int               @id @default(autoincrement())
   travelInformationId Int
-  travelInformation   TravelInformation @relation(fields: [travelInformationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  // Accommodation information
-  type      String
-  name      String
-  street    String
-  city      String
-  contactNo String
-  duration  String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  type                String
+  name                String
+  street              String
+  city                String
+  contactNo           String
+  duration            String
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  travelInformation   TravelInformation @relation(fields: [travelInformationId], references: [id], onDelete: Cascade)
 
   @@index([travelInformationId])
 }

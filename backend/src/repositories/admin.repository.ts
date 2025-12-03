@@ -1,6 +1,5 @@
 import prisma from "@/prisma/prisma";
-import { Document, Prisma } from "@prisma/client";
-import { Role } from "@prisma/client";
+import { Document, Prisma, Role } from "@/generate/prisma";
 import { paginationHelper } from "@/utils/paginationHelper";
 import { SortOrder, SortBy } from "@/services/admin/admin.dto";
 
@@ -24,17 +23,27 @@ const adminRepos = {
   },
   async adminCanAccessApplication(adminId: number, applicationId: string) {
     try {
-      const check = await prisma.user.findFirst({
-        where: {
-          managerId: adminId,
-          application: { some: { correlationId: applicationId } },
-        },
-      });
-      if (!check) throw new Error("Application not found");
+      const admin = await prisma.admin.findFirst({ where: { id: adminId } });
 
-      return check;
+      console.log(admin);
+
+      if (admin?.role !== "SUPER_ADMIN") {
+        const check = await prisma.user.findFirst({
+          where: {
+            managerId: adminId,
+            application: { some: { correlationId: applicationId } },
+          },
+        });
+        if (!check)
+          throw new Error(
+            "You do not have authority to access this application"
+          );
+
+        return check;
+      }
+      return true;
     } catch (error) {
-      throw new Error("You do not have authority to access this application");
+      throw new Error("Error");
     }
   },
   async findAdminByEmail(email: string) {

@@ -1,24 +1,24 @@
 import { Server } from "socket.io";
-import { Server as HttpServer } from "http";
-
+import { Server as httpServer } from "http";
 import corsOption from "@/config/corsConfig";
-import notificationHandler from "./notification.socket";
 
-export default function socket(server: HttpServer) {
-  try {
-    const io = new Server<
-      ClientToServerEvents,
-      ServerToClientEvents,
-      InterServerEvents,
-      SocketData
-    >(server, { cors: corsOption });
+let io: Server;
 
-    notificationHandler(io);
+export function initSocket(server: httpServer) {
+  io = new Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >(server, { cors: corsOption });
 
-    return io;
-  } catch (error) {
-    console.error(error);
-  }
+  return io;
+}
+
+export function getIO() {
+  if (!io) throw new Error("Socket IO not init yet");
+
+  return io;
 }
 
 interface ServerToClientEvents {
@@ -26,15 +26,12 @@ interface ServerToClientEvents {
   basicEmit: (a: number, b: string, c: Buffer) => void;
   withAck: (d: string, callback: (e: number) => void) => void;
 }
-
 interface ClientToServerEvents {
   hello: () => void;
 }
-
 interface InterServerEvents {
   ping: () => void;
 }
-
 interface SocketData {
   name: string;
   age: number;

@@ -3,14 +3,13 @@ import {
   visaType,
   DocumentType,
   VisitPurpose,
-  Title,
   Sex,
   MaritalStatus,
   TravelDocumentType,
   Occupation,
   AnnualIncome,
-} from "@prisma/client";
-import { Country } from "@prisma/client";
+  Country,
+} from "@/generate/prisma";
 
 export const staticService = {
   async getAllCountries() {
@@ -45,7 +44,7 @@ export const staticService = {
   },
 
   async getApplicationInformationOption() {
-    const title = Object.values(Title);
+    const title = ["Mr.", "Ms."];
     const sex = Object.values(Sex);
     const maritalStatus = Object.values(MaritalStatus);
     const travelDocumentType = Object.values(TravelDocumentType);

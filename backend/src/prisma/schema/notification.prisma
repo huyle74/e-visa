@@ -1,23 +1,28 @@
 model Notifications {
-  id                Int                @id @default(autoincrement())
-  type              NotificationType
-  actorId           Admin              @relation(fields: [adminId], references: [id])
-  createAt          DateTime           @default(now())
-  adminId           Int
-  notificationUsers NotificationUser[]
+  id               Int                @id @default(autoincrement())
+  type             NotificationType
+  adminId          Int
+  createAt         DateTime           @default(now()) @db.DateTime(0)
+  NotificationUser NotificationUser[]
+  actorId          Admin              @relation(fields: [adminId], references: [id], onUpdate: Restrict, map: "notifications_admin_fk")
+
+  @@index([adminId], map: "fk_notifications_admin_id_001")
 }
 
 model NotificationUser {
-  id              String        @id() @default(uuid())
-  user            String
-  userId          User          @relation(fields: [user], references: [id])
-  status          Status
-  message         String
-  readAt          DateTime?
-  title           String
-  notificationId  Notifications @relation(fields: [notificationsId], references: [id])
-  createAt        DateTime      @default(now())
+  id              String        @id @default(uuid()) @db.Char(36)
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "notificationuser_user_fk")
+  status          Status?       @default(UNREAD)
+  message         String        @db.Text
+  readAt          DateTime?     @db.DateTime(0)
+  title           String        @db.VarChar(255)
   notificationsId Int
+  createAt        DateTime      @default(now()) @db.DateTime(0)
+  Notifications   Notifications @relation(fields: [notificationsId], references: [id], onUpdate: Restrict, map: "notificationuser_notifications_fk")
+
+  @@index([notificationsId], map: "notificationuser_notifications_fk")
+  @@index([userId], map: "userId")
 }
 
 enum NotificationType {

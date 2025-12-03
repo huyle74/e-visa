@@ -1,5 +1,4 @@
-import { Role } from "@prisma/client";
-
+import { Role } from "@/generate/prisma";
 export interface AdminDataDto {
   id: number;
   name: String;

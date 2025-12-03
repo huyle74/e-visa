@@ -4,34 +4,38 @@ model Country {
   engName       String
   iso2          String   @unique
   countryCode   String?  @unique
-  user          User[]
+  from          Int      @default(0) @db.TinyInt
+  to            Int      @default(0) @db.TinyInt
+  governmentFee Decimal? @db.Decimal(11, 2)
+  stayDays      Int?
   city          City[]
   state         State[]
-  from          Boolean  @default(false)
-  to            Boolean  @default(false)
-  governmentFee Decimal? @db.Decimal(10, 2)
-  stayDays      Int?
+  user          User[]
 }
 
 model City {
   id         Int     @id @unique
   nationIso2 String
-  countries  Country @relation(fields: [nationIso2], references: [iso2])
   country    String
   state      String
   city       String
+  countries  Country @relation(fields: [nationIso2], references: [iso2])
+
+  @@index([nationIso2], map: "City_nationIso2_fkey")
 }
 
 model State {
   id         Int     @id @unique
   nationIso2 String
-  countries  Country @relation(fields: [nationIso2], references: [iso2])
   country    String
   state      String
+  countries  Country @relation(fields: [nationIso2], references: [iso2])
+
+  @@index([nationIso2], map: "State_nationIso2_fkey")
 }
 
 model Price {
-  id   Int    @id @default(autoincrement())
-  type String
-  fee  Int
+  id   Int     @id
+  type String  @db.VarChar(100)
+  fee  Decimal @db.Decimal(10, 2)
 }

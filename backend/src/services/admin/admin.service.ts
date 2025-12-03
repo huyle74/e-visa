@@ -1,8 +1,10 @@
 import adminRepos from "@/repositories/admin.repository";
-import { Document, Role } from "@prisma/client";
+import notificationRepo from "@/repositories/notification.repository";
+import { Document, Role } from "@/generate/prisma";
 import { AdminDataDto } from "@/dto/admin.dto";
 import { fileConvert } from "@/utils/file";
-import { SortOrder, SortBy } from "./admin.dto";
+import { SortOrder, SortBy, ResultsType, PostVisaResultDto } from "./admin.dto";
+import { getIO } from "@/socket/io";
 
 const adminService = {
   async getListCostumers(
@@ -148,6 +150,37 @@ const adminService = {
     );
 
     return document;
+  },
+
+  // ADMIN ANNOUNCE VISA RESULT
+  async postVisaResult(data: PostVisaResultDto) {
+    let message: string = "";
+    const { adminId, applicationId, result, userId } = data;
+
+    await adminRepos.adminCanAccessApplication(Number(adminId), applicationId);
+
+    if (result === ResultsType.SUCCESS) {
+      message =
+        "Great news! Your visa has been successfully approved. Please check you email to receive the visa document";
+    }
+    if (result === ResultsType.FAILED) {
+      message = "Sorry! Your visa application has been declined.";
+    }
+
+    console.log(userId);
+
+    const newNotification = await notificationRepo.createUseNotification({
+      message,
+      title: "Visa Result",
+      notificationsId: 1,
+      userId,
+      status: "UNREAD",
+    });
+    if (newNotification) {
+      const io = getIO();
+    }
+
+    return newNotification;
   },
 };
 

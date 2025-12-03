@@ -1,6 +1,7 @@
 import initialServer from "./app";
 import { createServer } from "http";
-import socket from "./socket";
+import { initSocket } from "./socket/io";
+import registerSocketHandlers from "./socket/handlers";
 
 import dotenv from "dotenv";
 
@@ -10,9 +11,10 @@ const port = process.env.PORT || 8080;
 (async () => {
   const app = await initialServer();
   const server = createServer(app);
-  socket(server);
+  const io = initSocket(server);
+  registerSocketHandlers(io);
 
   server.listen(port, () => {
-    console.log("Server running at http://localhost:", port);
+    console.log(`Server running at http://localhost:${port}`);
   });
 })();
