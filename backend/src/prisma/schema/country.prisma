@@ -14,7 +14,7 @@ model Country {
 }
 
 model City {
-  id         Int     @id @unique
+  id         Int     @id
   nationIso2 String
   country    String
   state      String
@@ -25,7 +25,7 @@ model City {
 }
 
 model State {
-  id         Int     @id @unique
+  id         Int     @id
   nationIso2 String
   country    String
   state      String

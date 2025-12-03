@@ -15,7 +15,7 @@ model TravelInformation {
   vehicleNumber           String
   additionalAccommodation Boolean         @default(false)
   createdAt               DateTime        @default(now())
-  updatedAt               DateTime        @updatedAt
+  updatedAt               DateTime        @default(now()) @updatedAt
   accommodations          Accommodation[]
   application             Application     @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
 
@@ -32,7 +32,7 @@ model Accommodation {
   contactNo           String
   duration            String
   createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
+  updatedAt           DateTime          @default(now()) @updatedAt
   travelInformation   TravelInformation @relation(fields: [travelInformationId], references: [id], onDelete: Cascade)
 
   @@index([travelInformationId])

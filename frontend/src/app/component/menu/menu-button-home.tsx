@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import {
   Box,
   Button,
@@ -18,6 +18,7 @@ interface ButtonMenuProps {
   disabledCreateAccount?: boolean;
   loggedIn?: boolean;
   userName?: string;
+  children: ReactNode;
 }
 
 const ButtonMenuHomePage = ({
@@ -25,6 +26,7 @@ const ButtonMenuHomePage = ({
   disabledSignIn = false,
   disabledCreateAccount = false,
   userName,
+  children,
 }: ButtonMenuProps) => {
   const { matches } = useMobileMedia();
 
@@ -50,6 +52,7 @@ const ButtonMenuHomePage = ({
           }}
         >
           <Box className={styles.welcomeUser}>Welcome {userName} !</Box>
+          {children}
           <Box className={styles.button}>
             <Button variant="contained" href="/dashboard" color="secondary">
               DASHBOARD

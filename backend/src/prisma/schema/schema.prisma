@@ -9,24 +9,22 @@ datasource db {
 }
 
 model User {
-  id                String             @id @default(uuid())
-  firstName         String
-  lastName          String
-  email             String
-  password          String
-  createAt          DateTime           @updatedAt
-  phoneNumber       String?
-  nationIso2        String
-  emailVerify       Boolean            @default(false)
-  verifyToken       String?            @unique
-  managerId         Int?
-  application       Application[]
-  notificationUsers NotificationUser[]
-  manager           Admin?             @relation(fields: [managerId], references: [id])
-  nation            Country            @relation(fields: [nationIso2], references: [iso2])
+  id          String        @id @default(uuid()) @db.Char(36)
+  firstName   String
+  lastName    String
+  email       String
+  password    String
+  createAt    DateTime      @default(now()) @updatedAt
+  phoneNumber String?
+  nationIso2  String
+  emailVerify Boolean       @default(false)
+  verifyToken String?       @unique
+  managerId   Int?
+  application Application[]
+  manager     Admin?        @relation(fields: [managerId], references: [id])
+  nation      Country       @relation(fields: [nationIso2], references: [iso2])
 
   @@index([managerId])
-  @@index([id])
   @@index([nationIso2], map: "User_nationIso2_fkey")
 }
 

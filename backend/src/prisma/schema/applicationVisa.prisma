@@ -1,8 +1,8 @@
 model Application {
   correlationId      String               @id @default("")
   createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  userId             String
+  updatedAt          DateTime             @default(now()) @updatedAt
+  userId             String               @db.Char(36)
   fromCountry        String
   toCountry          String
   price              Int

@@ -14,6 +14,17 @@ const notificationRepo = {
       throw new Error("Failed to created user notification");
     }
   },
+  async list(userId: string) {
+    try {
+      const notify = await prisma.notificationUser.findMany({
+        where: { userId },
+      });
+      return notify;
+    } catch (error) {
+      console.error(error);
+      throw new Error("failed to get notification list");
+    }
+  },
 };
 
 export default notificationRepo;

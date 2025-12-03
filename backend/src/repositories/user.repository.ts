@@ -1,5 +1,5 @@
 import prisma from "@/prisma/prisma";
-import { User } from "@/prisma/generate/prisma";
+import { User } from "@/generate/prisma";
 
 const findOne = async (id: string): Promise<User | null> => {
   try {

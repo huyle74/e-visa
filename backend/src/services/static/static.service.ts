@@ -8,8 +8,7 @@ import {
   TravelDocumentType,
   Occupation,
   AnnualIncome,
-  Country,
-} from "@/generate/prisma";
+} from "@dto/enum";
 
 export const staticService = {
   async getAllCountries() {

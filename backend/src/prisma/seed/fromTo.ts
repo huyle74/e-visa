@@ -24,7 +24,7 @@ async function addFeeAndDestination() {
     allowList.map(async ({ iso2, fee, stayDays }) => {
       await prisma.country.update({
         where: { iso2 },
-        data: { from: true, to: true, stayDays, governmentFee: fee },
+        data: { from: 1, to: 1, stayDays, governmentFee: fee },
       });
     });
   } catch (error) {

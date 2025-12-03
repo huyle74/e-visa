@@ -167,8 +167,6 @@ const adminService = {
       message = "Sorry! Your visa application has been declined.";
     }
 
-    console.log(userId);
-
     const newNotification = await notificationRepo.createUseNotification({
       message,
       title: "Visa Result",
@@ -178,6 +176,11 @@ const adminService = {
     });
     if (newNotification) {
       const io = getIO();
+      io.on("connection", (socket) => {
+        socket.emit("notification", {
+          data: newNotification,
+        });
+      });
     }
 
     return newNotification;

@@ -21,6 +21,8 @@ const googleLoginService = {
     const lastName = payload.family_name || "";
     const accessToken = generateToken({ email, firstName, lastName });
 
+    console.log(email);
+
     const checkUserExist = await userRepos.findByEmail(email);
     if (!checkUserExist) {
       const user = {
