@@ -1,8 +1,8 @@
 model ApplyInformation {
   id                 Int                @id @default(autoincrement())
   applicationId      String             @unique
-  biodata            String?            @db.LongText
-  photograph         String?            @db.LongText
+  biodata            Json?              @db.Json
+  photograph         Json?              @db.Json
   title              String
   sex                Sex
   firstName          String

@@ -1,4 +1,4 @@
-import { NotificationUser } from "@/generate/prisma";
+import { NotificationUser } from "@/generate/prisma/client";
 import prisma from "@/prisma/prisma";
 const notificationRepo = {
   async createUseNotification(

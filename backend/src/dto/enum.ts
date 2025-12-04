@@ -1,4 +1,4 @@
-export const AnnualIncome = {
+export const AnnualIncomeEnum = {
   UNDER_20000_USD: "Under $20,000 USD",
   BETWEEN_20000_40000_USD: "$20,000 – $40,000 USD",
   BETWEEN_40001_60000_USD: "$40,001 – $60,000 USD",
@@ -7,13 +7,13 @@ export const AnnualIncome = {
   NO_INCOME: "No income",
 } as const;
 
-export const Sex = {
+export const SexEnum = {
   MALE: "Male",
   FEMALE: "Female",
   OTHER: "Other",
 } as const;
 
-export const Occupation = {
+export const OccupationEnum = {
   BUSINESS_OWNER: "Business Owner",
   EMPLOYEE: "Employee",
   FREELANCE: "Freelancer",
@@ -24,7 +24,7 @@ export const Occupation = {
   OTHER: "Other",
 } as const;
 
-export const visaType = {
+export const VisaTypeEnum = {
   TOURIST: "Tourist Visa",
   TRANSIT: "Transit Visa",
   NON_IMMIGRANT: "Non-Immigrant Visa",
@@ -35,7 +35,7 @@ export const visaType = {
   THAILAND_PRIVILEGE_CARD: "Thailand Privilege Card",
 } as const;
 
-export const MaritalStatus = {
+export const MaritalStatusEnum = {
   SINGLE: "Single",
   MARRIED: "Married",
   COMMON_LAW_MARRIAGE: "Common-Law Marriage",
@@ -45,22 +45,23 @@ export const MaritalStatus = {
   SEPARATED: "Separated",
 } as const;
 
-export const VisitPurpose = {
+export const VisitPurposeEnum = {
   VISIT_FAMILY: "Visit Family",
   TRAVEL: "Travel / Tourism",
   FOR_WORK: "Work",
 } as const;
 
-export const TravelDocumentType = {
+export const TravelDocumentTypeEnum = {
   CERTIFICATE_OF_IDENTITY_CI: "Certificate of Identity (CI)",
   PASSPORT: "Passport",
   SEAMANS_BOOK: "Seaman’s Book",
   TRAVEL_DOCUMENT: "Travel Document",
 } as const;
 
-export const DocumentType = {
+export const DocumentTypeEnum = {
   ORDINARY_TRAVEL_DOCUMENT: "Ordinary Travel Document",
   DIPLOMATIC_PASSPORT: "Diplomatic Passport",
   OFFICIAL_SERVICE_PASSPORT: "Official / Service Passport",
   PUBLIC_AFFAIRS: "Public Affairs Passport",
 } as const;
+

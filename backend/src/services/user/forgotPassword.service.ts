@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
-import userRepos from "../../repositories/user.repository";
-import { generateToken } from "../../utils/jwt";
+import userRepos from "@/repositories/user.repository";
+import { generateToken } from "@/utils/jwt";
 import sendEmail from "@/utils/sendEmail";
-import { url } from "../../config/envLoader";
+import { url } from "@/config/envLoader";
 
 interface ChangePassword {
   email: string;

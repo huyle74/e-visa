@@ -1,13 +1,13 @@
 import countryRepo from "@/repositories/country.repository";
 import {
-  visaType,
-  DocumentType,
-  VisitPurpose,
-  Sex,
-  MaritalStatus,
-  TravelDocumentType,
-  Occupation,
-  AnnualIncome,
+  VisaTypeEnum,
+  DocumentTypeEnum,
+  VisitPurposeEnum,
+  SexEnum,
+  MaritalStatusEnum,
+  TravelDocumentTypeEnum,
+  OccupationEnum,
+  AnnualIncomeEnum,
 } from "@dto/enum";
 
 export const staticService = {
@@ -35,20 +35,20 @@ export const staticService = {
   },
 
   async getEligibiltyOption() {
-    const visaTypes = Object.values(visaType);
-    const documentType = Object.values(DocumentType);
-    const visitPurpose = Object.values(VisitPurpose);
+    const visaTypes = Object.values(VisaTypeEnum);
+    const documentType = Object.values(DocumentTypeEnum);
+    const visitPurpose = Object.values(VisitPurposeEnum);
 
     return { visaTypes, documentType, visitPurpose };
   },
 
   async getApplicationInformationOption() {
     const title = ["Mr.", "Ms."];
-    const sex = Object.values(Sex);
-    const maritalStatus = Object.values(MaritalStatus);
-    const travelDocumentType = Object.values(TravelDocumentType);
-    const occupation = Object.values(Occupation);
-    const annualIncome = Object.values(AnnualIncome);
+    const sex = Object.values(SexEnum);
+    const maritalStatus = Object.values(MaritalStatusEnum);
+    const travelDocumentType = Object.values(TravelDocumentTypeEnum);
+    const occupation = Object.values(OccupationEnum);
+    const annualIncome = Object.values(AnnualIncomeEnum);
 
     return {
       title,

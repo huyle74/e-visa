@@ -7,7 +7,7 @@ import {
 } from "@/utils/response.helper";
 import adminService from "@/services/admin/admin.service";
 import { AdminDataDto } from "@/dto/admin.dto";
-import { Document } from "@/generate/prisma";
+import { Document } from "@/generate/prisma/client";
 import { SortOrder, SortBy } from "@/services/admin/admin.dto";
 import fs from "fs";
 

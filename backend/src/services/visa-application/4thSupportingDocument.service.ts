@@ -2,7 +2,7 @@ import crypto from "crypto";
 import fs from "fs/promises";
 import { hostingRoot } from "@/config/envLoader";
 import { supportingDocumentRepos } from "@/repositories/visaApplication.repository";
-import { Document } from "@/generate/prisma";
+import { Document } from "@/generate/prisma/client";
 import userRepos from "@/repositories/user.repository";
 
 const supportingDocumentService = {

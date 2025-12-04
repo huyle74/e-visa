@@ -1,6 +1,6 @@
 generator client {
-  provider   = "prisma-client-js"
-  output     = "../../generate/prisma"
+  provider   = "prisma-client"
+  output     = "../generate/prisma"
   engineType = "client"
 }
 
@@ -29,8 +29,8 @@ model User {
 }
 
 model Admin {
-  id            Int             @id @default(autoincrement())
-  email         String
+  id            Int             @id @unique @default(autoincrement())
+  email         String          @unique
   name          String
   password      String
   role          Role            @default(ADMIN)

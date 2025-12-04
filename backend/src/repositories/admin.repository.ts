@@ -1,5 +1,5 @@
 import prisma from "@/prisma/prisma";
-import { Document, Prisma, Role } from "@/generate/prisma";
+import { Document, Prisma, Role } from "@/generate/prisma/client";
 import { paginationHelper } from "@/utils/paginationHelper";
 import { SortOrder, SortBy } from "@/services/admin/admin.dto";
 

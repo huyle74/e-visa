@@ -21,6 +21,6 @@
       "@/middleware/*": ["./src/middleware/*"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "prisma.config.ts"],
   "exclude": ["node_modules", "node_modules/@prisma/generate"]
 }

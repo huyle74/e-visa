@@ -10,3 +10,13 @@ export const checkUser = async (email: string, id: string) => {
     return false;
   }
 };
+
+export const mapEnum = (objectEnum: {}, key: string) => {
+  let result: string = "";
+
+  Object.entries(objectEnum).map((item) => {
+    if (key === item[1]) return (result = item[0]);
+  });
+
+  return result;
+};

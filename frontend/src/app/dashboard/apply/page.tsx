@@ -487,9 +487,9 @@ const ApplyNewVisa = () => {
       const data = {
         ...rest,
         ...selectCountryData,
-        visaType: reverseLabelToValue(visaType),
-        visitPurpose: reverseLabelToValue(visitPurpose),
-        documentType: reverseLabelToValue(documentType),
+        visaType,
+        visitPurpose,
+        documentType,
         price: getPrice,
       };
 
@@ -525,23 +525,8 @@ const ApplyNewVisa = () => {
     if (applyInfoData.completed) return triggerNext();
 
     try {
-      const {
-        sex,
-        maritalStatus,
-        documentType,
-        annualIncome,
-        occupation,
-        ...rest
-      } = applyInfoData;
-      const convert = {
-        ...rest,
-        sex: reverseLabelToValue(sex),
-        maritalStatus: reverseLabelToValue(maritalStatus),
-        documentType: reverseLabelToValue(documentType),
-        annualIncome: reverseLabelToValue(annualIncome),
-        occupation: reverseLabelToValue(occupation),
-      };
-      const form = formConvertApplicationInformation(convert);
+      const form = formConvertApplicationInformation(applyInfoData);
+      console.log(applyInfoData.documentType);
       setLoading(true);
       setDisable(true);
       const endpoint = prefix + "/2nd-applicationInformation";

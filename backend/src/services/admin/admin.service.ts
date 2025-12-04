@@ -1,6 +1,6 @@
 import adminRepos from "@/repositories/admin.repository";
 import notificationRepo from "@/repositories/notification.repository";
-import { Document, Role } from "@/generate/prisma";
+import { Document, Role } from "@/generate/prisma/client";
 import { AdminDataDto } from "@/dto/admin.dto";
 import { fileConvert } from "@/utils/file";
 import { SortOrder, SortBy, ResultsType, PostVisaResultDto } from "./admin.dto";

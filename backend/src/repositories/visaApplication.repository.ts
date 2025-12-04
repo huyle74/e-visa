@@ -6,7 +6,7 @@ import {
   TravelInformation,
   SupportingDocument,
   Document,
-} from "@/generate/prisma";
+} from "@/generate/prisma/client";
 import {
   TravelInformationInputDto,
   ApplicationInformationInputDto,

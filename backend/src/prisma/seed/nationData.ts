@@ -1,14 +1,23 @@
 import "dotenv/config";
-import { PrismaClient } from "@/generate/prisma";
+import prisma from "../prisma";
+import path from "path";
+import fs from "fs";
 
-const prisma = new PrismaClient();
+const dir = path.resolve("./cities.json");
+
 const API_BASE =
   "https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/json/";
 
 async function fetchData(endpoint: string) {
   const response = await fetch(`${API_BASE}${endpoint}.json`);
-  return response.json();
+  return await response.json();
 }
+
+const addCitiesWithJsonFile = async () => {
+  const read = fs.readFileSync(dir, "utf-8");
+  const results = JSON.parse(read);
+  return results;
+};
 
 async function addCountries() {
   const countries = await fetchData("countries");
@@ -30,9 +39,13 @@ async function addCountries() {
 }
 
 async function addCities() {
-  const cities = await fetchData("cities");
+  // const cities = await fetchData("cities");
+  const cities = await addCitiesWithJsonFile();
+
+  console.log(cities);
   const test = await prisma.city.createMany({
     data: cities.map((row: any) => {
+      row;
       return {
         country: row.country_name,
         id: row.id,
@@ -65,29 +78,29 @@ async function addStates() {
   console.log("----Done!----");
 }
 
-addStates()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+// addStates()
+//   .catch((e) => {
+//     console.error(e);
+//     process.exit(1);
+//   })
+//   .finally(async () => {
+//     await prisma.$disconnect();
+//   });
 
 addCities()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+.catch((e) => {
+  console.error(e);
+  process.exit(1);
+})
+.finally(async () => {
+  await prisma.$disconnect();
+});
 
-addCountries()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+// addCountries()
+//   .catch((e) => {
+//     console.error(e);
+//     process.exit(1);
+//   })
+//   .finally(async () => {
+//     await prisma.$disconnect();
+//   });

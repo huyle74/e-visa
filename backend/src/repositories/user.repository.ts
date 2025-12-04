@@ -1,5 +1,5 @@
 import prisma from "@/prisma/prisma";
-import { User } from "@/generate/prisma";
+import { User } from "@/generate/prisma/client";
 
 const findOne = async (id: string): Promise<User | null> => {
   try {
@@ -12,7 +12,7 @@ const findOne = async (id: string): Promise<User | null> => {
 
 const findByEmail = async (email: User["email"]) => {
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: { email },
       select: {
         id: true,
@@ -25,6 +25,7 @@ const findByEmail = async (email: User["email"]) => {
     });
     return user;
   } catch (error) {
+    console.log(error);
     throw new Error("Cannot find user by email");
   }
 };

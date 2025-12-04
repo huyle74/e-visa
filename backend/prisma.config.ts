@@ -7,11 +7,12 @@ type Env = {
 };
 
 export default defineConfig({
-  schema: "src/prisma/schema",
+  schema: "src/prisma",
   migrations: {
     path: "prisma/migrations",
+    seed:"tsx src/prisma/seed/nationData.ts"
   },
   datasource: {
     url: env<Env>("DATABASE_URL"),
-  },
+  }, 
 }) satisfies PrismaConfig;

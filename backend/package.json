@@ -3,10 +3,11 @@
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "build": "tsc && tsc-alias",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register --ignore-watch ../frontend/.next src/server.ts",
-    "seed": "node --max-old-space-size=6144 -r ts-node/register src/prisma/seed/fromTo.ts"
+    "seed": "tsx src/prisma/seed/fromTo.ts"
   },
   "prisma": {
-    "schema": "src/prisma/schema"
+    "schema": "src/prisma/schema/schema.prisma",
+    "seed": "tsx src/prisma/seed/fromTo.ts"
   },
   "type": "commonjs",
   "nodemonConfig": {
@@ -46,6 +47,7 @@
     "react-dom": "^19.2.0",
     "socket.io": "^4.8.1",
     "tsc-alias": "^1.8.16",
+    "tsx": "^4.21.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
