@@ -1,0 +1,33 @@
+model Notifications {
+  id       Int              @id @default(autoincrement())
+  type     NotificationType
+  adminId  Int
+  createAt DateTime         @default(now()) @db.DateTime(0)
+  actorId  Admin            @relation(fields: [adminId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "notifications_admin_fk")
+
+  @@index([adminId], map: "fk_notifications_admin_id_001")
+}
+
+model NotificationUser {
+  id              String    @id @default(uuid()) @db.Char(36)
+  userId          String
+  status          Status?   @default(UNREAD)
+  message         String    @db.Text
+  readAt          DateTime? @db.DateTime(0)
+  title           String    @db.VarChar(255)
+  notificationsId Int
+  createAt        DateTime  @default(now()) @db.DateTime(0)
+
+  @@index([userId], map: "userId")
+}
+
+enum NotificationType {
+  RESULT
+  EMAIL
+  CHAT
+}
+
+enum Status {
+  READ
+  UNREAD
+}

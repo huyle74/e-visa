@@ -1,5 +1,5 @@
 import prisma from "@/prisma/prisma";
-import { Prisma, User } from "@prisma/client";
+import { User } from "@/generate/prisma/client";
 
 const findOne = async (id: string): Promise<User | null> => {
   try {
@@ -10,9 +10,9 @@ const findOne = async (id: string): Promise<User | null> => {
   }
 };
 
-const findByEmail = async (email: string) => {
+const findByEmail = async (email: User["email"]) => {
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: { email },
       select: {
         id: true,
@@ -25,11 +25,12 @@ const findByEmail = async (email: string) => {
     });
     return user;
   } catch (error) {
+    console.log(error);
     throw new Error("Cannot find user by email");
   }
 };
 
-const create = async (data: Prisma.UserCreateInput): Promise<User> => {
+const create = async (data: any): Promise<User> => {
   try {
     const newUser = await prisma.user.create({
       data,
@@ -42,7 +43,7 @@ const create = async (data: Prisma.UserCreateInput): Promise<User> => {
   }
 };
 
-const update = async (where: Prisma.UserWhereUniqueInput, data: any) => {
+const update = async (where: any, data: any) => {
   try {
     const updateUser = await prisma.user.update({ where, data });
     return updateUser;

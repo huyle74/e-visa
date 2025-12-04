@@ -5,7 +5,7 @@ import {
   TravelDocumentType,
   Sex,
   Document,
-} from "@prisma/client";
+} from "@/generate/prisma/client";
 
 export interface EligibilityInputDto {
   applyAt: string;
@@ -31,7 +31,7 @@ export interface ApplicationInformationInputDto {
   applicationId: string;
 
   title: string;
-  sex: Sex;
+  sex: string;
   firstName: string;
   middleName?: string;
   familyName: string;
@@ -42,11 +42,11 @@ export interface ApplicationInformationInputDto {
   nationalityBirth: string;
   cityBirth: string;
   birthDate: Date;
-  maritalStatus: MaritalStatus;
+  maritalStatus: string;
   anotherNationality: string;
 
   // travelDocument
-  documentType: TravelDocumentType;
+  documentType: string;
   documentNumber: string;
   issuesPlace: string;
   issuesDate: Date;
@@ -60,8 +60,8 @@ export interface ApplicationInformationInputDto {
   currentAddress: boolean;
 
   // Employment
-  annualIncome: AnnualIncome;
-  occupation: Occupation;
+  annualIncome: string;
+  occupation: string;
   company: string;
 
   // files

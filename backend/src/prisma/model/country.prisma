@@ -1,0 +1,41 @@
+model Country {
+  id            Int      @id @default(autoincrement())
+  code          String
+  engName       String
+  iso2          String   @unique
+  countryCode   String?  @unique
+  from          Boolean  @default(false)
+  to            Boolean  @default(false)
+  governmentFee Decimal? @db.Decimal(11, 2)
+  stayDays      Int?
+  city          City[]
+  state         State[]
+  user          User[]
+}
+
+model City {
+  id         Int     @id
+  nationIso2 String
+  country    String
+  state      String
+  city       String
+  countries  Country @relation(fields: [nationIso2], references: [iso2])
+
+  @@index([nationIso2], map: "City_nationIso2_fkey")
+}
+
+model State {
+  id         Int     @id
+  nationIso2 String
+  country    String
+  state      String
+  countries  Country @relation(fields: [nationIso2], references: [iso2])
+
+  @@index([nationIso2], map: "State_nationIso2_fkey")
+}
+
+model Price {
+  id   Int     @id
+  type String  @db.VarChar(100)
+  fee  Decimal @db.Decimal(10, 2)
+}

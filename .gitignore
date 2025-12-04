@@ -15,3 +15,5 @@ deployment
 
 tsconfig.json
 README.md
+
+.vscode/settings.json

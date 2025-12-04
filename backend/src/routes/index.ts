@@ -11,6 +11,7 @@ import applicationRouter from "./visa-application/allApplicationStep.routes";
 import guardRoute from "./guard/guard.routes";
 import adminLoginRoute from "./admin/login.routes";
 import adminRoute from "./admin/admin.routes";
+import homeRoute from "./user/main.routes";
 
 const routes = Router();
 
@@ -21,6 +22,7 @@ routes.use("/forgot-password", forgotPasswordRoute);
 routes.use("/login-google", googleLoginRoute);
 routes.use("/payment", paypalRoute);
 routes.use("/static", staticRoutes);
+routes.use("/home", authenticationMiddleware, homeRoute);
 routes.use("/visa-application", authenticationMiddleware, applicationRouter);
 routes.use("/guard", guardRoute);
 

@@ -1,0 +1,79 @@
+model ApplyInformation {
+  id                 Int                @id @default(autoincrement())
+  applicationId      String             @unique
+  biodata            Json?              @db.Json
+  photograph         Json?              @db.Json
+  title              String
+  sex                Sex
+  firstName          String
+  middleName         String?
+  familyName         String
+  contactNo          String
+  email              String
+  nationality        String
+  otherNationality   Boolean
+  nationalityBirth   String
+  cityBirth          String
+  birthDate          DateTime
+  maritalStatus      MaritalStatus
+  anotherNationality String
+  documentType       TravelDocumentType
+  documentNumber     String
+  issuesPlace        String
+  issuesDate         DateTime
+  expiryDate         DateTime
+  homeAddress        String
+  addressCountry     String
+  addressState       String
+  addressCity        String
+  currentAddress     Boolean
+  occupation         Occupation
+  company            String
+  annualIncome       AnnualIncome
+  application        Application        @relation(fields: [applicationId], references: [correlationId], onDelete: Cascade)
+
+  @@index([id])
+}
+
+enum Sex {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  COMMON_LAW_MARRIAGE
+  CIVIL_UNION_DOMESTIC_PARTNERSHIP
+  WIDOWED
+  DIVORCED
+  SEPARATED
+}
+
+enum TravelDocumentType {
+  CERTIFICATE_OF_IDENTITY_CI
+  PASSPORT
+  SEAMANS_BOOK
+  TRAVEL_DOCUMENT
+}
+
+enum Occupation {
+  BUSINESS_OWNER
+  EMPLOYEE
+  FREELANCE
+  GOVERNMENT_OFFICIAL
+  RETIRED
+  STUDENT
+  UNEMPLOYED
+  OTHER
+}
+
+enum AnnualIncome {
+  UNDER_20000_USD
+  BETWEEN_20000_40000_USD
+  BETWEEN_40001_60000_USD
+  BETWEEN_60001_80000_USD
+  MORE_THAN_AND_OVER
+  NO_INCOME
+}

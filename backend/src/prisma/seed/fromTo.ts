@@ -1,7 +1,5 @@
 import "dotenv/config";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../prisma";
 
 const allowList = [
   { engName: "India", iso2: "IN", fee: 80, stayDays: 60 },
@@ -21,7 +19,8 @@ const allowList = [
 
 async function addFeeAndDestination() {
   try {
-    allowList.map(async ({ iso2, fee, stayDays }) => {
+    console.log("WE HERE----");
+    return allowList.map(async ({ iso2, fee, stayDays }) => {
       await prisma.country.update({
         where: { iso2 },
         data: { from: true, to: true, stayDays, governmentFee: fee },
@@ -31,4 +30,11 @@ async function addFeeAndDestination() {
     console.log(error);
   }
 }
-addFeeAndDestination();
+addFeeAndDestination()
+.catch((e) => {
+  console.error(e);
+  process.exit(1);
+})
+.finally(async () => {
+  await prisma.$disconnect();
+});

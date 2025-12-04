@@ -20,7 +20,7 @@ const chooseCountriesService = {
 
     const governmentFee = Number(fromToCountries?.to?.governmentFee);
 
-    const totalPrice = governmentFee + standardPrice[0].fee;
+    const totalPrice = governmentFee + Number(standardPrice[0].fee);
 
     return { totalPrice };
   },

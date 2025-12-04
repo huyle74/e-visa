@@ -3,10 +3,11 @@
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "build": "tsc && tsc-alias",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register --ignore-watch ../frontend/.next src/server.ts",
-    "seed": "node --max-old-space-size=6144 -r ts-node/register src/prisma/seed/fromTo.ts"
+    "seed": "tsx src/prisma/seed/fromTo.ts"
   },
   "prisma": {
-    "schema": "src/prisma/schema"
+    "schema": "src/prisma/schema/schema.prisma",
+    "seed": "tsx src/prisma/seed/fromTo.ts"
   },
   "type": "commonjs",
   "nodemonConfig": {
@@ -19,10 +20,10 @@
     }
   },
   "dependencies": {
-    "@prisma/client": "^6.13.0",
+    "@prisma/adapter-mariadb": "^7.0.1",
+    "@prisma/client": "^7.0.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/node": "^24.1.0",
     "@types/nodemailer": "^6.4.17",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -41,10 +42,12 @@
     "nodemailer": "^7.0.5",
     "pg-promise": "^11.15.0",
     "postgres": "^3.4.7",
-    "prisma": "^6.13.0",
+    "prisma": "^7.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "socket.io": "^4.8.1",
     "tsc-alias": "^1.8.16",
+    "tsx": "^4.21.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
@@ -53,6 +56,7 @@
     "@types/express-session": "^1.18.2",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
+    "@types/node": "^24.10.1",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.3",

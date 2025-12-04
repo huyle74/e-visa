@@ -1,4 +1,4 @@
-import userRepos from "../../repositories/user.repository";
+import userRepos from "@/repositories/user.repository";
 
 const verifyEmailService = async (email: string) => {
   const checkUser = await userRepos.findByEmail(email);

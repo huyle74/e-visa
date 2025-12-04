@@ -18,6 +18,15 @@ const KEY = "app:user";
 export default function Home() {
   const { matches } = useMobileMedia();
   const [user, setUser] = useState<any>(null);
+  const [notifications, setNotifications] = useState<
+    {
+      id: number | string;
+      title: string;
+      message: string;
+      createAt: Date;
+      status: "READ" | "UNREAD";
+    }[]
+  >([]);
   const param = useSearchParams();
 
   useEffect(() => {
@@ -56,7 +65,11 @@ export default function Home() {
 
   return (
     <Box>
-      <HeaderMenu logged={user !== null} userName={user?.lastName || ""} />
+      <HeaderMenu
+        logged={user !== null}
+        userName={user?.lastName || ""}
+        notifications={notifications}
+      />
       <Box>
         <Box sx={{ position: "relative" }}>
           <img

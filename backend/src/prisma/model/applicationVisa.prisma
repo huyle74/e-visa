@@ -1,0 +1,17 @@
+model Application {
+  correlationId      String               @id @default(uuid())
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @default(now()) @updatedAt
+  userId             String               @db.Char(36)
+  fromCountry        String
+  toCountry          String
+  price              Int
+  payment            Boolean              @default(false)
+  user               User                 @relation(fields: [userId], references: [id])
+  ApplyInformation   ApplyInformation?
+  Eligibility        Eligibility?
+  supportingDocument SupportingDocument[]
+  travelInformation  TravelInformation?
+
+  @@index([userId], map: "Application_userId_fkey")
+}
